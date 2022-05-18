@@ -67,7 +67,7 @@
 #'   "multipler <- if (variant == "high") 10 else 5\n",
 #'   "product <- multiplier * 7\n",
 #'   "saveRDS(product, file = target)"
-#' }
+#' )
 #' writeLines(txt, file = "product.R")
 #' 
 #' ## check that the file was created correctly
