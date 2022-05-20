@@ -1,12 +1,10 @@
 
 ## HAS_TESTS
-#' Get the 'target' for the current file
+#' Get the file path to the target
 #'
-#' Get the 'target' for the current file, ie get a path
-#' to the file that holds the output created by the
-#' current file.
+#' Get the path to the file that holds output from the current file.
 #'
-#' When called with no arguments, \code{target} assumes that (i) the
+#' When called with no arguments, \code{path_target} assumes that (i) the
 #' current file is being run from the command line,
 #' and that the name of the target was passed
 #' as a command line argument. See the examples below
@@ -14,7 +12,7 @@
 #'
 #' If the current file is not being run from the command line,
 #' and if a \code{default} argument has been supplied, then
-#' \code{target} will use that instead. Defaults are
+#' \code{path_target} will use that instead. Defaults are
 #' helpful when developing code, but can disguise problems,
 #' so should be removed when the code has matured.
 #'
@@ -24,7 +22,7 @@
 #' @return A character vector of length 1,
 #' giving the path to a file.
 #'
-#' @seealso \code{\link{opt_target}}
+#' @seealso \code{\link{filename_opt}}
 #'
 #' @examples 
 #' ## -- Run from the command line ------------------------
@@ -33,8 +31,8 @@
 #' ## a file called 'foo.R' contains the lines
 #' library(makr)
 #' product <- 6 * 7
-#' target <- target()
-#' saveRDS(product, file = target)
+#' path_target <- path_target()
+#' saveRDS(product, file = path_target)
 #'
 #' ## we have a shell script that contains the line
 #' Rscript foo.R bar.rds
@@ -42,14 +40,14 @@
 #' ## running the shell script creates a
 #' ## file 'bar.rds' consisting of the number 42
 #'
-#' ## (see the article 'makr' for a more complete example)
+#' ## (see the article 'makr' for more complete examples)
 #' }
 #'
 #' ## -- Use interactively --------------------------------
 #' 
-#' target(default = "product-high.rds")
+#' path_target(default = "product-high.rds")
 #' @export
-target <- function(default = NULL) {
+path_target <- function(default = NULL) {
     p_args <- "^--args$"
     p_file <- "^--file=.*$"
     args <- commandArgs()

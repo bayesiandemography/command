@@ -1,6 +1,6 @@
 
-test_that("'target' works when R file run from command line and target passed", {
-    project_dir <- tempdir()
+test_that("'path_target' works when R file run from command line and target passed", {
+    project_dir <- tempfile(pattern = "makr-test-path_target")
     if (file.exists(project_dir))
         unlink(project_dir, recursive = TRUE)
     dir.create(project_dir)
@@ -8,7 +8,7 @@ test_that("'target' works when R file run from command line and target passed", 
     dir.create(file.path(project_dir, "out"))
     setwd(project_dir)
     writeLines(c("library(makr)",
-                 "target <- target()",
+                 "target <- path_target()",
                  "saveRDS(42, target)"),
                con = "src/results.R")
     cmd <- sprintf("%s/bin/Rscript src/results.R out/results.rds", R.home())
@@ -17,13 +17,13 @@ test_that("'target' works when R file run from command line and target passed", 
     unlink(project_dir, recursive = TRUE)
 })
 
-test_that("'target' works when R run interactively and default given", {
-    expect_identical(target(default = "mytarget"),
+test_that("'path_target' works when R run interactively and default given", {
+    expect_identical(path_target(default = "mytarget"),
                      "mytarget")
 })
 
-test_that("'target' throws appropriate error when more than one command line argument passed", {
-    project_dir <- tempdir()
+test_that("'path_target' throws appropriate error when more than one command line argument passed", {
+    project_dir <- tempfile(pattern = "makr-test-path_target")
     if (file.exists(project_dir))
         unlink(project_dir, recursive = TRUE)
     dir.create(project_dir)
@@ -32,7 +32,7 @@ test_that("'target' throws appropriate error when more than one command line arg
     setwd(project_dir)
     writeLines(c("library(makr)",
                  "library(testthat)",
-                 "expect_error(target(), 'more than one command line argument passed')"),
+                 "expect_error(path_target(), 'more than one command line argument passed')"),
                con = "src/results.R")
     cmd <- sprintf("%s/bin/Rscript src/results.R out/results1.rds out/results2.rds", R.home())
     val <- system(cmd)
@@ -40,8 +40,8 @@ test_that("'target' throws appropriate error when more than one command line arg
     unlink(project_dir, recursive = TRUE)
 })
 
-test_that("'target' throws appropriate error when no command line arguments passed", {
-    project_dir <- tempdir()
+test_that("'path_target' throws appropriate error when no command line arguments passed", {
+    project_dir <- tempfile(pattern = "makr-test-path_target")
     if (file.exists(project_dir))
         unlink(project_dir, recursive = TRUE)
     dir.create(project_dir)
@@ -50,7 +50,7 @@ test_that("'target' throws appropriate error when no command line arguments pass
     setwd(project_dir)
     writeLines(c("library(makr)",
                  "library(testthat)",
-                 "expect_error(target(), 'could not find target')"),
+                 "expect_error(path_target(), 'could not find target')"),
                con = "src/results.R")
     cmd <- sprintf("%s/bin/Rscript src/results.R", R.home())
     val <- system(cmd)
@@ -58,8 +58,8 @@ test_that("'target' throws appropriate error when no command line arguments pass
     unlink(project_dir, recursive = TRUE)
 })
 
-test_that("'target' throws appropriate error when interactive session", {
-    expect_error(target(),
+test_that("'path_target' throws appropriate error when interactive session", {
+    expect_error(path_target(),
                  "could not find target : perhaps because file not run from command line?")
 })
 
