@@ -1,6 +1,7 @@
 
+## HAS_TESTS
 #' Extract options from a target
-#' 
+#'
 #' Infer option used in creating a target from the name of that target.
 #'
 #' Options include choices for inputs, parameters, or outputs.
@@ -30,6 +31,8 @@
 #' starting from the left-most.
 #' @param sep The string used to separate the base
 #' from the options, and to separate different options.
+#' @param fixed If \code{TRUE} (the default), match \code{sep} exactly.
+#' If \code{FALSE}, interpret \code{sep} as a regular expression.
 #' @param choices Valid values for the option. If \code{NULL}
 #' (the default), any values are allowed.
 #' @param convert Whether to convert numeric options to numbers
@@ -52,7 +55,7 @@
 #' ## leave "3" as character
 #' opt_target("project/figures/fig_forecast-high-3.pdf",
 #'            which = 2,
-#'            convert = FALSE) 
+#'            convert = FALSE)
 #'
 #' ## non-default value for 'sep'
 #' opt_target("output.urban.2022.female.csv", sep = ".")
@@ -72,13 +75,16 @@
 opt_target <- function(target,
                        which = 1,
                        sep = "-",
+                       fixed = TRUE,
                        choices = NULL,
                        convert = TRUE,
                        has_ext = TRUE) {
     checkmate::assert_string(target, min.chars = 1L)
     checkmate::assert_int(which, lower = 1L)
     checkmate::assert_string(sep, min.chars = 1L)
-    if (!is.null(choices))
+    checkmate::assert_flag(fixed)
+    has_choices <- !is.null(choices)
+    if (has_choices)
         checkmate::assert_vector(choices, min.len = 1L, unique = TRUE)
     checkmate::assert_flag(convert)
     checkmate::assert_flag(has_ext)
@@ -89,21 +95,31 @@ opt_target <- function(target,
         if (n_pieces_dot > 1L)
             target_base <- paste(pieces_dot[-n_pieces_dot], collapse = ".")
     }
-    pieces_split <- strsplit(target_base, split = sep)[[1L]]
+    pieces_split <- strsplit(target_base, split = sep, fixed = fixed)[[1L]]
     n_pieces_split <- length(pieces_split)
     if (n_pieces_split == 1L)
-        stop(sprintf("target '%s' has no variants", target),
+        stop(sprintf("target '%s' has no options", target),
              call. = FALSE)
-    n_variants <- n_pieces - 1L
-    if (which > n_variants)
-        stop(sprintf("'which' equals %s but target '%s' only has %d variants",
-                     which, target, n_variants),
-             call. = FALSE)
+    n_options <- n_pieces_split - 1L
+    if (which > n_options) {
+        if (n_options == 1L)
+            msg <- sprintf("'which' equals %s but target '%s' only has one option",
+                           which, target)
+        else
+            msg <- sprintf("'which' equals %s but target '%s' only has %d options",
+                           which, target, n_options)
+        stop(msg, call. = FALSE)
+    }
     ans <- pieces_split[[which + 1L]]
     if (convert)
         ans <- utils::type.convert(ans, as.is = TRUE)
+    if (has_choices) {
+        i_choice <- match(ans, choices, nomatch = 0L)
+        if (i_choice == 0L)
+            stop(sprintf("value for option [\"%s\"] not included in 'choices'",
+                         ans),
+                 call. = FALSE)
+    }
     ans
 }
-
-## suffix_target("out/tgt-1-low.rds", 1)
 

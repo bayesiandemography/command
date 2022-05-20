@@ -8,6 +8,7 @@ opt_target(
   target,
   which = 1,
   sep = "-",
+  fixed = TRUE,
   choices = NULL,
   convert = TRUE,
   has_ext = TRUE
@@ -21,6 +22,9 @@ starting from the left-most.}
 
 \item{sep}{The string used to separate the base
 from the options, and to separate different options.}
+
+\item{fixed}{If \code{TRUE} (the default), match \code{sep} exactly.
+If \code{FALSE}, interpret \code{sep} as a regular expression.}
 
 \item{choices}{Valid values for the option. If \code{NULL}
 (the default), any values are allowed.}
@@ -70,7 +74,7 @@ opt_target("project/figures/fig_forecast-high-3.pdf",
 ## leave "3" as character
 opt_target("project/figures/fig_forecast-high-3.pdf",
            which = 2,
-           convert = FALSE) 
+           convert = FALSE)
 
 ## non-default value for 'sep'
 opt_target("output.urban.2022.female.csv", sep = ".")

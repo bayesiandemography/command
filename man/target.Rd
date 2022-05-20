@@ -20,7 +20,7 @@ to the file that holds the output created by the
 current file.
 }
 \details{
-By default, \code{target} assumes that (i) the
+When called with no arguments, \code{target} assumes that (i) the
 current file is being run from the command line,
 and that the name of the target was passed
 as a command line argument. See the examples below
@@ -28,79 +28,33 @@ and the vignette for this package.
 
 If the current file is not being run from the command line,
 and if a \code{default} argument has been supplied, then
-\code{target} will use that instead. A default is
-helpful when developing code. A default can, however, disguise
-problems. Once the code has matured, removing the default
-can make the code safer.
+\code{target} will use that instead. Defaults are
+helpful when developing code, but can disguise problems,
+so should be removed when the code has matured.
 }
 \examples{
-## -- Single target ------------------------------------
+## -- Run from the command line ------------------------
 
-## create a file called "product.R"
-txt <- c(
-  "library(makr)",
-  "product <- 6 * 7"\n",
-  "target <- target()\n",
-  "saveRDS(product, file = target)"
-)
-writeLines(txt, file = "product.R")
+\dontrun{
+## a file called 'foo.R' contains the lines
+library(makr)
+product <- 6 * 7
+target <- target()
+saveRDS(product, file = target)
 
-## check that the file was created correctly
-dir()
-readLines("product.R")
+## we have a shell script that contains the line
+Rscript foo.R bar.rds
 
-## run the file from the command line, passing the
-## name of the target file ("product.rds") as a
-## command line argument
-system("Rscript product.R product.rds")
+## running the shell script creates a
+## file 'bar.rds' consisting of the number 42
 
-## check that the new file was created correctly
-dir()
+## (see the article 'makr' for a more complete example)
+}
 
-## read the contents of the new file
-readRDS("product.rds")
+## -- Use interactively --------------------------------
 
-## tidy up
-file.remove("product.R", "product.rds")
-
-
-## -- Reuse file to make multiple targets --------------
-
-## create a file called "product.R"
-txt <- c(
-  "library(makr)
-  "target <- target()\n",
-  "variant <- variant(target)\n",
-  "multipler <- if (variant == "high") 10 else 5\n",
-  "product <- multiplier * 7\n",
-  "saveRDS(product, file = target)"
-)
-writeLines(txt, file = "product.R")
-
-## check that the file was created correctly
-dir()
-readLines("product.R")
-
-## run the file from the command line twice,
-## with two different targets
-system("Rscript product.R product-high.rds")
-system("Rscript product.R product-low.rds")
-
-## check that the new files were created correctly
-dir()
-
-## read the contents of the new files
-readRDS("product-high.rds")
-readRDS("product-low.rds")
-
-## tidy up
-file.remove("product.R", "product-high.rds", "product-low.rds")
-
-## -- Use the 'default' argument -----------------------
-
-## call 'target' when working interactively
 target(default = "product-high.rds")
 }
 \seealso{
-\code{\link{variant}}
+\code{\link{opt_target}}
 }
