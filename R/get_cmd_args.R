@@ -14,6 +14,8 @@
 #' if the argument was named, eg \code{--sex=Female}
 #' or \code{-s=F}.
 #'
+#' DEFAULT ONLY USED IN INTERACTIVE SESSIONS
+#'
 #' If \code{convert} is \code{TRUE} (the default), then
 #' \code{get_cmd_arg} converts results to numeric where
 #' it can, via function \code{\link[utils]{type.convert}}.
@@ -24,9 +26,8 @@
 #' any value is allowed.
 #' @param convert Whether to coerce numeric strings to
 #' numeric. Defaults to \code{TRUE}.
-#' @param allow_default Whether to use the first element
-#' of \code{choices} if no command line argument supplied.
-#' Defaults to \code{TRUE}.
+#' @param interactive Value to be used in interactive sessions.
+#' Optional.
 #'
 #' @return A number or string.
 #'
@@ -58,12 +59,12 @@
 #'
 #' ## -- Use interactively --------------------------------
 #' 
-#' path_target(default = "product-high.rds")
+#' path_target(interactive = "product-high.rds")
 #' }
 #' @export
 get_cmd_arg <- function(which = 1,
                         choices = NULL,
-                        allow_default = TRUE,
+                        interactive = NULL,
                         convert = TRUE) {
     ## string constants
     p_named <- "^-{1,2}([^-]+)=(.+)$"
@@ -78,7 +79,15 @@ get_cmd_arg <- function(which = 1,
     has_choices <- !is.null(choices)
     if (has_choices)
         checkmate::assert_atomic(choices, any.missing = FALSE, min.len = 1L, unique = TRUE)
-    checkmate::assert_flag(allow_default)
+    has_interactive <- !is.null(interactive)
+    if (has_interactive) {
+        if (is.numeric(interactive))
+            checkmate::assert_number(interactive)
+        else if (is.character(interactive))
+            checkmate::assert_string(interactive, min.chars = 1L)
+        else
+            stop("'interactive' is not numeric or character", call. = FALSE)
+    }
     checkmate::assert_flag(convert)
     ## extract and characterise args
     args <- commandArgs()
@@ -124,16 +133,12 @@ get_cmd_arg <- function(which = 1,
     }
     ## case 2: command line arguments not supplied
     else {
-        if (allow_default) {
-            if (has_choices)
-                ans <- choices[[1L]]
-            else
-                stop("no command line arguments supplied and 'choices' is NULL", call. = FALSE)
-        }
-        else {
-            stop("no command line arguments supplied, and 'allow_default' is FALSE",
+        is_interactive_session <- !any(grepl(p_file, args))
+        if (has_interactive && is_interactive_session)
+            ans <- interactive
+        else
+            stop("no command line arguments supplied",
                  call. = FALSE)
-        }
     }
     ## convert and return
     if (convert)

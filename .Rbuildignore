@@ -3,3 +3,4 @@
 ^vignettes/articles$
 ^LICENSE\.md$
 ^README\.Rmd$
+sample_code.R

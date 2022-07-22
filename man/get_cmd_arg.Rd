@@ -4,7 +4,7 @@
 \alias{get_cmd_arg}
 \title{Get an argument that was passed from the command line}
 \usage{
-get_cmd_arg(which = 1, choices = NULL, allow_default = TRUE, convert = TRUE)
+get_cmd_arg(which = 1, choices = NULL, interactive = NULL, convert = TRUE)
 }
 \arguments{
 \item{which}{A number or a string. Defaults to \code{1}.}
@@ -13,9 +13,8 @@ get_cmd_arg(which = 1, choices = NULL, allow_default = TRUE, convert = TRUE)
 is allowed to take. If \code{NULL} (the default)
 any value is allowed.}
 
-\item{allow_default}{Whether to use the first element
-of \code{choices} if no command line argument supplied.
-Defaults to \code{TRUE}.}
+\item{interactive}{Value to be used in interactive sessions.
+Optional.}
 
 \item{convert}{Whether to coerce numeric strings to
 numeric. Defaults to \code{TRUE}.}
@@ -36,6 +35,8 @@ line arguments if more than one was supplied.
 \code{which} can be a number the name of an argument
 if the argument was named, eg \code{--sex=Female}
 or \code{-s=F}.
+
+DEFAULT ONLY USED IN INTERACTIVE SESSIONS
 
 If \code{convert} is \code{TRUE} (the default), then
 \code{get_cmd_arg} converts results to numeric where
@@ -62,7 +63,7 @@ Rscript foo.R bar.rds
 
 ## -- Use interactively --------------------------------
 
-path_target(default = "product-high.rds")
+path_target(interactive = "product-high.rds")
 }
 }
 \seealso{
