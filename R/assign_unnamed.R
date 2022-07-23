@@ -72,9 +72,10 @@
 #' setwd(dir_current)
 #' @export
 assign_unnamed <- function(...) {
-    args_dots <- get_args_dots(..., fun_name = "assign_unnamed")
+    args_dots <- list(...)
+    check_args_dots(args_dots, fun_name = "assign_unnamed")
     if (interactive())
-        assign_args(arg_dots)
+        assign_args(args_dots)
     else {
         args_cmd <- get_args_cmd_unnamed()
         args_comb <- make_args_comb_(args_dots = args_dots,

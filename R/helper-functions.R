@@ -1,33 +1,43 @@
 
-
-get_args_dots <- function(..., fun_name) {
-    ans function<- list(...)
-    n <- length(ans)
-    nms <- names(dots)
-    val_check_nms <- check_names(nms, type = "strict")
-    if (!isTRUE(value)) {
-        msg <- gettextf("problem with name-value pairs supplied to '%s' : %s",
+#' Check dots arguments
+#'
+#' Check that names and values supplied
+#' 'assign_named' or 'assign_unnamed'
+#' via the dots argument are valid.
+#'
+#' @param args_dots Dots argument from 'assign_named' or
+#' 'assign_unnamed' turned into a list.
+#' @param fun_name "assign_named" or "assign_unnamed"
+#'
+#' @return TRUE, invisibly
+#'
+#' @noRd
+check_args_dots <- function(args_dots, fun_name) {
+    n <- length(args_dots)
+    nms <- names(args_dots)
+    val_chk_nms <- check_names(nms, type = "strict")
+    if (!isTRUE(val_chk_nms)) {
+        msg <- gettextf("problem with names in '...' argument to '%s' : %s",
                         fun_name,
-                        val_check_nms)
+                        val_chk_nms)
         stop(msg, call. = FALSE)
     }
-    is_logical <- vapply(ans, is.logical, TRUE, USE.NAMES = FALSE)
-    is_numeric <- vapply(ans, is.numeric, TRUE, USE.NAMES = FALSE)
-    is_character <- vapply(ans, is.character, TRUE, USE.NAMES = FALSE)
-    is_valid <- is_logical | is_numeric | is_character
+    is_character <- vapply(args_dots, is.character, NA, USE.NAMES = FALSE)
+    is_numeric <- vapply(args_dots, is.numeric, NA, USE.NAMES = FALSE)
+    is_logical <- vapply(args_dots, is.logical, NA, USE.NAMES = FALSE)
+    is_valid <- is_character | is_numeric | is_logical
     i_invalid <- match(FALSE, is_valid, nomatch = 0L)
     if (i_invalid > 0L) {
-        msg_inner <- gettextf("does not have type '%s', '%s', '%s', or '%s'",
-                              "logical",
-                              "integer",
-                              "numeric",
-                              "character")
-        msg_outer <- gettextf("problem with name-value pairs supplied to '%s' : %s"
-                              fun_name,
-                              msg_inner)
+        msg1 <- gettextf("value [%s] for '%s' has class \"%s\"",
+                         args_dots[[i_invalid]],
+                         nms[[i_invalid]],
+                         class(args_dots[[i_invalid]]))
+        msg <- gettextf("problem with value in '...' argument to '%s' : %s"
+                        fun_name,
+                        msg)
         stop(msg, call. = FALSE)
     }
-    ans
+    invisible(TRUE)
 }
 
 is_named_arg <- function(x) {
@@ -56,122 +66,101 @@ get_args_cmd_named <- function() {
     ans
 }
 
-coerce_vals <- function(args, names, vals, templates, fun_name) {
+coerce_to_template <- function(vals, names, templates, fun_name) {
     for (i in seq_along(vals)) {
-        arg <- args[[i]]
-        nm <- names[[i]]
-        val_old <- vals[[i]]
+        name <- names[[i]]
+        val <- vals[[i]]
         template <- templates[[i]]
-        val_new <- utils::type.convert(val_old, as.is = TRUE)
-        if (is.logical(template)) {
-            if (is.logical(val_new))
-                vals[[i]] <- val_new
-            else if (is.numeric(val_new))
-                vals[[i]] <- as.logical(val_new)
-            else {
-                msg1 <- gettextf("command line argument '%s'",
-                                 arg)
-                msg2 <- gettextf("cannot be coerced to type implied by 
-                
-
-                                          cannot be coerced to type \"%s\"",
-                                 nm,
-                                 val_old,
-                                 class(template))
-                msg_outer <- gettextxf("problem with function '%s' : %s",
-                                       fun_name,
-                                       msg_inner)
-                stop(msg_outer, call. = FALSE)
-            }
-                
-            
-        if (is.character(
-        if (!is.character(template)) {
-            val_new <- 
-            if (is.logical(template))
-                
+        class_template <- class(template)
+        val_new <- as(val, class_template)
+        cannot_coerce <- is.na(val_new)
+        if (cannot_coerce) {
+            msg1 <- gettextf("value '%s' passed at command line cannot be coerced to class \"%s\"",
+                             val,
+                             class_template)
+            msg <- gettextf("function '%s' unable to create object '%s' : %s",
+                            fun_name,
+                            name,
+                            msg1)
+            stop(msg, call. = FALSE)
         }
         vals[[i]] <- val_new
-        }
-        vals
-        }
+    }
+    vals
+}
             
+
 make_args_comb_unnamed <- function(args_dots, args_cmd) {
     n_dots <- length(args_dots)
     n_cmd <- length(args_cmd)
+    nms <- names(args_dots)
     if (n_dots != n_cmd) {
-        msg1 <- gettextf("problem with function '%s' :",
-                         "assign_unnamed")
-        msg2 <- sprintf(ngettext(n_dots,
+        msg1 <- sprintf(ngettext(n_dots,
                                  "%d name-value pair supplied in '...'",
                                  "%d name-value pairs supplied in '...'"),
                         n_dots)
-        msg3 <- sprintf(ngettext(n_cmd,
-                                 "and %d unnamed argument passed at command line",
-                                 "and %d unnamed arguments passed at command line"),
+        msg2 <- sprintf(ngettext(n_cmd,
+                                 "%d unnamed argument passed at command line",
+                                 "%d unnamed arguments passed at command line"),
                         n_cmd)
-        stop(msg1, msg2, msg3, call. = FALSE)
+        msg <- gettextf("problem with function '%s' : %s and %s",
+                        "assign_unnamed",
+                        msg1,
+                        msg2)
+        stop(msg, call. = FALSE)
     }
-    ans <- args_cmd
-    names(ans) <- names(args_dots)
-    
-    ans <- args_dots
-    nms_ans <- names(ans)
-    s_cmd <- seq_len(n_cmd)
-    ans[s_cmd] <- args_cmd[s_cmd]
-    for (i in seq_along(ans)) {
-        value <- ans[[i]]
-        if (!is.null(value)) {
-            x <- nms_ans[[i]]
-            assign(x = x, value = value)
-        }
-    }
-    ans <- ans[!is.null(ans)]
-    invisible(ans)
+    ans <- coerce_to_templates(vals = ans_cmd,
+                               names = nms,
+                               templates = args_dots,
+                               fun_name = "assign_unnamed")
+    names(ans) <- nms
+    ans
 }
 
-
+    
 make_args_comb_named <- function(args_dots, args_cmd) {
     n_dots <- length(args_dots)
     n_cmd <- length(args_cmd)
     nms_dots <- names(args_dots)
     nms_cmd <- names(args_cmd)
-    is_full <- grepl("^--[^-].*$", nms_cmd)
-    msg_invalid <- paste("problem with function '%s' :",
-                         "could not find unique match in '...' for",
-                         "named command-line argument '%s'")
+    in_dots_not_in_cmd <- setdiff(nms_dots, nms_cmd)
+    if (length(in_dots_not_in_cmd) >= 1L) {
+        msg1 <- gettextf("argument named '%s' supplied via '...' but passed at command line",
+                         in_dots_not_in_cmd[[1L]])
+        msg <- gettextf("problem with function '%s' : %s",
+                        "assign_named",
+                        msg1)
+        stop(msg, call. = FALSE)
+    }
+    in_cmd_not_in_dots <- setdiff(nms_cmd, nms_dots)
+    if (length(in_cmd_not_in_dots) >= 1L) {
+        msg1 <- gettextf("argument named '%s' passed at command line but not supplied via '...'",
+                         in_cmd_not_in_dots[[1L]])
+        msg <- gettextf("problem with function '%s' : %s",
+                        "assign_named",
+                        msg1)
+        stop(msg, call. = FALSE)
+    }
     ans <- args_dots
-    ## process command line arguments with '--name' format
-    nms_full <- sub("^--", "", nms_cmd[is_full])
-    i_full <- match(nms_full, nms_dots, nomatch = 0L)
-    i_invalid_full <- match(0, i_full, nomatch = 0L)
-    if (i_invalid_full > 0L) {
-        msg <- gettextf(msg,
-                        "assign_named",
-                        nms_full[[i_invalid_full]])
-        stop(msg, call. = FALSE)
+    for (i in seq_along(args_dots)) {
+        i_cmd <- match(nms_dots[[i]], nms_cmd)
+        ans[[i]] <- args_cmd[[i]]
     }
-    ans[i_full] <- args_cmd[is_full]
-    ## process command line args with '-n' format
-    nms_short <- sub("^-", "", nms_cmd[[!is_full]])
-    i_short <- pmatch(nms_short, nms_dots[!is_full], nomatch = 0L)
-    i_invalid_short <- match(0L, i_short, nomatch = 0L)
-    if (i_invalid_short > 0L) {
-        msg <- gettextf(msg,
-                        "assign_named",
-                        nms_short[[i_invalid_short]])
-        stop(msg, call. = FALSE)
-    }
-    ans[!is_full][is_short] <- args_cmd[!is_full][i_short]
-    ## assign values
-    for (i in seq_along(ans)) {
-        value <- ans[[i]]
-        if (!is.null(value)) {
-            x <- nms_ans[[i]]
-            assign(x = x, value = value)
-        }
-    }
-    ans <- ans[!is.null(ans)]
-    invisible(ans)
+    ans <- coerce_to_templates(vals = args_dots,
+                               names = nms_dots,
+                               templates = args_dots,
+                               fun_name = "assign_named")
+    ans
 }
+
+    
                     
+assign_args <- function(args) {
+    nms <- names(args)
+    for (i in seq_along(args)) {
+        x <- nms[[i]]
+        value <- args[[i]]
+        assign(x = x, value = value)
+    }
+    invisible(args)
+}    

@@ -84,7 +84,8 @@
 #' setwd(dir_current)
 #' @export
 assign_named <- function(...) {
-    args_dots <- get_args_dots(..., fun_name = "assign_named")
+    args_dots <- list(...)
+    check_args_dots(args_dots, fun_name = "assign_named")
     if (interactive())
         assign_args(arg_dots)
     else {
