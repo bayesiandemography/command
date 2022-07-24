@@ -30,6 +30,28 @@ test_that("'check_args_dots' throws errors when values are invalid", {
 })
 
 
+## 'coerce_to_template' -------------------------------------------------------
+
+test_that("'coerce_to_template' works with valid inputs", {
+    ans_obtained <- coerce_to_template(vals = list("TRUE", "1", "1", "1"),
+                                       names = c("a", "b", "c", "d"),
+                                       templates = list(NA, 1L, 1, "1"),
+                                       fun_name = "assign_unnamed")
+    ans_expected <- list(TRUE, 1L, 1, "1")
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'coerce_to_template' throws correct error when cannot coerce", {
+    expect_error(coerce_to_template(vals = list("TRUE", "1", "a", "1"),
+                                    names = c("a", "b", "c", "d"),
+                                    templates = list(NA, 1L, 1, "1"),
+                                    fun_name = "assign_unnamed"),
+                 paste("function 'assign_unnamed' unable to create object 'c' :",
+                       "value \"a\" passed at command line cannot be coerced",
+                       "to class \"numeric\""))
+})
+
+
 ## 'get_args_cmd_named' -------------------------------------------------------
 
 test_that("'get_args_cmd_named' picks out valid named arguments", {
@@ -107,5 +129,24 @@ test_that("'is_named_arg' works with short and long names", {
 })
 
 
-    
+## 'make_args_comb_unnamed' ---------------------------------------------------
 
+test_that("'make_args_comb_unnamed' works with valid inputs", {
+    ans_obtained <- make_args_comb_unnamed(args_dots = list(a = NA, b = 1L, c = 1, d = "1"),
+                                           args_cmd = list("TRUE", "1", "1", "1"))
+    ans_expected <- list(a = TRUE, b = 1L, c = 1, d = "1")
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'make_args_comb_unnamed' throws correct error when cannot coerce", {
+    expect_error(make_args_comb_unnamed(args_dots = list(a = NA, b = 1L, c = 1, d = "1"),
+                                        args_cmd = list("TRUE")),
+                 paste("problem with function 'assign_unnamed' :",
+                       "4 name-value pairs supplied in '...' and",
+                       "1 unnamed argument passed at command line"))
+    expect_error(make_args_comb_unnamed(args_dots = list(a = NA),
+                                        args_cmd = list("TRUE", "1", "1", "1")),
+                 paste("problem with function 'assign_unnamed' :",
+                       "1 name-value pair supplied in '...' and",
+                       "4 unnamed arguments passed at command line"))
+})

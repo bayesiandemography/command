@@ -42,6 +42,45 @@ check_args_dots <- function(args_dots, fun_name) {
 
 
 ## HAS_TESTS
+#' Coerce values to classes implied by templates
+#'
+#' Coerce the elements of 'vals' to have the same
+#' classes as the elements of 'templates',
+#' raising an error if this cannot be done.
+#'
+#' @param vals A list of values.
+#' @param names The names of the elements of 'vals'/
+#' @param templates A list of values.
+#' @param fun_name "assign_named" or "assign_unnamed".
+#'
+#' @return A list of values.
+#'
+#' @noRd
+coerce_to_template <- function(vals, names, templates, fun_name) {
+    for (i in seq_along(vals)) {
+        name <- names[[i]]
+        val <- vals[[i]]
+        template <- templates[[i]]
+        class_template <- class(template)
+        val_new <- suppressWarnings(methods::as(val, class_template))
+        cannot_coerce <- is.na(val_new)
+        if (cannot_coerce) {
+            msg1 <- gettextf("value \"%s\" passed at command line cannot be coerced to class \"%s\"",
+                             val,
+                             class_template)
+            msg <- gettextf("function '%s' unable to create object '%s' : %s",
+                            fun_name,
+                            name,
+                            msg1)
+            stop(msg, call. = FALSE)
+        }
+        vals[[i]] <- val_new
+    }
+    vals
+}
+            
+
+## HAS_TESTS
 #' Get named command line arguments
 #'
 #' Use function 'commandArgs' to get
@@ -101,30 +140,18 @@ is_named_arg <- function(x) {
 }
 
 
-coerce_to_template <- function(vals, names, templates, fun_name) {
-    for (i in seq_along(vals)) {
-        name <- names[[i]]
-        val <- vals[[i]]
-        template <- templates[[i]]
-        class_template <- class(template)
-        val_new <- as(val, class_template)
-        cannot_coerce <- is.na(val_new)
-        if (cannot_coerce) {
-            msg1 <- gettextf("value '%s' passed at command line cannot be coerced to class \"%s\"",
-                             val,
-                             class_template)
-            msg <- gettextf("function '%s' unable to create object '%s' : %s",
-                            fun_name,
-                            name,
-                            msg1)
-            stop(msg, call. = FALSE)
-        }
-        vals[[i]] <- val_new
-    }
-    vals
-}
-            
-
+## HAS_TESTS
+#' Combine values from dots with unnamed command line arguments
+#'
+#' Combine names and classes from 'dots' with values
+#' obtained from command line arguments.
+#'
+#' @param args_dots Named list.
+#' @param args_cmd Unnamed list.
+#'
+#' @return Named list
+#'
+#' @noRd
 make_args_comb_unnamed <- function(args_dots, args_cmd) {
     n_dots <- length(args_dots)
     n_cmd <- length(args_cmd)
@@ -144,10 +171,10 @@ make_args_comb_unnamed <- function(args_dots, args_cmd) {
                         msg2)
         stop(msg, call. = FALSE)
     }
-    ans <- coerce_to_templates(vals = ans_cmd,
-                               names = nms,
-                               templates = args_dots,
-                               fun_name = "assign_unnamed")
+    ans <- coerce_to_template(vals = args_cmd,
+                              names = nms,
+                              templates = args_dots,
+                              fun_name = "assign_unnamed")
     names(ans) <- nms
     ans
 }
@@ -181,10 +208,10 @@ make_args_comb_named <- function(args_dots, args_cmd) {
         i_cmd <- match(nms_dots[[i]], nms_cmd)
         ans[[i]] <- args_cmd[[i]]
     }
-    ans <- coerce_to_templates(vals = args_dots,
-                               names = nms_dots,
-                               templates = args_dots,
-                               fun_name = "assign_named")
+    ans <- coerce_to_template(vals = args_dots,
+                              names = nms_dots,
+                              templates = args_dots,
+                              fun_name = "assign_named")
     ans
 }
 
