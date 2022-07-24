@@ -1,4 +1,16 @@
 
+## 'assign_args' --------------------------------------------------------------
+
+test_that("'assign_args' creates correct objects in the parent frame", {
+    args <- list(xx = 1, yy = "hello", zz = TRUE)
+    assign_args(args)
+    expect_identical(xx, 1)
+    expect_identical(yy, "hello")
+    expect_identical(zz, TRUE)
+    rm(xx, yy, zz)
+})
+    
+
 ## 'check_args_dots' ----------------------------------------------------------
 
 test_that("'check_args_dots' returns TRUE when 'args_dots' valid", {
@@ -129,6 +141,45 @@ test_that("'is_named_arg' works with short and long names", {
 })
 
 
+## 'make_args_comb_named' -----------------------------------------------------
+
+test_that("'make_args_comb_named' works with valid inputs", {
+    ans_obtained <- make_args_comb_named(args_dots = list(a = NA,
+                                                          b = 1L,
+                                                          c = 1,
+                                                          d = "1"),
+                                         args_cmd = list(a = "TRUE",
+                                                         b = "1",
+                                                         c = "1",
+                                                         d = "1"))
+    ans_expected <- list(a = TRUE, b = 1L, c = 1, d = "1")
+    expect_identical(ans_obtained, ans_expected)
+    ans_obtained <- make_args_comb_named(args_dots = list(a = NA,
+                                                          b = 1L,
+                                                          c = 1,
+                                                          d = "1"),
+                                         args_cmd = list(c = "1",
+                                                         b = "1",
+                                                         d = "1",
+                                                         a = "TRUE"))
+    ans_expected <- list(a = TRUE, b = 1L, c = 1, d = "1")
+    expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'make_args_comb_named' throws correct error when different names", {
+    expect_error(make_args_comb_named(args_dots = list(a = NA, b = 1L, c = 1, d = "1"),
+                                      args_cmd = list(a = "TRUE", d = "1")),
+                 paste("problem with function 'assign_named' :",
+                       "have argument named 'b' supplied in '...' but do not have",
+                       "argument named 'b' passed at command line"))
+    expect_error(make_args_comb_named(args_dots = list(b = 1L, a = NA),
+                                      args_cmd = list(a = "TRUE", b = "1", c = "1")),
+                 paste("problem with function 'assign_named' :",
+                       "have argument named 'c' passed at command line",
+                       "but do not have argument named 'c' supplied in '...'"))
+})
+
+
 ## 'make_args_comb_unnamed' ---------------------------------------------------
 
 test_that("'make_args_comb_unnamed' works with valid inputs", {
@@ -138,7 +189,7 @@ test_that("'make_args_comb_unnamed' works with valid inputs", {
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'make_args_comb_unnamed' throws correct error when cannot coerce", {
+test_that("'make_args_comb_unnamed' throws correct error when different number of arguments", {
     expect_error(make_args_comb_unnamed(args_dots = list(a = NA, b = 1L, c = 1, d = "1"),
                                         args_cmd = list("TRUE")),
                  paste("problem with function 'assign_unnamed' :",

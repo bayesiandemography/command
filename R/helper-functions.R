@@ -1,5 +1,31 @@
 
 ## HAS_TESTS
+#' Create objects in current environment
+#'
+#' Use the names and values in 'args' to
+#' create objects in the current environment.
+#'
+#' @param args A named list.
+#'
+#' @return Returns 'args' invisibly,
+#' and creates objects as a side effect.
+#'
+#' @noRd
+assign_args <- function(args) {
+    nms <- names(args)
+    envir <- parent.frame()
+    for (i in seq_along(args)) {
+        x <- nms[[i]]
+        value <- args[[i]]
+        assign(x = x,
+               value = value,
+               envir = envir)
+    }
+    invisible(args)
+}    
+
+
+## HAS_TESTS
 #' Check dots arguments
 #'
 #' Check that names and values supplied
@@ -180,35 +206,55 @@ make_args_comb_unnamed <- function(args_dots, args_cmd) {
 }
 
     
+## HAS_TESTS
+#' Combine values from dots with named command line arguments
+#'
+#' Combine names and classes from 'dots' with values
+#' obtained from command line arguments.
+#'
+#' @param args_dots Named list.
+#' @param args_cmd Named list.
+#'
+#' @return Named list
+#'
+#' @noRd
 make_args_comb_named <- function(args_dots, args_cmd) {
     n_dots <- length(args_dots)
     n_cmd <- length(args_cmd)
     nms_dots <- names(args_dots)
     nms_cmd <- names(args_cmd)
-    in_dots_not_in_cmd <- setdiff(nms_dots, nms_cmd)
-    if (length(in_dots_not_in_cmd) >= 1L) {
-        msg1 <- gettextf("argument named '%s' supplied via '...' but passed at command line",
-                         in_dots_not_in_cmd[[1L]])
-        msg <- gettextf("problem with function '%s' : %s",
+    not_in_cmd <- setdiff(nms_dots, nms_cmd)
+    if (length(not_in_cmd) >= 1L) {
+        first_not_in_cmd <- not_in_cmd[[1L]]
+        msg1 <- gettextf("argument named '%s' supplied in '...'",
+                         first_not_in_cmd)
+        msg2 <- gettextf("argument named '%s' passed at command line",
+                         first_not_in_cmd)
+        msg <- gettextf("problem with function '%s' : have %s but do not have %s",
                         "assign_named",
-                        msg1)
+                        msg1,
+                        msg2)
         stop(msg, call. = FALSE)
     }
-    in_cmd_not_in_dots <- setdiff(nms_cmd, nms_dots)
-    if (length(in_cmd_not_in_dots) >= 1L) {
-        msg1 <- gettextf("argument named '%s' passed at command line but not supplied via '...'",
-                         in_cmd_not_in_dots[[1L]])
-        msg <- gettextf("problem with function '%s' : %s",
+    not_in_dots <- setdiff(nms_cmd, nms_dots)
+    if (length(not_in_dots) >= 1L) {
+        first_not_in_dots <- not_in_dots[[1L]]
+        msg1 <- gettextf("argument named '%s' passed at command line",
+                         first_not_in_dots)
+        msg2 <- gettextf("argument named '%s' supplied in '...'",
+                         first_not_in_dots)
+        msg <- gettextf("problem with function '%s' : have %s but do not have %s",
                         "assign_named",
-                        msg1)
+                        msg1,
+                        msg2)
         stop(msg, call. = FALSE)
     }
     ans <- args_dots
-    for (i in seq_along(args_dots)) {
+    for (i in seq_along(ans)) {
         i_cmd <- match(nms_dots[[i]], nms_cmd)
-        ans[[i]] <- args_cmd[[i]]
+        ans[[i]] <- args_cmd[[i_cmd]]
     }
-    ans <- coerce_to_template(vals = args_dots,
+    ans <- coerce_to_template(vals = ans,
                               names = nms_dots,
                               templates = args_dots,
                               fun_name = "assign_named")
@@ -217,12 +263,3 @@ make_args_comb_named <- function(args_dots, args_cmd) {
 
     
                     
-assign_args <- function(args) {
-    nms <- names(args)
-    for (i in seq_along(args)) {
-        x <- nms[[i]]
-        value <- args[[i]]
-        assign(x = x, value = value)
-    }
-    invisible(args)
-}    
