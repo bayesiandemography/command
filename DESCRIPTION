@@ -1,20 +1,23 @@
-Package: makr
+Package: argfun
 Type: Package
-Title: Using Makefiles for Data Analysis
+Title: Process Command Line Arguments in a Function-Like Way
 Version: 0.0.0.9000
 Author: John Bryant
 Maintainer: John Bryant <john@bayesiandemography.com>
-Description: Tools to help set up a data analysis using make files.
+Description: Convert command line arguments into objects
+    in the current environment, with appropriate naming
+    and checking. Makes scripts behave a little like
+    functions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
     checkmate,
-    utils
+    methods
 Suggests: 
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr

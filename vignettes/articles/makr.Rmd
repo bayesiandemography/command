@@ -1,5 +1,5 @@
 ---
-title: "makr"
+title: "argfun"
 ---
 
 ```{r, include = FALSE}
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(makr)
+library(argfun)
 ```
 ```{r}
 tmpdir <- tempdir()
@@ -19,7 +19,7 @@ if (!file.exists(tmpdir))
 
 ## create a file called "product.R"
 txt <- c(
-  "library(makr)",
+  "library(argfun)",
   "target <- target()",
   "variant <- opt_target(target)",
   "multiplier <- if (variant == 'high') 10 else 5",

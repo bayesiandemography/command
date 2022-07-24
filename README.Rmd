@@ -13,21 +13,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-# makr
+# argfun
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of makr is to ...
+The goal of argfun is to ...
 
 ## Installation
 
-You can install the development version of makr from [GitHub](https://github.com/) with:
+You can install the development version of argfun from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("bayesiandemography/makr")
+devtools::install_github("bayesiandemography/argfun")
 ```
 
 ## Example
@@ -35,7 +35,7 @@ devtools::install_github("bayesiandemography/makr")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(makr)
+library(argfun)
 ## basic example code
 ```
 

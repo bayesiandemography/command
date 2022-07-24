@@ -1,4 +1,4 @@
 library(testthat)
-library(makr)
+library(argfun)
 
-test_check("makr")
+test_check("argfun")

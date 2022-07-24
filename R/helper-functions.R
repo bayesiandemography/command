@@ -1,4 +1,5 @@
 
+## HAS_TESTS
 #' Check dots arguments
 #'
 #' Check that names and values supplied
@@ -15,7 +16,7 @@
 check_args_dots <- function(args_dots, fun_name) {
     n <- length(args_dots)
     nms <- names(args_dots)
-    val_chk_nms <- check_names(nms, type = "strict")
+    val_chk_nms <- checkmate::check_names(nms, type = "strict")
     if (!isTRUE(val_chk_nms)) {
         msg <- gettextf("problem with names in '...' argument to '%s' : %s",
                         fun_name,
@@ -28,43 +29,77 @@ check_args_dots <- function(args_dots, fun_name) {
     is_valid <- is_character | is_numeric | is_logical
     i_invalid <- match(FALSE, is_valid, nomatch = 0L)
     if (i_invalid > 0L) {
-        msg1 <- gettextf("value [%s] for '%s' has class \"%s\"",
-                         args_dots[[i_invalid]],
+        msg1 <- gettextf("value for '%s' has class \"%s\"",
                          nms[[i_invalid]],
                          class(args_dots[[i_invalid]]))
-        msg <- gettextf("problem with value in '...' argument to '%s' : %s"
+        msg <- gettextf("problem with values in '...' argument to '%s' : %s",
                         fun_name,
-                        msg)
+                        msg1)
         stop(msg, call. = FALSE)
     }
     invisible(TRUE)
 }
 
-is_named_arg <- function(x) {
-    is_short <- grepl("^-[A-z]=.+$", x)
-    is_full <- grepl("^--[A-z_.]+=.+$", x)
-    is_short | is_full
-}
 
-            
-## assume this session is not interactive
-get_args_cmd_unnamed <- function() {
-    args <- commandArgs(trailingOnly = TRUE)
-    is_unnamed <- !is_named_arg(args)
-    args[is_unnamed]
-}
-
-## assume this session is not interactive
+## HAS_TESTS
+#' Get named command line arguments
+#'
+#' Use function 'commandArgs' to get
+#' named command line arguments. Assumes
+#' that current session is not interactive.
+#'
+#' @return A named list.
+#'
+#' @noRd
 get_args_cmd_named <- function() {
     p <- "^-{1,2}([A-z_.]+)=(.*)$"
     args <- commandArgs(trailingOnly = TRUE)
     is_named <- is_named_arg(args)
     args_named <- args[is_named]
     ans <- sub(p, "\\2", args_named)
+    ans <- as.list(ans)
     nms <- sub(p, "\\1", args_named)
-    name(ans) <- nms
+    names(ans) <- nms
     ans
 }
+
+
+## HAS_TESTS
+#' Get unnamed command line arguments
+#'
+#' Use function 'commandArgs' to get
+#' unnamed command line arguments. Assumes
+#' that current session is not interactive.
+#'
+#' @return An unnamed list.
+#'
+#' @noRd
+get_args_cmd_unnamed <- function() {
+    args <- commandArgs(trailingOnly = TRUE)
+    is_unnamed <- !is_named_arg(args)
+    ans <- args[is_unnamed]
+    as.list(ans)
+}
+
+
+## HAS_TESTS
+#' Identify named command line arguments
+#'
+#' Identify command line arguments that have
+#' the format -n=value or --name=value.
+#'
+#' @param x Command line arguments - output from
+#'   \code{\link{commandArgs}}.
+#'
+#' @return A logical vector.
+#'
+#' @noRd
+is_named_arg <- function(x) {
+    is_short <- grepl("^-[A-z]=.+$", x)
+    is_full <- grepl("^--[A-z_.]+=.+$", x)
+    is_short | is_full
+}
+
 
 coerce_to_template <- function(vals, names, templates, fun_name) {
     for (i in seq_along(vals)) {

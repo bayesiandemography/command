@@ -54,7 +54,7 @@ file_args(p_target = "out/fitted.rds",
 
 
 library(dplyr)
-library(makr)
+library(argfun)
 
 
 args_xnnamed(p_target = "out/fit-indig-ever-20-svd-5.rds",
