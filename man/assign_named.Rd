@@ -62,20 +62,20 @@ assign_named(outfile = "results.rds",
              i = 100)
 ls()
 outfile
-iter
-rm(outfile, iter)
+i
+rm(outfile, i)
 
 
 ## used in script run from command line ----------------
 
 ## create script and place in
 ## temporary directory
-txt <- "library(argfun)
+txt <- 'library(argfun)
         assign_named(outfile = "results.rds",
                      i = 100)
         print(ls())
         print(outfile)
-        print(iter)"
+        print(i)'
 dir_current <- getwd()
 setwd(tempdir())
 cat(txt, file = "myscript.R")

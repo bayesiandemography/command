@@ -1,19 +1,20 @@
 
 ## HAS_TESTS
-#' Create objects in current environment
+#' Create objects in the specified environment.
 #'
-#' Use the names and values in 'args' to
-#' create objects in the current environment.
+#' Use the names and values in 'args' to create
+#' objects in environment 'envir'.
 #'
 #' @param args A named list.
+#' @param envir The environment where the
+#' objects are to be created.
 #'
 #' @return Returns 'args' invisibly,
 #' and creates objects as a side effect.
 #'
 #' @noRd
-assign_args <- function(args) {
+assign_args <- function(args, envir) {
     nms <- names(args)
-    envir <- parent.frame()
     for (i in seq_along(args)) {
         x <- nms[[i]]
         value <- args[[i]]

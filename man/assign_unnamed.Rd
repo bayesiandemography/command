@@ -50,6 +50,7 @@ pairs in \dots.
 assign_unnamed(outfile = "results.rds",
                iter = 100)
 ls()
+outfile
 iter
 rm(outfile, iter)
 
@@ -58,12 +59,12 @@ rm(outfile, iter)
 
 ## create script and place in
 ## temporary directory
-txt <- "library(argfun)
+txt <- 'library(argfun)
         assign_unnamed(outfile = "results.rds",
                        iter = 100)
         print(ls())
         print(outfile)
-        print(iter)"
+        print(iter)'
 dir_current <- getwd()
 setwd(tempdir())
 cat(txt, file = "myscript.R")

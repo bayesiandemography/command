@@ -3,11 +3,11 @@
 
 test_that("'assign_args' creates correct objects in the parent frame", {
     args <- list(xx = 1, yy = "hello", zz = TRUE)
-    assign_args(args)
-    expect_identical(xx, 1)
-    expect_identical(yy, "hello")
-    expect_identical(zz, TRUE)
-    rm(xx, yy, zz)
+    envir <- new.env()
+    assign_args(args, envir = envir)
+    expect_identical(envir$xx, 1)
+    expect_identical(envir$yy, "hello")
+    expect_identical(envir$zz, TRUE)
 })
     
 

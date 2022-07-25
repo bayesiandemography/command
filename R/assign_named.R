@@ -60,20 +60,20 @@
 #'              i = 100)
 #' ls()
 #' outfile
-#' iter
-#' rm(outfile, iter)
+#' i
+#' rm(outfile, i)
 #'
 #' 
 #' ## used in script run from command line ----------------
 #'
 #' ## create script and place in
 #' ## temporary directory
-#' txt <- "library(argfun)
+#' txt <- 'library(argfun)
 #'         assign_named(outfile = "results.rds",
 #'                      i = 100)
 #'         print(ls())
 #'         print(outfile)
-#'         print(iter)"
+#'         print(i)'
 #' dir_current <- getwd()
 #' setwd(tempdir())
 #' cat(txt, file = "myscript.R")
@@ -85,13 +85,14 @@
 #' @export
 assign_named <- function(...) {
     args_dots <- list(...)
+    envir <- parent.frame()
     check_args_dots(args_dots, fun_name = "assign_named")
     if (interactive())
-        assign_args(arg_dots)
+        assign_args(args = args_dots, envir = envir)
     else {
-        args_cmd <- get_args_cmd_named(args_dots)
-        args_comb <- make_args_comb(args_dots = args_dots,
-                                    args_cmd = args_cmd)
-        assign_args(args_comb)
+        args_cmd <- get_args_cmd_named()
+        args_comb <- make_args_comb_named(args_dots = args_dots,
+                                          args_cmd = args_cmd)
+        assign_args(args = args_comb, envir = envir)
     }
 }

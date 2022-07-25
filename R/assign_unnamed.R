@@ -48,6 +48,7 @@
 #' assign_unnamed(outfile = "results.rds",
 #'                iter = 100)
 #' ls()
+#' outfile
 #' iter
 #' rm(outfile, iter)
 #'
@@ -56,12 +57,12 @@
 #'
 #' ## create script and place in
 #' ## temporary directory
-#' txt <- "library(argfun)
+#' txt <- 'library(argfun)
 #'         assign_unnamed(outfile = "results.rds",
 #'                        iter = 100)
 #'         print(ls())
 #'         print(outfile)
-#'         print(iter)"
+#'         print(iter)'
 #' dir_current <- getwd()
 #' setwd(tempdir())
 #' cat(txt, file = "myscript.R")
@@ -73,14 +74,15 @@
 #' @export
 assign_unnamed <- function(...) {
     args_dots <- list(...)
+    envir <- parent.frame()
     check_args_dots(args_dots, fun_name = "assign_unnamed")
     if (interactive())
-        assign_args(args_dots)
+        assign_args(args = args_dots, envir = envir)
     else {
         args_cmd <- get_args_cmd_unnamed()
-        args_comb <- make_args_comb_(args_dots = args_dots,
-                                     args_cmd = args_cmd)
-        assign_args(args_comb)
+        args_comb <- make_args_comb_unnamed(args_dots = args_dots,
+                                            args_cmd = args_cmd)
+        assign_args(args = args_comb, envir = envir)
     }
 }
 
