@@ -1,5 +1,55 @@
 
 
+args <- "
+@file fn11 data-raw/xxx.xlsx
+@file fn_erp16 data-raw/xxx.xlsx
+@load age_conc out/age_conc.rds
+@load vals_deaths out/vals_deaths-{smooth}.rds
+@named n_comp 12
+@named algo ndi
+"
+
+file_args(p_erp11 = "data-raw/xxx.xlsx"
+          p_erp16 = "data-raw/xxx.xlsx"
+          age_conc = "out/age_conc.rds",
+          vals_death = "out/vals_deaths-smooth.rds",
+          n_comp = 12,
+          algo = "ndi")
+
+p_target()
+
+
+          p_target = "out/mort.rds")
+
+
+
+           
+           
+
+assign_nms(fn_indig = "data-raw/xxx.xlsx",
+           fn_nonindig = "data-raw/xxx.xlsx")
+
+load_rds("
+
+
+
+
+unnamed_args(* = "../out/vals_direct.rds",
+             * = "../../svd/out/bX-5.rds",
+             p_model = "src/model_simple.stan",
+             p_out = "out/mod_base-NDI-5")
+
+named_args(algo = "NDI",
+           n_pc = 5,
+           n_iter_mod = 20)
+             
+             p(
+             
+
+set_unnamed("
+
+arg_set(
+
 
 
 f <- function(p_target = "out/fit-indig-ever-20-svd-5.rds",
@@ -110,3 +160,25 @@ get_args(return = "fitted_(indigenous)-(rule)-(phi)-(n_component)",
 ## creates strings/numbers 'indigenous', 'rule', 'phi', 'n_component', 'iter'
 
 
+library(tm)
+library(igraph)
+## Read makefile into R
+makefile <- readLines("Makefile")
+## Find relevant lines in makefile
+dep <- grep(":", makefile, value = TRUE)
+## Select target files
+target <- gsub(":.*", "", dep)
+## Select files target depends on
+depends <- gsub(".*:", "", dep)
+depends <- strsplit(depends, " ")
+names(depends) <- target
+## Create a dependency matrix (using igraph package)
+dlist <- lapply(target, function(t) {
+  d <- if(length(depends[[t]]) == 0) NA else depends[[t]]
+  data.frame(depends = d, target = t)
+  })
+dependencymat <- na.omit(do.call("rbind", dlist))
+dependencymat <- dependencymat[dependencymat$depends != "", ]                         
+makegraph <- graph.data.frame(dependencymat)
+## ... and plot
+plot(makegraph, vertex.shape = "none", edge.arrow.size = 0.5)
