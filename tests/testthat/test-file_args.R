@@ -1,0 +1,54 @@
+
+test_that("'file_args' works with valid arguments - on command line", {
+    dir_curr <- getwd()
+    dir_tmp <- tempfile()
+    if (file.exists(dir_tmp))
+        unlink(dir_tmp, recursive = TRUE)
+    dir.create(dir_tmp)
+    setwd(dir_tmp)
+    saveRDS(1:5, file = "obj.rds")
+    writeLines(c("argfun::file_args(p_file1 = 'myfile.xsls', obj = 'obj.rds', n = 2L, named = 'goodbye')",
+                 "saveRDS(p_file1, file = 'p_file1.rds')",
+                 "saveRDS(obj, file = 'obj_saved.rds')",
+                 "saveRDS(n, file = 'n.rds')",
+                 "saveRDS(named, file = 'named.rds')",
+                 "saveRDS(ls(), file = 'ls.rds')"),
+               con = "script.R")
+    cmd <- sprintf("%s/bin/Rscript script.R thatfile.xlsx obj.rds -n=1 --named=hello",
+                   R.home())
+    system(cmd)
+    p_file1 <- readRDS("p_file1.rds")
+    expect_identical(p_file1, "thatfile.xlsx")
+    obj <- readRDS("obj_saved.rds")
+    expect_identical(obj, 1:5)
+    n <- readRDS("n.rds")
+    expect_identical(n, 1L)
+    named <- readRDS("named.rds")
+    expect_identical(named, "hello")
+    ls <- readRDS("ls.rds")
+    expect_setequal(ls, c("p_file1", "obj", "n", "named"))
+    setwd(dir_curr)
+    unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'file_args' works with valid arguments - interactively", {
+    if (interactive()) {
+        dir_curr <- getwd()
+        dir_tmp <- tempfile()
+        if (file.exists(dir_tmp))
+            unlink(dir_tmp, recursive = TRUE)
+        dir.create(dir_tmp)
+        setwd(dir_tmp)
+        saveRDS(1:5, file = "obj.rds")
+        file_args(obj = "obj.rds", n = 2, named = 'goodbye')
+        setwd(dir_curr)
+        unlink(dir_tmp, recursive = TRUE)
+        rm(dir_curr, dir_tmp)
+        expect_identical(obj, 1:5)
+        expect_identical(n, 2)
+        expect_identical(named, "goodbye")
+        expect_setequal(ls(), c("obj", "n", "named"))
+    }
+})
+
+

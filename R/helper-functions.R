@@ -1,5 +1,56 @@
 
 ## HAS_TESTS
+#' Reorder 'args_cmd', and add names, so that
+#' it aligns with 'args_dots'
+#'
+#' Use 'args_dots' to name and order elements
+#' of 'args_cmd'. The process mimics argument
+#' matching in function calls in R, in that
+#' elements of 'args_cmd' are matched by name
+#' where possible and by position where not.
+#'
+#' Assume that \code{args_dots} has been
+#' checked via \code{check_arg_dots} and
+#' \code{args_cmd} has been checked via
+#' \code{check_args_cmd}.
+#' 
+#' @param args_cmd A list, possibly with names.
+#' @param args_dots A named list, the same
+#' length as \code{arg_dots}.
+#'
+#' @return A list with the same length
+#' and names as \code{arg_dots}.
+#' 
+#' @noRd
+align_cmd_to_dots <- function(args_cmd, args_dots) {
+    n <- length(args_cmd)
+    nms_cmd <- names(args_cmd)
+    nms_dots <- names(args_dots)
+    if (is.null(nms_cmd))
+        is_named <- rep(FALSE, times = n)
+    else
+        is_named <- nzchar(nms_cmd)
+    args_cmd_named <- args_cmd[is_named]
+    args_cmd_unnamed <- args_cmd[!is_named]
+    nms_cmd_named <- nms_cmd[is_named]
+    i_unnamed <- 1L
+    ans <- vector(mode = "list", length = n)
+    for (i in seq_len(n)) {
+        nm_dots <- nms_dots[[i]]
+        i_named <- match(nm_dots, nms_cmd_named, nomatch = 0L)
+        if (i_named > 0L)
+            ans[[i]] <- args_cmd_named[[i_named]]
+        else {
+            ans[[i]] <- args_cmd_unnamed[[i_unnamed]]
+            i_unnamed <- i_unnamed + 1L
+        }
+    }
+    names(ans) <- nms_dots
+    ans
+}
+
+
+## HAS_TESTS
 #' Create objects in the specified environment.
 #'
 #' Use the names and values in 'args' to create
@@ -27,26 +78,70 @@ assign_args <- function(args, envir) {
 
 
 ## HAS_TESTS
+#' Check values passed at command line
+#'
+#' Check that any named argument passed
+#' at command line are also found in 'dots',
+#' and that the number of arguments passed
+#' at the command line matches the number
+#' present in 'dots'.
+#'
+#' @param args_cmd A list, possibly with names.
+#' @param args_dots A named list.
+#' 
+#' @return TRUE, invisibly.
+#'
+#' @noRd
+check_args_cmd <- function(args_cmd, args_dots) {
+    nms_cmd <- names(args_cmd)
+    nms_dots <- names(args_dots)
+    for (nm in nms_cmd) {
+        if (nzchar(nm) && !(nm %in% nms_dots)) {
+            msg <- gettextf(paste("argument named \"%s\" passed at command line",
+                                  "but no argument named \"%s\" specified in call to '%s'"),
+                            nm,
+                            nm,
+                            "file_args")
+            stop(msg, call. = FALSE)
+        }
+    }
+    ## number of arguments passed at command line
+    ## should match naumber of arguments specified in dots
+    n_cmd <- length(args_cmd)
+    n_dots <- length(args_dots)
+    if (n_cmd != n_dots) {
+        msg <- gettextf(paste("number of arguments passed at command line [%d]",
+                              "not equal to number of arguments specified in",
+                              "call to '%s' [%d]"),
+                        n_cmd,
+                        "file_args",
+                        n_dots)
+        stop(msg, call. = FALSE)
+    }
+    invisible(TRUE)
+}
+
+
+## HAS_TESTS
 #' Check dots arguments
 #'
 #' Check that names and values supplied
-#' 'assign_named' or 'assign_unnamed'
+#' to \code{\link{file_args}}
 #' via the dots argument are valid.
 #'
-#' @param args_dots Dots argument from 'assign_named' or
-#' 'assign_unnamed' turned into a list.
-#' @param fun_name "assign_named" or "assign_unnamed"
+#' @param args_dots Dots argument from
+#' \code{\link{file_args}}.
 #'
 #' @return TRUE, invisibly
 #'
 #' @noRd
-check_args_dots <- function(args_dots, fun_name) {
+check_args_dots <- function(args_dots) {
     n <- length(args_dots)
     nms <- names(args_dots)
     val_chk_nms <- checkmate::check_names(nms, type = "strict")
     if (!isTRUE(val_chk_nms)) {
-        msg <- gettextf("problem with names in '...' argument to '%s' : %s",
-                        fun_name,
+        msg <- gettextf("names in call to '%s' invalid : %s",
+                        "file_args",
                         val_chk_nms)
         stop(msg, call. = FALSE)
     }
@@ -56,12 +151,10 @@ check_args_dots <- function(args_dots, fun_name) {
     is_valid <- is_character | is_numeric | is_logical
     i_invalid <- match(FALSE, is_valid, nomatch = 0L)
     if (i_invalid > 0L) {
-        msg1 <- gettextf("value for '%s' has class \"%s\"",
-                         nms[[i_invalid]],
-                         class(args_dots[[i_invalid]]))
-        msg <- gettextf("problem with values in '...' argument to '%s' : %s",
-                        fun_name,
-                        msg1)
+        msg <- gettextf("value in call to '%s' invalid : '%s' has class \"%s\"",
+                        "file_args",
+                        nms[[i_invalid]],
+                        class(args_dots[[i_invalid]]))
         stop(msg, call. = FALSE)
     }
     invisible(TRUE)
@@ -69,198 +162,282 @@ check_args_dots <- function(args_dots, fun_name) {
 
 
 ## HAS_TESTS
-#' Coerce values to classes implied by templates
+#' Coerce values supplied at command line
+#' to classes used in dots
 #'
-#' Coerce the elements of 'vals' to have the same
-#' classes as the elements of 'templates',
-#' raising an error if this cannot be done.
+#' Coerce each element of 'args_cmd' to have
+#' the same class as the corresponding
+#' element of 'args_dots'. Raise an error
+#' if the cannot be done.
 #'
-#' @param vals A list of values.
-#' @param names The names of the elements of 'vals'/
-#' @param templates A list of values.
-#' @param fun_name "assign_named" or "assign_unnamed".
+#' @param args_cmd Named list of values passed from
+#' command line.
+#' @param args_dots Named list of values specified
+#' via the dots argument of \code{\link{file_args}}.
 #'
-#' @return A list of values.
+#' @return Revised version of \code{args_cmd}.
 #'
 #' @noRd
-coerce_to_template <- function(vals, names, templates, fun_name) {
-    for (i in seq_along(vals)) {
-        name <- names[[i]]
-        val <- vals[[i]]
-        template <- templates[[i]]
-        class_template <- class(template)
-        val_new <- suppressWarnings(methods::as(val, class_template))
-        cannot_coerce <- is.na(val_new)
+coerce_to_dots_class <- function(args_cmd, args_dots) {
+    nms <- names(args_cmd)
+    for (i in seq_along(args_cmd)) {
+        val_cmd_old <- args_cmd[[i]]
+        val_dots <- args_dots[[i]]
+        class_dots <- class(val_dots)
+        val_cmd_new <- suppressWarnings(methods::as(val_cmd_old, class_dots))
+        cannot_coerce <- !identical(val_cmd_new, val_cmd_old) && is.na(val_cmd_new)
         if (cannot_coerce) {
-            msg1 <- gettextf("value \"%s\" passed at command line cannot be coerced to class \"%s\"",
-                             val,
-                             class_template)
-            msg <- gettextf("function '%s' unable to create object '%s' : %s",
-                            fun_name,
-                            name,
-                            msg1)
+            val_quoted <- if (is.character(val_cmd_old)) sprintf('"%s"', val_cmd_old) else val_cmd_old
+            msg <- gettextf(paste("value for '%s' in call to '%s' has class \"%s\",",
+                                  "but value for '%s' passed at command line [%s]",
+                                  "cannot be coerced to class \"%s\""),
+                            nms[[i]],                            
+                            "file_args",
+                            class_dots,
+                            nms[[i]],
+                            val_quoted,
+                            class_dots)
             stop(msg, call. = FALSE)
         }
-        vals[[i]] <- val_new
+        args_cmd[[i]] <- val_cmd_new
     }
-    vals
+    args_cmd
 }
             
 
-## HAS_TESTS
-#' Get named command line arguments
+
+#' Get command line arguments
 #'
 #' Use function 'commandArgs' to get
-#' named command line arguments. Assumes
+#' command line arguments. Assumes
 #' that current session is not interactive.
 #'
 #' @return A named list.
 #'
 #' @noRd
-get_args_cmd_named <- function() {
+get_args_cmd <- function() {
     p <- "^-{1,2}([A-z_.]+)=(.*)$"
     args <- commandArgs(trailingOnly = TRUE)
-    is_named <- is_named_arg(args)
+    if (length(args) == 0L)
+        return(list())
+    is_named <- grepl(p, args)
     args_named <- args[is_named]
-    ans <- sub(p, "\\2", args_named)
-    ans <- as.list(ans)
-    nms <- sub(p, "\\1", args_named)
-    names(ans) <- nms
+    nms_named <- sub(p, "\\1", args_named)
+    vals_named <- sub(p, "\\2", args_named)
+    ans <- as.list(args)
+    nms_ans <- rep("", times = length(ans))
+    nms_ans[is_named] <- nms_named
+    names(ans) <- nms_ans
+    ans[is_named] <- vals_named
     ans
 }
 
 
-## HAS_TESTS
-#' Get unnamed command line arguments
-#'
-#' Use function 'commandArgs' to get
-#' unnamed command line arguments. Assumes
-#' that current session is not interactive.
-#'
-#' @return An unnamed list.
-#'
-#' @noRd
-get_args_cmd_unnamed <- function() {
-    args <- commandArgs(trailingOnly = TRUE)
-    is_unnamed <- !is_named_arg(args)
-    ans <- args[is_unnamed]
-    as.list(ans)
-}
+
+## ## HAS_TESTS
+## #' Get named command line arguments
+## #'
+## #' Use function 'commandArgs' to get
+## #' named command line arguments. Assumes
+## #' that current session is not interactive.
+## #'
+## #' @return A named list.
+## #'
+## #' @noRd
+## get_args_cmd_named <- function() {
+##     p <- "^-{1,2}([A-z_.]+)=(.*)$"
+##     args <- commandArgs(trailingOnly = TRUE)
+##     is_named <- is_named_arg(args)
+##     args_named <- args[is_named]
+    
+##     ans <- sub(p, "\\2", args_named)
+##     ans <- as.list(ans)
+##     nms <- sub(p, "\\1", args_named)
+##     names(ans) <- nms
+##     ans
+## }
+
+
+## ## HAS_TESTS
+## #' Get unnamed command line arguments
+## #'
+## #' Use function 'commandArgs' to get
+## #' unnamed command line arguments. Assumes
+## #' that current session is not interactive.
+## #'
+## #' @return An unnamed list.
+## #'
+## #' @noRd
+## get_args_cmd_unnamed <- function() {
+##     args <- commandArgs(trailingOnly = TRUE)
+##     is_unnamed <- !is_named_arg(args)
+##     ans <- args[is_unnamed]
+##     as.list(ans)
+## }
+
+
+## ## HAS_TESTS
+## #' Identify named command line arguments
+## #'
+## #' Identify command line arguments that have
+## #' the format -n=value or --name=value.
+## #'
+## #' @param x Command line arguments - output from
+## #'   \code{\link{commandArgs}}.
+## #'
+## #' @return A logical vector.
+## #'
+## #' @noRd
+## is_named_arg <- function(x) {
+##     is_short <- grepl("^-[A-z]=.+$", x)
+##     is_full <- grepl("^--[A-z_.]+=.+$", x)
+##     is_short | is_full
+## }
 
 
 ## HAS_TESTS
-#' Identify named command line arguments
+#' Test whether 'x' is the name of an .rds file
 #'
-#' Identify command line arguments that have
-#' the format -n=value or --name=value.
-#'
-#' @param x Command line arguments - output from
-#'   \code{\link{commandArgs}}.
-#'
-#' @return A logical vector.
+#' Assumes that \code{x} has length 1.
 #'
 #' @noRd
-is_named_arg <- function(x) {
-    is_short <- grepl("^-[A-z]=.+$", x)
-    is_full <- grepl("^--[A-z_.]+=.+$", x)
-    is_short | is_full
+is_rds_filename <- function(x) {
+    if (!is.character(x))
+        return(FALSE)
+    x <- tolower(x)
+    ext <- tools::file_ext(x)
+    identical(ext, "rds")
 }
 
 
-## HAS_TESTS
-#' Combine values from dots with unnamed command line arguments
-#'
-#' Combine names and classes from 'dots' with values
-#' obtained from command line arguments.
-#'
-#' @param args_dots Named list.
-#' @param args_cmd Unnamed list.
-#'
-#' @return Named list
-#'
-#' @noRd
-make_args_comb_unnamed <- function(args_dots, args_cmd) {
-    n_dots <- length(args_dots)
-    n_cmd <- length(args_cmd)
-    nms <- names(args_dots)
-    if (n_dots != n_cmd) {
-        msg1 <- sprintf(ngettext(n_dots,
-                                 "%d name-value pair supplied in '...'",
-                                 "%d name-value pairs supplied in '...'"),
-                        n_dots)
-        msg2 <- sprintf(ngettext(n_cmd,
-                                 "%d unnamed argument passed at command line",
-                                 "%d unnamed arguments passed at command line"),
-                        n_cmd)
-        msg <- gettextf("problem with function '%s' : %s and %s",
-                        "assign_unnamed",
-                        msg1,
-                        msg2)
-        stop(msg, call. = FALSE)
-    }
-    ans <- coerce_to_template(vals = args_cmd,
-                              names = nms,
-                              templates = args_dots,
-                              fun_name = "assign_unnamed")
-    names(ans) <- nms
-    ans
-}
+## ## HAS_TESTS
+## #' Combine values from dots with unnamed command line arguments
+## #'
+## #' Combine names and classes from 'dots' with values
+## #' obtained from command line arguments.
+## #'
+## #' @param args_dots Named list.
+## #' @param args_cmd Unnamed list.
+## #'
+## #' @return Named list
+## #'
+## #' @noRd
+## make_args_comb_unnamed <- function(args_dots, args_cmd) {
+##     n_dots <- length(args_dots)
+##     n_cmd <- length(args_cmd)
+##     nms <- names(args_dots)
+##     if (n_dots != n_cmd) {
+##         msg1 <- sprintf(ngettext(n_dots,
+##                                  "%d name-value pair supplied in '...'",
+##                                  "%d name-value pairs supplied in '...'"),
+##                         n_dots)
+##         msg2 <- sprintf(ngettext(n_cmd,
+##                                  "%d unnamed argument passed at command line",
+##                                  "%d unnamed arguments passed at command line"),
+##                         n_cmd)
+##         msg <- gettextf("problem with function '%s' : %s and %s",
+##                         "assign_unnamed",
+##                         msg1,
+##                         msg2)
+##         stop(msg, call. = FALSE)
+##     }
+##     ans <- coerce_to_template(vals = args_cmd,
+##                               names = nms,
+##                               templates = args_dots,
+##                               fun_name = "assign_unnamed")
+##     names(ans) <- nms
+##     ans
+## }
 
     
-## HAS_TESTS
-#' Combine values from dots with named command line arguments
-#'
-#' Combine names and classes from 'dots' with values
-#' obtained from command line arguments.
-#'
-#' @param args_dots Named list.
-#' @param args_cmd Named list.
-#'
-#' @return Named list
-#'
-#' @noRd
-make_args_comb_named <- function(args_dots, args_cmd) {
-    n_dots <- length(args_dots)
-    n_cmd <- length(args_cmd)
-    nms_dots <- names(args_dots)
-    nms_cmd <- names(args_cmd)
-    not_in_cmd <- setdiff(nms_dots, nms_cmd)
-    if (length(not_in_cmd) >= 1L) {
-        first_not_in_cmd <- not_in_cmd[[1L]]
-        msg1 <- gettextf("argument named '%s' supplied in '...'",
-                         first_not_in_cmd)
-        msg2 <- gettextf("argument named '%s' passed at command line",
-                         first_not_in_cmd)
-        msg <- gettextf("problem with function '%s' : have %s but do not have %s",
-                        "assign_named",
-                        msg1,
-                        msg2)
-        stop(msg, call. = FALSE)
-    }
-    not_in_dots <- setdiff(nms_cmd, nms_dots)
-    if (length(not_in_dots) >= 1L) {
-        first_not_in_dots <- not_in_dots[[1L]]
-        msg1 <- gettextf("argument named '%s' passed at command line",
-                         first_not_in_dots)
-        msg2 <- gettextf("argument named '%s' supplied in '...'",
-                         first_not_in_dots)
-        msg <- gettextf("problem with function '%s' : have %s but do not have %s",
-                        "assign_named",
-                        msg1,
-                        msg2)
-        stop(msg, call. = FALSE)
-    }
-    ans <- args_dots
-    for (i in seq_along(ans)) {
-        i_cmd <- match(nms_dots[[i]], nms_cmd)
-        ans[[i]] <- args_cmd[[i_cmd]]
-    }
-    ans <- coerce_to_template(vals = ans,
-                              names = nms_dots,
-                              templates = args_dots,
-                              fun_name = "assign_named")
-    ans
-}
+## ## HAS_TESTS
+## #' Combine values from dots with named command line arguments
+## #'
+## #' Combine names and classes from 'dots' with values
+## #' obtained from command line arguments.
+## #'
+## #' @param args_dots Named list.
+## #' @param args_cmd Named list.
+## #'
+## #' @return Named list
+## #'
+## #' @noRd
+## make_args_comb_named <- function(args_dots, args_cmd) {
+##     n_dots <- length(args_dots)
+##     n_cmd <- length(args_cmd)
+##     nms_dots <- names(args_dots)
+##     nms_cmd <- names(args_cmd)
+##     not_in_cmd <- setdiff(nms_dots, nms_cmd)
+##     if (length(not_in_cmd) >= 1L) {
+##         first_not_in_cmd <- not_in_cmd[[1L]]
+##         msg1 <- gettextf("argument named '%s' supplied in '...'",
+##                          first_not_in_cmd)
+##         msg2 <- gettextf("argument named '%s' passed at command line",
+##                          first_not_in_cmd)
+##         msg <- gettextf("problem with function '%s' : have %s but do not have %s",
+##                         "assign_named",
+##                         msg1,
+##                         msg2)
+##         stop(msg, call. = FALSE)
+##     }
+##     not_in_dots <- setdiff(nms_cmd, nms_dots)
+##     if (length(not_in_dots) >= 1L) {
+##         first_not_in_dots <- not_in_dots[[1L]]
+##         msg1 <- gettextf("argument named '%s' passed at command line",
+##                          first_not_in_dots)
+##         msg2 <- gettextf("argument named '%s' supplied in '...'",
+##                          first_not_in_dots)
+##         msg <- gettextf("problem with function '%s' : have %s but do not have %s",
+##                         "assign_named",
+##                         msg1,
+##                         msg2)
+##         stop(msg, call. = FALSE)
+##     }
+##     ans <- args_dots
+##     for (i in seq_along(ans)) {
+##         i_cmd <- match(nms_dots[[i]], nms_cmd)
+##         ans[[i]] <- args_cmd[[i_cmd]]
+##     }
+##     ans <- coerce_to_template(vals = ans,
+##                               names = nms_dots,
+##                               templates = args_dots,
+##                               fun_name = "assign_named")
+##     ans
+## }
 
     
                     
+#' Replace file paths for .rds files with
+#' the contents of those files
+#'
+#' Identify elements of 'args' that are file
+#' paths for .rds files, call \code{readRDS}
+#' on those paths, and replace the paths
+#' with the objects obtained.
+#'
+#' @param args A named list.
+#'
+#' @return A modified version of \code{args}.
+#'
+#' @noRd
+replace_rds_with_obj <- function(args) {
+    for (i in seq_along(args)) {
+        value_old <- args[[i]]
+        if (is_rds_filename(value_old)) {
+            value_new <- tryCatch(suppressWarnings(readRDS(value_old)),
+                                  error = function(e) e)
+            if (methods::is(value_new, "error")) {
+                msg <- gettextf(paste("problem with function '%s' :",
+                                      "attempt to call '%s'",
+                                      "with argument \"%s\" failed : %s"),
+                                "file_args",
+                                "readRDS",
+                                value_old,
+                                value_new$message)
+                stop(msg, call. = FALSE)
+            }
+            args[[i]] <- value_new
+        }
+    }
+    args
+}
