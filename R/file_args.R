@@ -19,18 +19,18 @@
 #' to be created from \dots. In a session
 #' invoked from the command
 #' line, \code{file_args} takes the values
-#' from the command line, and uses names
-#' from the command line where possible, and
-#' names from \dots otherwise.
+#' from the command line, and the names from
+#' names \dots. The assigning of names to values
+#' passed at the command line works much
+#' like the assigning of argument names to
+#' values in a standard R function call.
+#' \code{file_args} first assigns any named arguments
+#' passed at the command line to names specified
+#' in dots. It then assigns any unnamed arguments
+#' passed at the command line to remaining names
+#' specified in dots.
 #'
-#' \code{file_args} tries to coerce values
-#' passed at the command line to the same classes as
-#' the corresponding arguments in \dots, raising
-#' an error if this cannot be done.
-#'
-#' When 
-#'
-#' \code{file_args} assumes named values passed
+#' \code{file_args} assumes named arguments passed
 #' at the command line have the form
 #' \itemize{
 #'   \item \code{-<single-letter>=<value>}
@@ -42,11 +42,36 @@
 #' or some combination of the two. (Note that there are
 #' no spaces around the \code{=} sign.) \code{file_args}
 #' processes both the same way.
-#' 
+#'
+#' If \code{.load.rds} is \code{TRUE} (the default),
+#' then \code{file_args} treats filenames with
+#' \code{.rds} specially. Rather than simply
+#' assigning the filename in the current,
+#' it actually loads the file, using function
+#' \code{\link[base]{readRDS}}.
+#'
+#' To prevent a particular \code{.rds} file from being
+#' automatically loaded, give the file a name
+#' in \dots that starts with \code{p_}. For instance,
+#' when called interactively,
+#'
+#' \code{file_args(out = "myfile.rds")}
+#'
+#' is equivalent to
+#'
+#' \code{out <- readRDS("myfile.rds")}
+#'
+#' while
+#'
+#' \code{file_args(out = "myfile.rds")}
+#'
+#' is equivalent to
+#'
+#' \code{p_out <- "myfile.rds"}.
+#'
 #' @param \dots Names and values for arguments.
 #' @param .load.rds Whether to automatically load
-#' arguments that the look like they are names
-#' of \code{.rds} files. Defaults to \code{TRUE}.
+#' files with \code{.rds} extensions. Defaults to \code{TRUE}.
 #' 
 #' @return \code{file_args} returns a named list of objects
 #' invisibly, but is normally called for its side effect,

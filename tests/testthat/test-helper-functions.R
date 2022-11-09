@@ -97,7 +97,6 @@ test_that("'check_args_cmd' throws expected error lengths of 'args_cmd' 'args_do
 })
 
 
-
 ## 'check_args_dots' ----------------------------------------------------------
 
 test_that("'check_args_dots' returns TRUE when 'args_dots' valid", {
