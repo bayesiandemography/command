@@ -233,6 +233,12 @@ test_that("'replace_rds_with_obj' works with valid inputs", {
     expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'replace_rds_with_obj' ignores files with p suffix", {
+    args <- list(a = "p_fname.rds", b = "p.fname.rds", c = "pFname.rds")
+    expect_identical(replace_rds_with_obj(args),
+                     args)
+})
+
 test_that("'replace_rds_with_obj' works with no rds files", {
     args <- list(a = "fname.xlsx", b = "fname.csv", c = 1)
     expect_identical(replace_rds_with_obj(args),

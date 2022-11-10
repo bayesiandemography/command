@@ -282,7 +282,8 @@ is_rds_filename <- function(x) {
 replace_rds_with_obj <- function(args) {
     for (i in seq_along(args)) {
         value_old <- args[[i]]
-        if (is_rds_filename(value_old)) {
+        is_replace <- is_rds_filename(value_old) && !is_p_filename(value_old)
+        if (is_replace) {
             value_new <- tryCatch(suppressWarnings(readRDS(value_old)),
                                   error = function(e) e)
             if (methods::is(value_new, "error")) {
