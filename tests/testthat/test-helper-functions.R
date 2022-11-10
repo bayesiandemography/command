@@ -179,21 +179,19 @@ test_that("'get_args_cmd' works when no arguments passed", {
 })
 
 
-## 'is_p_filename' ------------------------------------------------------------
+## 'is_p_objname' -------------------------------------------------------------
 
-test_that("'is_p_filename' returns TRUE when 'x' starts a p suffix", {
-    expect_true(is_p_filename("p_myfile.rds"))
-    expect_true(is_p_filename("dir/p_myfile.rds"))
-    expect_true(is_p_filename("p.myfile.rds"))
-    expect_true(is_p_filename("pMyfile.rds"))
+test_that("'is_p_objname' returns TRUE when 'x' starts a p suffix", {
+    expect_true(is_p_objname("p_obj"))
+    expect_true(is_p_objname("p.obj"))
+    expect_true(is_p_objname("pObj"))
 })
 
-test_that("'is_p_filename' returns FALSE when 'x' does not start with a p suffix", {
-    expect_false(is_p_filename(1L))
-    expect_false(is_p_filename("P_myfile.rds"))
-    expect_false(is_p_filename("dir/pmyfile.rds"))
-    expect_false(is_p_filename("pp.myfile.rds"))
-    expect_false(is_p_filename("pmyfile.rds"))
+test_that("'is_p_objname' returns FALSE when 'x' does not start with a p suffix", {
+    expect_false(is_p_objname(1L))
+    expect_false(is_p_objname("P_obj"))
+    expect_false(is_p_objname("pp.obj"))
+    expect_false(is_p_objname("pobj"))
 })
 
 
@@ -233,8 +231,8 @@ test_that("'replace_rds_with_obj' works with valid inputs", {
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'replace_rds_with_obj' ignores files with p suffix", {
-    args <- list(a = "p_fname.rds", b = "p.fname.rds", c = "pFname.rds")
+test_that("'replace_rds_with_obj' ignores names with p suffix", {
+    args <- list(p_a = "fname.rds", p.b = "fname.rds", pC = "fname.rds")
     expect_identical(replace_rds_with_obj(args),
                      args)
 })

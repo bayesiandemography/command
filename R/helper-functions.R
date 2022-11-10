@@ -232,19 +232,16 @@ get_args_cmd <- function() {
 }
 
 
-#' Test whether 'x' is a filename starting with
-#' "p_".
+#' Test whether 'x' is a object name starting
+#' with "p" suffix
 #'
 #' @param A character or numeric vector of length 1.
 #'
 #' @return TRUE or FALSE.
 #'
 #' @noRd
-is_p_filename <- function(x) {
-    if (!is.character(x))
-        return(FALSE)
-    basename <- basename(x)
-    grepl("^p_|^p\\.|^p[A-Z]", basename)
+is_p_objname <- function(x) {
+    grepl("^p_|^p\\.|^p[A-Z]", x)
 }
 
 
@@ -280,9 +277,11 @@ is_rds_filename <- function(x) {
 #'
 #' @noRd
 replace_rds_with_obj <- function(args) {
+    nms_args <- names(args)
     for (i in seq_along(args)) {
+        nm_old <- nms_args[[i]]
         value_old <- args[[i]]
-        is_replace <- is_rds_filename(value_old) && !is_p_filename(value_old)
+        is_replace <- is_rds_filename(value_old) && !is_p_objname(nm_old)
         if (is_replace) {
             value_new <- tryCatch(suppressWarnings(readRDS(value_old)),
                                   error = function(e) e)

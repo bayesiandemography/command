@@ -44,11 +44,11 @@
 #' processes arguments with one dash and arguments
 #' with two dashes the same way.
 #'
-#' \code{file_args} potentially treats filenames with an
+#' \code{file_args} treats filenames with an
 #' \code{.rds} extension differently from other filenames.
 #' If \code{file_args} sees that a filename has
 #' a \code{.rds} extension, it checks whether the
-#' filename starts with \code{"p_"},
+#' argunment name in \dots starts with \code{"p_"},
 #' \code{"p."} or \code{"p<capital letter>"}.
 #' If it does, then \code{file_args}
 #' proceeds as normal, and assigns the filename
@@ -58,11 +58,11 @@
 #' \code{\link[base]{readRDS}}.For instance,
 #' in an interactive session,
 #'
-#' \code{file_args(out = "p_myfile.rds")}
+#' \code{file_args(p_out = "myfile.rds")}
 #'
 #' is equivalent to
 #'
-#' \code{out <- "p_myfile.rds"}
+#' \code{p_out <- "myfile.rds"}
 #'
 #' while
 #'
