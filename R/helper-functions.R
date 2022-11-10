@@ -232,10 +232,28 @@ get_args_cmd <- function() {
 }
 
 
+#' Test whether 'x' is a filename starting with
+#' "p_".
+#'
+#' @param A character or numeric vector of length 1.
+#'
+#' @return TRUE or FALSE.
+#'
+#' @noRd
+is_p_filename <- function(x) {
+    if (!is.character(x))
+        return(FALSE)
+    basename <- basename(x)
+    grepl("^p_|^p\\.|^p[A-Z]", basename)
+}
+
+
 ## HAS_TESTS
 #' Test whether 'x' is the name of an .rds file
 #'
-#' Assumes that \code{x} has length 1.
+#' @param A character or numeric vector of length 1.
+#'
+#' @return TRUE or FALSE.
 #'
 #' @noRd
 is_rds_filename <- function(x) {

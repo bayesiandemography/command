@@ -7,30 +7,30 @@
 #'
 #' The behaviour of \code{file_args} depends the
 #' on the type of R session it is called from:
-#' an interactive session, or a session
+#' (i) an interactive session, or (ii) a session
 #' invoked from the command line, e.g
-#' via \code{\link[utils]{Rscript}}. Typically,
-#' \code{file_args} is used iteractively when
-#' developing code and via the command line
-#' when the code is mature.
+#' via \code{\link[utils]{Rscript}}. The typical
+#' pattern is to use interactive sessions
+#' when first developing an R script, and
+#' then to call use the command line when the
+#' code is mature.
 #'
 #' In an interactive session, \code{file_args}
-#' takes the names and values for the objects
-#' to be created from \dots. In a session
+#' creates values based on the default values
+#' specified in \dots. In a session
 #' invoked from the command
-#' line, \code{file_args} takes the values
-#' from the command line, and the names from
-#' names \dots. The assigning of names to values
-#' passed at the command line works much
-#' like the assigning of argument names to
-#' values in a standard R function call.
-#' \code{file_args} first assigns any named arguments
-#' passed at the command line to names specified
-#' in dots. It then assigns any unnamed arguments
-#' passed at the command line to remaining names
-#' specified in dots.
+#' line, \code{file_args} creates values based on
+#' arguments passed at the command line.
+#' When processing arguments passed at the command
+#' line, \code{file_args} assigns names to values
+#' in much the same way that R does when it
+#' processes a function call. If an argument
+#' is named when it is passed at the command line,
+#' then it keeps that name. If an argument is
+#' unnamed, then it gets the first unassigned
+#' name in \dots.
 #'
-#' \code{file_args} assumes named arguments passed
+#' \code{file_args} assumes that named arguments passed
 #' at the command line have the form
 #' \itemize{
 #'   \item \code{-<single-letter>=<value>}
@@ -41,25 +41,28 @@
 #' }
 #' or some combination of the two. (Note that there are
 #' no spaces around the \code{=} sign.) \code{file_args}
-#' processes both the same way.
+#' processes arguments with one dash and arguments
+#' with two dashes the same way.
 #'
-#' If \code{.load.rds} is \code{TRUE} (the default),
-#' then \code{file_args} treats filenames with
-#' \code{.rds} specially. Rather than simply
-#' assigning the filename in the current,
-#' it actually loads the file, using function
-#' \code{\link[base]{readRDS}}.
+#' \code{file_args} potentially treats filenames with an
+#' \code{.rds} extension differently from other filenames.
+#' If \code{file_args} sees that a filename has
+#' a \code{.rds} extension, it checks whether the
+#' filename starts with \code{"p_"},
+#' \code{"p."} or \code{"p<capital letter>"}.
+#' If it does, then \code{file_args}
+#' proceeds as normal, and assigns the filename
+#' in the the name in the current environment. If
+#' it does not, then \code{file_args} actually
+#' loads the file, using function
+#' \code{\link[base]{readRDS}}.For instance,
+#' in an interactive session,
 #'
-#' To prevent a particular \code{.rds} file from being
-#' automatically loaded, give the file a name
-#' in \dots that starts with \code{p_}. For instance,
-#' when called interactively,
-#'
-#' \code{file_args(out = "myfile.rds")}
+#' \code{file_args(out = "p_myfile.rds")}
 #'
 #' is equivalent to
 #'
-#' \code{out <- readRDS("myfile.rds")}
+#' \code{out <- "p_myfile.rds"}
 #'
 #' while
 #'
@@ -67,11 +70,11 @@
 #'
 #' is equivalent to
 #'
-#' \code{p_out <- "myfile.rds"}.
+#' \code{out <- readRDS("myfile.rds")}.
+#'
+#' (The "p" is short for "path" or "pointer".)
 #'
 #' @param \dots Names and values for arguments.
-#' @param .load.rds Whether to automatically load
-#' files with \code{.rds} extensions. Defaults to \code{TRUE}.
 #' 
 #' @return \code{file_args} returns a named list of objects
 #' invisibly, but is normally called for its side effect,
@@ -88,14 +91,14 @@
 #' file_args(p_inputs = "data/inputs.csv",
 #'           fitted_values = "out/fitted_values.rds",
 #'           variant = "low",
-#'           size = 12)
+#'           size = 12,
+#'           p_outfile = "out/model_summary.rds")
 #' }
 #' @export
-file_args <- function(..., .load.rds = TRUE) {
+file_args <- function(...) {
     envir <- parent.frame()
     args_dots <- list(...)
     check_args_dots(args_dots)
-    checkmate::assert_flag(.load.rds)
     if (interactive())
         args <- args_dots
     else {
@@ -108,8 +111,7 @@ file_args <- function(..., .load.rds = TRUE) {
                                          args_dots = args_dots)
         args <- args_cmd
     }
-    if (.load.rds)
-        args <- replace_rds_with_obj(args)
+    args <- replace_rds_with_obj(args)
     assign_args(args = args,
                 envir = envir)
 }

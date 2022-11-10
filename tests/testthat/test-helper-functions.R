@@ -179,6 +179,24 @@ test_that("'get_args_cmd' works when no arguments passed", {
 })
 
 
+## 'is_p_filename' ------------------------------------------------------------
+
+test_that("'is_p_filename' returns TRUE when 'x' starts a p suffix", {
+    expect_true(is_p_filename("p_myfile.rds"))
+    expect_true(is_p_filename("dir/p_myfile.rds"))
+    expect_true(is_p_filename("p.myfile.rds"))
+    expect_true(is_p_filename("pMyfile.rds"))
+})
+
+test_that("'is_p_filename' returns FALSE when 'x' does not start with a p suffix", {
+    expect_false(is_p_filename(1L))
+    expect_false(is_p_filename("P_myfile.rds"))
+    expect_false(is_p_filename("dir/pmyfile.rds"))
+    expect_false(is_p_filename("pp.myfile.rds"))
+    expect_false(is_p_filename("pmyfile.rds"))
+})
+
+
 ## 'is_rds_filename' ----------------------------------------------------------
 
 test_that("'is_rds_filename' returns TRUE when 'x' is an RDS filename", {
@@ -189,6 +207,7 @@ test_that("'is_rds_filename' returns TRUE when 'x' is an RDS filename", {
 })
 
 test_that("'is_rds_filename' returns FALSE when 'x' is not an RDS filename", {
+    expect_false(is_rds_filename(1L))
     expect_false(is_rds_filename("myfile.rda"))
     expect_false(is_rds_filename("/dir1/dir2/myfile.xlsx"))
     expect_false(is_rds_filename("myfile.R"))
