@@ -1,5 +1,5 @@
 
-test_that("'file_args' works with valid arguments - on command line", {
+test_that("'cmd_assign' works with valid arguments - on command line", {
     dir_curr <- getwd()
     dir_tmp <- tempfile()
     if (file.exists(dir_tmp))
@@ -7,7 +7,7 @@ test_that("'file_args' works with valid arguments - on command line", {
     dir.create(dir_tmp)
     setwd(dir_tmp)
     saveRDS(1:5, file = "obj.rds")
-    writeLines(c("argfun::file_args(p_file1 = 'myfile.xsls', obj = 'obj.rds', n = 2L, named = 'goodbye')",
+    writeLines(c("argfun::cmd_assign(p_file1 = 'myfile.xsls', obj = 'obj.rds', n = 2L, named = 'goodbye')",
                  "saveRDS(p_file1, file = 'p_file1.rds')",
                  "saveRDS(obj, file = 'obj_saved.rds')",
                  "saveRDS(n, file = 'n.rds')",
@@ -31,7 +31,7 @@ test_that("'file_args' works with valid arguments - on command line", {
     unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'file_args' works with valid arguments - interactively", {
+test_that("'cmd_assign' works with valid arguments - interactively", {
     if (interactive()) {
         dir_curr <- getwd()
         dir_tmp <- tempfile()
@@ -40,7 +40,7 @@ test_that("'file_args' works with valid arguments - interactively", {
         dir.create(dir_tmp)
         setwd(dir_tmp)
         saveRDS(1:5, file = "obj.rds")
-        file_args(obj = "obj.rds", n = 2, named = 'goodbye')
+        cmd_assign(obj = "obj.rds", n = 2, named = 'goodbye')
         setwd(dir_curr)
         unlink(dir_tmp, recursive = TRUE)
         rm(dir_curr, dir_tmp)

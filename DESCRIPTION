@@ -4,13 +4,13 @@ Title: Process Command Line Arguments in a Function-Like Way
 Version: 0.0.0.9000
 Author: John Bryant
 Maintainer: John Bryant <john@bayesiandemography.com>
-Description: Convert command line arguments into objects
-    in the current environment, with appropriate naming
-    and checking. Makes scripts behave a little like
-    functions.
+Description: Create objects in the current environment
+    based on arguments passed at the command line.
+    Make scripts behave like functions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 Imports:
     checkmate,
     methods,

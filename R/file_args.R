@@ -2,7 +2,13 @@
 #' Process command line arguments
 #'
 #' Create objects in the current environment
-#' based on values passed at the command line,
+#' based on values passed at the command line.
+#'
+#' # Session invoked from a command line
+#'
+#' 
+#'
+#' 
 #' or on values supplied via \dots.
 #'
 #' The behaviour of \code{file_args} depends the
@@ -40,25 +46,25 @@
 #'        \code{--filename=params.rds},
 #' }
 #' or some combination of the two. (Note that there are
-#' no spaces around the \code{=} sign.) \code{file_args}
+#' no spaces around the \code{=} sign.) \code{cmd_assign}
 #' processes arguments with one dash and arguments
 #' with two dashes the same way.
 #'
-#' \code{file_args} treats filenames with an
+#' \code{cmd_assign} potentially treats filenames with an
 #' \code{.rds} extension differently from other filenames.
-#' If \code{file_args} sees that a filename has
+#' If \code{cmd_assign} sees that a filename has
 #' a \code{.rds} extension, it checks whether the
 #' argunment name in \dots starts with \code{"p_"},
 #' \code{"p."} or \code{"p<capital letter>"}.
-#' If it does, then \code{file_args}
+#' If it does, then \code{cmd_assign}
 #' proceeds as normal, and assigns the filename
 #' in the the name in the current environment. If
-#' it does not, then \code{file_args} actually
+#' it does not, then \code{cmd_assign} actually
 #' loads the file, using function
 #' \code{\link[base]{readRDS}}.For instance,
 #' in an interactive session,
 #'
-#' \code{file_args(p_out = "myfile.rds")}
+#' \code{cmd_assign(out = "p_myfile.rds")}
 #'
 #' is equivalent to
 #'
@@ -66,7 +72,7 @@
 #'
 #' while
 #'
-#' \code{file_args(out = "myfile.rds")}
+#' \code{cmd_assign(out = "myfile.rds")}
 #'
 #' is equivalent to
 #'
@@ -74,13 +80,13 @@
 #'
 #' (The "p" is short for "path" or "pointer".)
 #'
-#' @param \dots Names and values for arguments.
+#' @param ... Names and values for arguments.
 #' 
-#' @return \code{file_args} returns a named list of objects
+#' @returns code{cmd_assign} returns a named list of objects
 #' invisibly, but is normally called for its side effect,
 #' which is to create objects in the current environment.
 #'
-#' @seealso \code{file_args} uses function
+#' @seealso \code{cmd_assign} uses function
 #' \code{\link[base]{interactive}} to decide
 #' whether a function is interactive. It uses
 #' function \code{\link[base]{commandArgs}}
@@ -88,14 +94,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' file_args(p_inputs = "data/inputs.csv",
+#' cmd_assign(p_inputs = "data/inputs.csv",
 #'           fitted_values = "out/fitted_values.rds",
 #'           variant = "low",
 #'           size = 12,
 #'           p_outfile = "out/model_summary.rds")
 #' }
 #' @export
-file_args <- function(...) {
+cmd_assign <- function(...) {
     envir <- parent.frame()
     args_dots <- list(...)
     check_args_dots(args_dots)
@@ -111,7 +117,8 @@ file_args <- function(...) {
                                          args_dots = args_dots)
         args <- args_cmd
     }
-    args <- replace_rds_with_obj(args)
-    assign_args(args = args,
+    args_new <- replace_rds_with_obj(args)
+    assign_args(args_new = args_new,
+                args_old = args,
                 envir = envir)
 }
