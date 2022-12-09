@@ -1,4 +1,4 @@
-Package: argfun
+Package: command
 Type: Package
 Title: Process Command Line Arguments in a Function-Like Way
 Version: 0.0.0.9000
@@ -6,7 +6,8 @@ Author: John Bryant
 Maintainer: John Bryant <john@bayesiandemography.com>
 Description: Create objects in the current environment
     based on arguments passed at the command line.
-    Make scripts behave like functions.
+    Allows scripts to behave like functions, which
+    can make workflows clearer and safer.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

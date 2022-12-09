@@ -7,7 +7,7 @@ test_that("'cmd_assign' works with valid arguments - on command line", {
     dir.create(dir_tmp)
     setwd(dir_tmp)
     saveRDS(1:5, file = "obj.rds")
-    writeLines(c("argfun::cmd_assign(p_file1 = 'myfile.xsls', obj = 'obj.rds', n = 2L, named = 'goodbye')",
+    writeLines(c("command::cmd_assign(p_file1 = 'myfile.xsls', obj = 'obj.rds', n = 2L, named = 'goodbye')",
                  "saveRDS(p_file1, file = 'p_file1.rds')",
                  "saveRDS(obj, file = 'obj_saved.rds')",
                  "saveRDS(n, file = 'n.rds')",
@@ -16,7 +16,7 @@ test_that("'cmd_assign' works with valid arguments - on command line", {
                con = "script.R")
     cmd <- sprintf("%s/bin/Rscript script.R thatfile.xlsx obj.rds -n=1 --named=hello",
                    R.home())
-    system(cmd)
+    system(cmd, ignore.stderr = TRUE)
     p_file1 <- readRDS("p_file1.rds")
     expect_identical(p_file1, "thatfile.xlsx")
     obj <- readRDS("obj_saved.rds")

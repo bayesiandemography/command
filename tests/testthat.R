@@ -1,4 +1,4 @@
 library(testthat)
-library(argfun)
+library(command)
 
-test_check("argfun")
+test_check("command")

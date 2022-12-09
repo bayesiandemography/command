@@ -44,7 +44,9 @@ test_that("'align_cmd_to_dots' works 'args_cmd' and 'args_dots' both length 0", 
 test_that("'assign_args' creates correct objects in the parent frame, and returns as list", {
     args <- list(xx = 1, yy = "hello", zz = TRUE)
     envir <- new.env()
-    ans_obtained <- assign_args(args_new = args, args_old = args, envir = envir)
+    ans_obtained <- suppressMessages(
+        assign_args(args_new = args, args_old = args, envir = envir)
+    )
     expect_identical(envir$xx, 1)
     expect_identical(envir$yy, "hello")
     expect_identical(envir$zz, TRUE)
@@ -54,7 +56,9 @@ test_that("'assign_args' creates correct objects in the parent frame, and return
 test_that("'assign_args' works with empty args", {
     args <- list()
     envir <- new.env()
-    ans_obtained <- assign_args(args_new = args, args_old = args, envir = envir)
+    ans_obtained <- suppressMessages(
+        assign_args(args_new = args, args_old = args, envir = envir)
+    )
     expect_identical(length(envir), 0L)
     expect_identical(ans_obtained, args)
 })
