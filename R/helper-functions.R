@@ -56,7 +56,8 @@ align_cmd_to_dots <- function(args_cmd, args_dots) {
 #' Use the names and values in 'args' to create
 #' objects in environment 'envir'.
 #'
-#' @param args A named list.
+#' @param args_new A named list.
+#' @param args_old A named list.
 #' @param envir The environment where the
 #' objects are to be created.
 #'
@@ -64,16 +65,30 @@ align_cmd_to_dots <- function(args_cmd, args_dots) {
 #' and creates objects as a side effect.
 #'
 #' @noRd
-assign_args <- function(args, envir) {
-    nms <- names(args)
-    for (i in seq_along(args)) {
-        x <- nms[[i]]
-        value <- args[[i]]
-        assign(x = x,
-               value = value,
+assign_args <- function(args_new, args_old, envir) {
+    nms <- names(args_new)
+    for (i in seq_along(args_new)) {
+        arg_new <- args_new[[i]]
+        arg_old <- args_old[[i]]
+        nm <- nms[[i]]
+        assign(x = nm,
+               value = arg_new,
                envir = envir)
+        replaced <- !identical(arg_new, arg_old)
+        if (replaced) {
+            msg <- gettextf("    cmd_assign : setting '%s' to contents of \"%s\"",
+                            nm,
+                            arg_old)
+        }
+        else {
+            arg_old_quo <- if (is.character(arg_old)) sprintf("\"%s\"", arg_old) else arg_old
+            msg <- gettextf("    cmd_assign : setting '%s' to %s",
+                            nm,
+                            arg_old_quo)
+        }
+        message(msg)
     }
-    invisible(args)
+    invisible(args_new)
 }    
 
 
@@ -101,7 +116,7 @@ check_args_cmd <- function(args_cmd, args_dots) {
                                   "but no argument named \"%s\" specified in call to '%s'"),
                             nm,
                             nm,
-                            "file_args")
+                            "cmd_assign")
             stop(msg, call. = FALSE)
         }
     }
@@ -114,7 +129,7 @@ check_args_cmd <- function(args_cmd, args_dots) {
                               "not equal to number of arguments specified in",
                               "call to '%s' [%d]"),
                         n_cmd,
-                        "file_args",
+                        "cmd_assign",
                         n_dots)
         stop(msg, call. = FALSE)
     }
@@ -126,11 +141,11 @@ check_args_cmd <- function(args_cmd, args_dots) {
 #' Check dots arguments
 #'
 #' Check that names and values supplied
-#' to \code{\link{file_args}}
+#' to \code{\link{cmd_assign}}
 #' via the dots argument are valid.
 #'
 #' @param args_dots Dots argument from
-#' \code{\link{file_args}}.
+#' \code{\link{cmd_assign}}.
 #'
 #' @return TRUE, invisibly
 #'
@@ -141,7 +156,7 @@ check_args_dots <- function(args_dots) {
     val_chk_nms <- checkmate::check_names(nms, type = "strict")
     if (!isTRUE(val_chk_nms)) {
         msg <- gettextf("names in call to '%s' invalid : %s",
-                        "file_args",
+                        "cmd_assign",
                         val_chk_nms)
         stop(msg, call. = FALSE)
     }
@@ -152,7 +167,7 @@ check_args_dots <- function(args_dots) {
     i_invalid <- match(FALSE, is_valid, nomatch = 0L)
     if (i_invalid > 0L) {
         msg <- gettextf("value in call to '%s' invalid : '%s' has class \"%s\"",
-                        "file_args",
+                        "cmd_assign",
                         nms[[i_invalid]],
                         class(args_dots[[i_invalid]]))
         stop(msg, call. = FALSE)
@@ -173,7 +188,7 @@ check_args_dots <- function(args_dots) {
 #' @param args_cmd Named list of values passed from
 #' command line.
 #' @param args_dots Named list of values specified
-#' via the dots argument of \code{\link{file_args}}.
+#' via the dots argument of \code{\link{cmd_assign}}.
 #'
 #' @return Revised version of \code{args_cmd}.
 #'
@@ -192,7 +207,7 @@ coerce_to_dots_class <- function(args_cmd, args_dots) {
                                   "but value for '%s' passed at command line [%s]",
                                   "cannot be coerced to class \"%s\""),
                             nms[[i]],                            
-                            "file_args",
+                            "cmd_assign",
                             class_dots,
                             nms[[i]],
                             val_quoted,
@@ -289,7 +304,7 @@ replace_rds_with_obj <- function(args) {
                 msg <- gettextf(paste("problem with function '%s' :",
                                       "attempt to call '%s'",
                                       "with argument \"%s\" failed : %s"),
-                                "file_args",
+                                "cmd_assign",
                                 "readRDS",
                                 value_old,
                                 value_new$message)
