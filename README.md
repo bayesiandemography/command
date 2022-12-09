@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# makr
+# command
 
 <!-- badges: start -->
 
@@ -13,12 +13,12 @@ The goal of makr is to …
 
 ## Installation
 
-You can install the development version of makr from
+You can install the development version of command from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("bayesiandemography/makr")
+devtools::install_github("bayesiandemography/command")
 ```
 
 ## Example
