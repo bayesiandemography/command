@@ -1,46 +1,32 @@
 
 #' Process command line arguments
 #'
-#' Create objects in the current environment
+#' Create objects in the current environment,
 #' based on arguments passed at the command line.
-#' Makes running a script a little like calling
-#' a function.
+#' Allows scripts to be used like functions.
 #'
 #' # Types of session
 #'
-#' The behaviour of `cmd_assign()` depends on the
-#' type of session.
+#' The behavior of `cmd_assign()` depends how it is called:
+#'
+#' * If `cmd_assign()` is called in a script that is
+#'   run from the command line,
+#'   then `cmd_assign()` processes
+#'   values that were passed at the command line.
+#' * If `cmd_assign()` is used interactively, then
+#'   it processes values values supplied to it
+#'   when it is called.
 #' 
-#' ## Sessions invoked from a command line
-#'
-#' `cmd_assign()` is typically used in scripts that
-#' are launched from the command line, eg via
-#' [utils::Rscript()]. `cmd_assign()` uses
-#' command line arguments that are passed when
-#' the script is launched to create objects in
-#' the current environment.
-#'
-#' ## Interactive sessions
-#'
-#' `cmd_assign()` can also be used interactively,
-#' which is useful when developing or testing code.
-#' When used interactively, `cmd_assign()`
-#' relies on defaults specified via ... .
-#' 
+#' `cmd_assign()` is designed mainly for use with the
+#' command line. However, using it interactively can be
+#' helpful when developing or testing code.
 #'
 #' # How arguments are processed
 #'
-#' ## Matching names to arguments
+#' ## Matching names and values
 #'
-#' The way that `cmd_assign` matches values supplied
-#' at the command line to names specified in the call
-#' to `cmd_assign` is loosely based of the way that R
-#' matches values supplied in a function call
-#' to names specified in the function definition.
-#'
-#' `cmd_assign` begins by identifying values
-#' passed at the command line that are named. 
-#' `cmd_assign()` treats a value as named
+#' `cmd_assign()` fist processes named arguments
+#' `cmd_assign()` treats an argument as named
 #' if it has the form
 #' 
 #' `-<single-letter>=<value>`
@@ -49,77 +35,75 @@
 #'
 #' `--<name>=<value>`
 #'
-#' (note that there are no spaces around the `=`.)
 #' Examples are `-n=100` and `--n_iteration=100`.
+#' Note that there are no spaces around the 
+#' equals sign.
 #'
-#' If a named argument is supplied at the command line
-#' but that name was not specified in the call to
-#' `cmd_assign(), then `cmd_assign()` raises an error.
+#' If a named argument supplied at the command line
+#' does not have a counterpart in the call to
+#' `cmd_assign()`, then `cmd_assign()` raises an error.
 #'
-#' Once it has matched all the named command line
-#' arguments, `cmd_assign()` matches unnamed command
-#' line arguments to the remaining names in
-#' .... As with R function calls, unnamed arguments
-#' are matched in the order that they appear.
+#' Once `cmd_assign()` has processed all the named 
+#' command line arguments, it matches any unnamed
+#' command to any unused names from the call to
+#' `cmd_assign()`.
 #'
-#' Every argument that is specified in the
-#' call to `cmd_assign()` must be supplied with
-#' a value at the command line. If no value is
-#' supplied, `cmd_assign()` does not fall back
-#' on the default, but instead raises an error.
+#' When `cmd_assign()` is processing command line
+#' arguments, it does not fall back on defaults. 
+#' Every name specified in the call to `cmd_assign()`
+#' must be supplied with a value at the command line.
 #'
 #' ## Creating objects
 #'
-#' A command line argument is just a character string.
-#' There are two circumstances in which `cmd_assign()`
-#' converts the string into something else:
+#' A command line argument is a character string.
+#' The object that `cmd_assign()` creates in 
+#' the current environment is just a copy of
+#' this string, except in two situations:
 #'
-#' 1. If the string is the file path for an `.rds` file,
+#' 1. The string is the file path for an `.rds` file,
 #'   and the file path does not start with `"p_"`, `"p."`
-#'   or `"p<capital letter>"`, then `cmd_assign()` loads
-#'   the file.
-#' 1. If the default argument is a logical, integer or
-#'   double, then `cmd_assign` will try to convert the
-#'   string to the same type.
-#'
-#' Otherwise `cmd_assign()` leaves the string untouched.
+#'   or `"p<capital letter>"`. In this case,
+#'   `cmd_assign()` loads the file.
+#' 1. The default value is a logical, integer or
+#'   double. In this case, then `cmd_assign()`
+#'   converts the string to the same type.
 #'
 #' # More information
 #'
-#' For examples of the use of `cmd_assign()`,
-#' plus discussion of how `cmd_assign` can fit
-#' into a data analysis workflow,
-#' see NAME OF VIGNETTE.
+#' The vignette NAME OF VIGNETTE gives examples
+#' of the use of `cmd_assign()`, and discusses how
+#' `cmd_assign` can be used in a data analysis
+#'  workflow.
 #'
 #' @param ... Name-value pairs.
 #' 
-#' @returns `cmd_assign()` invisible returns
-#' a named list of objects, but is normally called
+#' @returns `cmd_assign()` is normally called
 #' for its side effect, which is to create objects
-#' in the current environment.
+#' in the current environment. However, `cmd_assign()`
+#' also invisibly returns a named list of objects.
 #'
-#' @seealso Internally, `cmd_assign()` uses
+#' @seealso Function [utils::Rscript()] and
+#' package `littler` can be used to run
+#' scripts from the command line.
+#' 
+#' Internally, `cmd_assign()` uses
 #' [base::interactive()] to decide whether
 #' the current session is interactive, and uses
 #' [base::commandArgs()] to access command line
 #' arguments.
 #'
-#' @examplesIf interactive()
-#' ## Running
+#' @examples
+#' \dontrun{
 #' cmd_assign(p_inputs = "data/inputs.csv",
 #'            fitted_values = "out/fitted_values.rds",
 #'            variant = "low",
 #'            size = 12)
-#' ## in an interactive session is equivalent to
+#' ## In an interactive session, this is equivalent to
 #' p_inputs <- "data/inputs.csv"
 #' fitted_valus <- readRDS("out/fitted_values.rds")
 #' variant <- low
 #' size <- 12
-#' ## If the script containing the lines above
-#' ## is run from the command line, then
-#' ## "data/inputs.csv", "out/fitted_values.rds",
-#' ## "low", and 12 are replaced by values
-#' ## passed at the command line.
+#' }
 #' @export
 cmd_assign <- function(...) {
     envir <- parent.frame()

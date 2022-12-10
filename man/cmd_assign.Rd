@@ -10,51 +10,38 @@ cmd_assign(...)
 \item{...}{Name-value pairs.}
 }
 \value{
-\code{cmd_assign()} invisible returns
-a named list of objects, but is normally called
+\code{cmd_assign()} is normally called
 for its side effect, which is to create objects
-in the current environment.
+in the current environment. However, \code{cmd_assign()}
+also invisibly returns a named list of objects.
 }
 \description{
-Create objects in the current environment
+Create objects in the current environment,
 based on arguments passed at the command line.
-Makes running a script a little like calling
-a function.
+Allows scripts to be used like functions.
 }
 \section{Types of session}{
-The behaviour of \code{cmd_assign()} depends on the
-type of session.
-\subsection{Sessions invoked from a command line}{
-
-\code{cmd_assign()} is typically used in scripts that
-are launched from the command line, eg via
-\code{\link[utils:Rscript]{utils::Rscript()}}. \code{cmd_assign()} uses
-command line arguments that are passed when
-the script is launched to create objects in
-the current environment.
+The behavior of \code{cmd_assign()} depends how it is called:
+\itemize{
+\item If \code{cmd_assign()} is called in a script that is
+run from the command line,
+then \code{cmd_assign()} processes
+values that were passed at the command line.
+\item If \code{cmd_assign()} is used interactively, then
+it processes values values supplied to it
+when it is called.
 }
 
-\subsection{Interactive sessions}{
-
-\code{cmd_assign()} can also be used interactively,
-which is useful when developing or testing code.
-When used interactively, \code{cmd_assign()}
-relies on defaults specified via ... .
-}
+\code{cmd_assign()} is designed mainly for use with the
+command line. However, using it interactively can be
+helpful when developing or testing code.
 }
 
 \section{How arguments are processed}{
-\subsection{Matching names to arguments}{
+\subsection{Matching names and values}{
 
-The way that \code{cmd_assign} matches values supplied
-at the command line to names specified in the call
-to \code{cmd_assign} is loosely based of the way that R
-matches values supplied in a function call
-to names specified in the function definition.
-
-\code{cmd_assign} begins by identifying values
-passed at the command line that are named.
-\code{cmd_assign()} treats a value as named
+\code{cmd_assign()} fist processes named arguments
+\code{cmd_assign()} treats an argument as named
 if it has the form
 
 \verb{-<single-letter>=<value>}
@@ -63,72 +50,68 @@ or
 
 \verb{--<name>=<value>}
 
-(note that there are no spaces around the \code{=}.)
 Examples are \code{-n=100} and \code{--n_iteration=100}.
+Note that there are no spaces around the
+equals sign.
 
-If a named argument is supplied at the command line
-but that name was not specified in the call to
-\verb{cmd_assign(), then }cmd_assign()` raises an error.
+If a named argument supplied at the command line
+does not have a counterpart in the call to
+\code{cmd_assign()}, then \code{cmd_assign()} raises an error.
 
-Once it has matched all the named command line
-arguments, \code{cmd_assign()} matches unnamed command
-line arguments to the remaining names in
-.... As with R function calls, unnamed arguments
-are matched in the order that they appear.
+Once \code{cmd_assign()} has processed all the named
+command line arguments, it matches any unnamed
+command to any unused names from the call to
+\code{cmd_assign()}.
 
-Every argument that is specified in the
-call to \code{cmd_assign()} must be supplied with
-a value at the command line. If no value is
-supplied, \code{cmd_assign()} does not fall back
-on the default, but instead raises an error.
+When \code{cmd_assign()} is processing command line
+arguments, it does not fall back on defaults.
+Every name specified in the call to \code{cmd_assign()}
+must be supplied with a value at the command line.
 }
 
 \subsection{Creating objects}{
 
-A command line argument is just a character string.
-There are two circumstances in which \code{cmd_assign()}
-converts the string into something else:
+A command line argument is a character string.
+The object that \code{cmd_assign()} creates in
+the current environment is just a copy of
+this string, except in two situations:
 \enumerate{
-\item If the string is the file path for an \code{.rds} file,
+\item The string is the file path for an \code{.rds} file,
 and the file path does not start with \code{"p_"}, \code{"p."}
-or \code{"p<capital letter>"}, then \code{cmd_assign()} loads
-the file.
-\item If the default argument is a logical, integer or
-double, then \code{cmd_assign} will try to convert the
-string to the same type.
+or \code{"p<capital letter>"}. In this case,
+\code{cmd_assign()} loads the file.
+\item The default value is a logical, integer or
+double. In this case, then \code{cmd_assign()}
+converts the string to the same type.
 }
-
-Otherwise \code{cmd_assign()} leaves the string untouched.
 }
 }
 
 \section{More information}{
-For examples of the use of \code{cmd_assign()},
-plus discussion of how \code{cmd_assign} can fit
-into a data analysis workflow,
-see NAME OF VIGNETTE.
+The vignette NAME OF VIGNETTE gives examples
+of the use of \code{cmd_assign()}, and discusses how
+\code{cmd_assign} can be used in a data analysis
+workflow.
 }
 
 \examples{
-\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-## Running
+\dontrun{
 cmd_assign(p_inputs = "data/inputs.csv",
            fitted_values = "out/fitted_values.rds",
            variant = "low",
            size = 12)
-## in an interactive session is equivalent to
+## In an interactive session, this is equivalent to
 p_inputs <- "data/inputs.csv"
 fitted_valus <- readRDS("out/fitted_values.rds")
 variant <- low
 size <- 12
-## If the script containing the lines above
-## is run from the command line, then
-## "data/inputs.csv", "out/fitted_values.rds",
-## "low", and 12 are replaced by values
-## passed at the command line.
-\dontshow{\}) # examplesIf}
+}
 }
 \seealso{
+Function \code{\link[utils:Rscript]{utils::Rscript()}} and
+package \code{littler} can be used to run
+scripts from the command line.
+
 Internally, \code{cmd_assign()} uses
 \code{\link[base:interactive]{base::interactive()}} to decide whether
 the current session is interactive, and uses
