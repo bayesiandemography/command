@@ -24,5 +24,5 @@ devtools::install_github("bayesiandemography/command")
 ``` r
 cmd_assign(survey_file = "out/survey_file.rds",
            n_iterations = 1000,
-          trim_outliers = TRUE)
+       trim_outliers = TRUE)
 ```
