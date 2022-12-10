@@ -19,20 +19,15 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-Turn arguments passed at the command line into objects in the current environment. Scripts become more function-like, with all inputs explicitly defined. The goalis a clear, safe, modular workflow.
+Turn arguments passed at the command line into objects in the current environment. Scripts behave like functions, leading to a safer, more modular workflow.
 
 ## Installation
 
-You can install the development version of command from [GitHub](https://github.com/) with:
-
 ``` r
-# install.packages("devtools")
 devtools::install_github("bayesiandemography/command")
 ```
 
 ## Example
-
-command has a single function, `cmd_assign`:
 
 ```{r example, eval = FALSE}
 cmd_assign(survey_file = "out/survey_file.rds",
