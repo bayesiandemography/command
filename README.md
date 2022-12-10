@@ -9,10 +9,10 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-Create objects in the current environment, based on arguments passed at
-the command line. This can make a script work like a function: all
-inputs are explicitly defined, and all variables are local. The result
-is a clearer, safer, more modular workflow.
+Turn arguments passed at the command line into objects in the current
+environment. Scripts become more function-like, with all inputs
+explicitly defined. The aim is to create a clear, safe, modular
+workflow.
 
 ## Installation
 
@@ -31,5 +31,5 @@ command has a single function, `cmd_assign`:
 ``` r
 cmd_assign(survey_file = "out/survey_file.rds",
            n_iterations = 1000,
-       trim_outliers = TRUE)
+           trim_outliers = TRUE)
 ```
