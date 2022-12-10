@@ -74,18 +74,26 @@ assign_args <- function(args_new, args_old, envir) {
         assign(x = nm,
                value = arg_new,
                envir = envir)
-        replaced <- !identical(arg_new, arg_old)
-        if (replaced) {
-            msg <- gettextf("    cmd_assign : setting '%s' to contents of \"%s\"",
-                            nm,
-                            arg_old)
+        replaced_rds <- !identical(arg_new, arg_old)
+        if (replaced_rds) {
+            msg <- "setting '%s' to object in \"%s\""
         }
         else {
-            arg_old_quo <- if (is.character(arg_old)) sprintf("\"%s\"", arg_old) else arg_old
-            msg <- gettextf("    cmd_assign : setting '%s' to %s",
-                            nm,
-                            arg_old_quo)
+            if (is.character(arg_old))
+                msg <- "setting '%s' to character string \"%s\""
+            else if (is.logical(arg_old))
+                msg <- "setting '%s' to logical %s"
+            else if (is.integer(arg_old))
+                msg <- "setting '%s' to integer %s"
+            else if (is.double(arg_old))
+                msg <- "setting '%s' to double %s"
+            else
+                stop(gettextf("argument '%s' has unexpected class : \"%s\"",
+                              nm, class(arg_old)),
+                     call. = FALSE)
         }
+        msg <- gettextf("    cmd_assign : %s", msg)
+        msg <- gettextf(msg, nm, arg_old)
         message(msg)
     }
     invisible(args_new)

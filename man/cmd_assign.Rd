@@ -7,103 +7,131 @@
 cmd_assign(...)
 }
 \arguments{
-\item{...}{Names and values for arguments.}
+\item{...}{Name-value pairs.}
 }
 \value{
-code{cmd_assign} returns a named list of objects
-invisibly, but is normally called for its side effect,
-which is to create objects in the current environment.
+\code{cmd_assign()} invisible returns
+a named list of objects, but is normally called
+for its side effect, which is to create objects
+in the current environment.
 }
 \description{
 Create objects in the current environment
-based on values passed at the command line.
+based on arguments passed at the command line.
+Makes running a script a little like calling
+a function.
 }
-\section{Session invoked from a command line}{
-or on values supplied via \dots.
+\section{Types of session}{
+The behaviour of \code{cmd_assign()} depends on the
+type of session.
+\subsection{Sessions invoked from a command line}{
 
-The behaviour of \code{file_args} depends the
-on the type of R session it is called from:
-(i) an interactive session, or (ii) a session
-invoked from the command line, e.g
-via \code{\link[utils]{Rscript}}. The typical
-pattern is to use interactive sessions
-when first developing an R script, and
-then to call use the command line when the
-code is mature.
-
-In an interactive session, \code{file_args}
-creates values based on the default values
-specified in \dots. In a session
-invoked from the command
-line, \code{file_args} creates values based on
-arguments passed at the command line.
-When processing arguments passed at the command
-line, \code{file_args} assigns names to values
-in much the same way that R does when it
-processes a function call. If an argument
-is named when it is passed at the command line,
-then it keeps that name. If an argument is
-unnamed, then it gets the first unassigned
-name in \dots.
-
-\code{file_args} assumes that named arguments passed
-at the command line have the form
-\itemize{
-\item \code{-<single-letter>=<value>}
-e.g. \code{-n=10} or \code{-f=params.rds}, or
-\item \code{--<name>=<value>}
-e.g. \code{--nchains=10} or
-\code{--filename=params.rds},
+\code{cmd_assign()} is typically used in scripts that
+are launched from the command line, eg via
+\code{\link[utils:Rscript]{utils::Rscript()}}. \code{cmd_assign()} uses
+command line arguments that are passed when
+the script is launched to create objects in
+the current environment.
 }
-or some combination of the two. (Note that there are
-no spaces around the \code{=} sign.) \code{cmd_assign}
-processes arguments with one dash and arguments
-with two dashes the same way.
 
-\code{cmd_assign} potentially treats filenames with an
-\code{.rds} extension differently from other filenames.
-If \code{cmd_assign} sees that a filename has
-a \code{.rds} extension, it checks whether the
-argunment name in \dots starts with \code{"p_"},
-\code{"p."} or \code{"p<capital letter>"}.
-If it does, then \code{cmd_assign}
-proceeds as normal, and assigns the filename
-in the the name in the current environment. If
-it does not, then \code{cmd_assign} actually
-loads the file, using function
-\code{\link[base]{readRDS}}.For instance,
-in an interactive session,
+\subsection{Interactive sessions}{
 
-\code{cmd_assign(out = "p_myfile.rds")}
+\code{cmd_assign()} can also be used interactively,
+which is useful when developing or testing code.
+When used interactively, \code{cmd_assign()}
+relies on defaults specified via ... .
+}
+}
 
-is equivalent to
+\section{How arguments are processed}{
+\subsection{Matching names to arguments}{
 
-\code{p_out <- "myfile.rds"}
+The way that \code{cmd_assign} matches values supplied
+at the command line to names specified in the call
+to \code{cmd_assign} is loosely based of the way that R
+matches values supplied in a function call
+to names specified in the function definition.
 
-while
+\code{cmd_assign} begins by identifying values
+passed at the command line that are named.
+\code{cmd_assign()} treats a value as named
+if it has the form
 
-\code{cmd_assign(out = "myfile.rds")}
+\verb{-<single-letter>=<value>}
 
-is equivalent to
+or
 
-\code{out <- readRDS("myfile.rds")}.
+\verb{--<name>=<value>}
 
-(The "p" is short for "path" or "pointer".)
+(note that there are no spaces around the \code{=}.)
+Examples are \code{-n=100} and \code{--n_iteration=100}.
+
+If a named argument is supplied at the command line
+but that name was not specified in the call to
+\verb{cmd_assign(), then }cmd_assign()` raises an error.
+
+Once it has matched all the named command line
+arguments, \code{cmd_assign()} matches unnamed command
+line arguments to the remaining names in
+.... As with R function calls, unnamed arguments
+are matched in the order that they appear.
+
+Every argument that is specified in the
+call to \code{cmd_assign()} must be supplied with
+a value at the command line. If no value is
+supplied, \code{cmd_assign()} does not fall back
+on the default, but instead raises an error.
+}
+
+\subsection{Creating objects}{
+
+A command line argument is just a character string.
+There are two circumstances in which \code{cmd_assign()}
+converts the string into something else:
+\enumerate{
+\item If the string is the file path for an \code{.rds} file,
+and the file path does not start with \code{"p_"}, \code{"p."}
+or \code{"p<capital letter>"}, then \code{cmd_assign()} loads
+the file.
+\item If the default argument is a logical, integer or
+double, then \code{cmd_assign} will try to convert the
+string to the same type.
+}
+
+Otherwise \code{cmd_assign()} leaves the string untouched.
+}
+}
+
+\section{More information}{
+For examples of the use of \code{cmd_assign()},
+plus discussion of how \code{cmd_assign} can fit
+into a data analysis workflow,
+see NAME OF VIGNETTE.
 }
 
 \examples{
-\dontrun{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+## Running
 cmd_assign(p_inputs = "data/inputs.csv",
-          fitted_values = "out/fitted_values.rds",
-          variant = "low",
-          size = 12,
-          p_outfile = "out/model_summary.rds")
-}
+           fitted_values = "out/fitted_values.rds",
+           variant = "low",
+           size = 12)
+## in an interactive session is equivalent to
+p_inputs <- "data/inputs.csv"
+fitted_valus <- readRDS("out/fitted_values.rds")
+variant <- low
+size <- 12
+## If the script containing the lines above
+## is run from the command line, then
+## "data/inputs.csv", "out/fitted_values.rds",
+## "low", and 12 are replaced by values
+## passed at the command line.
+\dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{cmd_assign} uses function
-\code{\link[base]{interactive}} to decide
-whether a function is interactive. It uses
-function \code{\link[base]{commandArgs}}
-to access command line arguments.
+Internally, \code{cmd_assign()} uses
+\code{\link[base:interactive]{base::interactive()}} to decide whether
+the current session is interactive, and uses
+\code{\link[base:commandArgs]{base::commandArgs()}} to access command line
+arguments.
 }

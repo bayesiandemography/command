@@ -40,7 +40,9 @@ test_that("'cmd_assign' works with valid arguments - interactively", {
         dir.create(dir_tmp)
         setwd(dir_tmp)
         saveRDS(1:5, file = "obj.rds")
-        cmd_assign(obj = "obj.rds", n = 2, named = 'goodbye')
+        suppressMessages(
+            cmd_assign(obj = "obj.rds", n = 2, named = 'goodbye')
+        )
         setwd(dir_curr)
         unlink(dir_tmp, recursive = TRUE)
         rm(dir_curr, dir_tmp)
