@@ -87,11 +87,11 @@ assign_args <- function(args_new, args_old, envir) {
                 msg <- "setting '%s' to integer %s"
             else if (is.double(arg_old))
                 msg <- "setting '%s' to double %s"
-            else
-                stop(gettextf("argument '%s' has unexpected class : \"%s\"",
-                              nm, class(arg_old)),
-                     call. = FALSE)
-        }
+            else                                                             # nocov
+                stop(gettextf("argument '%s' has unexpected class : \"%s\"", # nocov
+                              nm, class(arg_old)),                           # nocov
+                     call. = FALSE)                                          # nocov
+        }                    
         msg <- gettextf("    cmd_assign : %s", msg)
         msg <- gettextf(msg, nm, arg_old)
         message(msg)

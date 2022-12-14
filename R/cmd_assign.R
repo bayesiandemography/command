@@ -110,7 +110,7 @@ cmd_assign <- function(...) {
     args_dots <- list(...)
     check_args_dots(args_dots)
     if (interactive())
-        args <- args_dots
+        args <- args_dots # nocov
     else {
         args_cmd <- get_args_cmd()
         check_args_cmd(args_cmd = args_cmd,
