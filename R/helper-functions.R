@@ -76,11 +76,11 @@ assign_args <- function(args_new, args_old, envir) {
                envir = envir)
         replaced_rds <- !identical(arg_new, arg_old)
         if (replaced_rds) {
-            msg <- "setting '%s' to object in \"%s\""
+            msg <- "setting '%s' to contents of \"%s\""
         }
         else {
             if (is.character(arg_old))
-                msg <- "setting '%s' to character string \"%s\""
+                msg <- "setting '%s' to string \"%s\""
             else if (is.logical(arg_old))
                 msg <- "setting '%s' to logical %s"
             else if (is.integer(arg_old))
@@ -210,7 +210,11 @@ coerce_to_dots_class <- function(args_cmd, args_dots) {
         val_cmd_new <- suppressWarnings(methods::as(val_cmd_old, class_dots))
         cannot_coerce <- !identical(val_cmd_new, val_cmd_old) && is.na(val_cmd_new)
         if (cannot_coerce) {
-            val_quoted <- if (is.character(val_cmd_old)) sprintf('"%s"', val_cmd_old) else val_cmd_old
+            add_hint <- FALSE
+            if (is.character(val_cmd_old)) {
+                val_cmd_old <-  sprintf('"%s"', val_cmd_old)
+                add_hint <- grepl("^[^-].+=.+$", val_cmd_old)
+            }
             msg <- gettextf(paste("value for '%s' in call to '%s' has class \"%s\",",
                                   "but value for '%s' passed at command line [%s]",
                                   "cannot be coerced to class \"%s\""),
@@ -218,8 +222,11 @@ coerce_to_dots_class <- function(args_cmd, args_dots) {
                             "cmd_assign",
                             class_dots,
                             nms[[i]],
-                            val_quoted,
+                            val_cmd_old,
                             class_dots)
+            if (add_hint)
+                msg <- gettextf("%s : is %s a malformed named argument?",
+                                msg, val_cmd_old)
             stop(msg, call. = FALSE)
         }
         args_cmd[[i]] <- val_cmd_new

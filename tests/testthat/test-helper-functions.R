@@ -143,6 +143,18 @@ test_that("'coerce_to_dots_class' throws correct error when cannot coerce", {
                        "cannot be coerced to class \"numeric\""))
 })
 
+test_that("'coerce_to_dots_class' throws correct error when cannot coerce - with hint", {
+    args_cmd <- list(a = "TRUE", b = "1", c = "c=1", d = "1")
+    args_dots <- list(a = NA, b = 1L, c = 1, d = "1")
+    expect_error(coerce_to_dots_class(args_cmd = args_cmd,
+                                      args_dots = args_dots),
+                 paste("value for 'c' in call to 'cmd_assign' has class \"numeric\",",
+                       "but value for 'c' passed at command line \\[\"c=1\"\\]",
+                       "cannot be coerced to class \"numeric\"",
+                       ": is \"c=1\" a malformed named argument?"))
+})
+
+
 
 ## 'get_args_cmd' -------------------------------------------------------------
 
@@ -153,7 +165,7 @@ test_that("'get_args_cmd' works with valid inputs", {
         unlink(dir_tmp, recursive = TRUE)
     dir.create(dir_tmp)
     setwd(dir_tmp)
-    writeLines(c("args <- argfun:::get_args_cmd()",
+    writeLines(c("args <- command:::get_args_cmd()",
                  "saveRDS(args, file = 'args.rds')"),
                con = "script.R")
     cmd <- sprintf("%s/bin/Rscript script.R unnamed1 -n=1 unnamed2 --named=hello", R.home())
@@ -171,7 +183,7 @@ test_that("'get_args_cmd' works when no arguments passed", {
         unlink(dir_tmp, recursive = TRUE)
     dir.create(dir_tmp)
     setwd(dir_tmp)
-    writeLines(c("args <- argfun:::get_args_cmd()",
+    writeLines(c("args <- command:::get_args_cmd()",
                  "saveRDS(args, file = 'args.rds')"),
                con = "script.R")
     cmd <- sprintf("%s/bin/Rscript script.R", R.home())
