@@ -16,4 +16,23 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(command)
+library(fs)
 ```
+
+```{r, root_dir}
+root_dir <- system.file("extdata/swiss_fertility", 
+                        package = "command")
+dir_tree(root_dir)
+```
+
+
+```{r, echo = FALSE, comment = ""}
+cat(readLines(file.path(root_dir, "run_all.sh")), sep = "\n")
+```
+
+
+
+```{r, echo = FALSE}
+cat(readLines(file.path(root_dir, "src", "dataset.R")), sep = "\n")
+```
+
