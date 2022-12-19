@@ -262,16 +262,20 @@ get_args_cmd <- function() {
 }
 
 
-#' Test whether 'x' is a object name starting
-#' with "p" suffix
+#' Test whether 'x' is the name of an
+#' object that should not be loaded
+#'
+#' Test whether 'x' is the name of an
+#' object that should not be loaded,
+#' even when it has an '.rds' extension
 #'
 #' @param A character or numeric vector of length 1.
 #'
 #' @return TRUE or FALSE.
 #'
 #' @noRd
-is_p_objname <- function(x) {
-    grepl("^p_|^p\\.|^p[A-Z]", x)
+is_noload_objname <- function(x) {
+    grepl("^\\.", x)
 }
 
 
@@ -311,7 +315,7 @@ replace_rds_with_obj <- function(args) {
     for (i in seq_along(args)) {
         nm_old <- nms_args[[i]]
         value_old <- args[[i]]
-        is_replace <- is_rds_filename(value_old) && !is_p_objname(nm_old)
+        is_replace <- is_rds_filename(value_old) && !is_noload_objname(nm_old)
         if (is_replace) {
             value_new <- tryCatch(suppressWarnings(readRDS(value_old)),
                                   error = function(e) e)

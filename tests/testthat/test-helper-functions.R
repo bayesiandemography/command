@@ -195,19 +195,16 @@ test_that("'get_args_cmd' works when no arguments passed", {
 })
 
 
-## 'is_p_objname' -------------------------------------------------------------
+## 'is_noload_objname' --------------------------------------------------------
 
-test_that("'is_p_objname' returns TRUE when 'x' starts a p suffix", {
-    expect_true(is_p_objname("p_obj"))
-    expect_true(is_p_objname("p.obj"))
-    expect_true(is_p_objname("pObj"))
+test_that("'is_noload_objname' returns TRUE when 'x' starts a .", {
+    expect_true(is_noload_objname(".obj"))
+    expect_true(is_noload_objname("....obj"))
 })
 
-test_that("'is_p_objname' returns FALSE when 'x' does not start with a p suffix", {
-    expect_false(is_p_objname(1L))
-    expect_false(is_p_objname("P_obj"))
-    expect_false(is_p_objname("pp.obj"))
-    expect_false(is_p_objname("pobj"))
+test_that("'is_noload_objname' returns FALSE when 'x' does not start with a .", {
+    expect_false(is_noload_objname(1L))
+    expect_false(is_noload_objname("p_obj"))
 })
 
 
@@ -247,8 +244,8 @@ test_that("'replace_rds_with_obj' works with valid inputs", {
     expect_identical(ans_obtained, ans_expected)
 })
 
-test_that("'replace_rds_with_obj' ignores names with p suffix", {
-    args <- list(p_a = "fname.rds", p.b = "fname.rds", pC = "fname.rds")
+test_that("'replace_rds_with_obj' ignores names with . suffix", {
+    args <- list(a = "fname.csv", .b = "fname.rds")
     expect_identical(replace_rds_with_obj(args),
                      args)
 })

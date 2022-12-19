@@ -19,6 +19,42 @@ library(command)
 library(fs)
 ```
 
+
+# The problem of writing safe, flexible data analysis code
+
+- classic example: big file
+    - difficult to understand
+    - slow or confusing/unreliable - have to re-run
+    - difficult to debug
+- split into logical parts (modular), then source
+    - helps
+    - but doesn't totally solve - confusing environment
+- better: break into pieces, and run each in own environment
+- a bit like functions (but without global environment)
+- push harder - make inputs outputs completely transparenet
+
+    have to re-run - slow
+    - 
+    - difficult to change
+    - polluted environment
+- classic software solution: break into small files
+- but if 
+- how to run them?
+
+[https://stemurphy.com/post/rep_manu_think_about/]
+
+# Other solutions
+
+- commandArgs
+- docopt
+- other?
+
+
+
+
+
+
+
 ```{r, root_dir}
 root_dir <- system.file("extdata/swiss_fertility", 
                         package = "command")
