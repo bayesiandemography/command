@@ -10,7 +10,7 @@ cmd_assign(...)
 \item{...}{Name-value pairs.}
 }
 \value{
-\code{cmd_assign()} is normally called
+\code{cmd_assign()} is called
 for its side effect, which is to create objects
 in the current environment. However, \code{cmd_assign()}
 also invisibly returns a named list of objects.
@@ -18,15 +18,27 @@ also invisibly returns a named list of objects.
 \description{
 Create objects in the current environment,
 based on arguments passed at the command line.
+For instance, if a script 'tidy_data.R' contains the
+lines
+
+\code{cmd_assign(raw_data = "raw_data.rds", unit = "kg")}
+
+is run at the command line using
+
+\verb{Rscript tidy_data.R raw_data.rds --unit=kg}
+
+then objects called \code{raw_data} and \code{unit} are
+created in the current environment.
 }
 \section{Types of session}{
-\code{cmd_assign()} behaves different depending on how it is called:
+\code{cmd_assign()} behaves differently depending
+on how it is called:
 \itemize{
-\item If \code{cmd_assign()} is called in a script that is
-being run from the command line, then it uses
-values that were passed at the command line.
+\item If \code{cmd_assign()} is called inside a script
+being run from the command line, it processes
+values passed at the command line.
 \item If \code{cmd_assign()} is called in an interactive
-session, then it uses default values.
+session, it reverts to defaults.
 }
 
 \code{cmd_assign()} is typically used interactively
@@ -35,33 +47,20 @@ line mode once the code is mature.
 }
 
 \section{Matching names and values}{
-\code{cmd_assign()} starts by processing named arguments.
-\code{cmd_assign()} treats an argument as named
-if the argument has the form
+When used in command line mode, \code{cmd_assign()}
+first processes named command-line arguments,
+and then processes unnamed command-line arguments.
 
-\verb{-<single-letter>=<value>}
+\code{cmd_assign()} treats a command-line argument as named
+if the argument has the form \verb{-<single-letter>=<value>},
+eg \code{-n=100}, or \verb{--<name>=<value>},
+eg \code{--n_iteration=100}. (Note that there are no
+spaces around the equals signs.)
 
-or
+\code{cmd_assign()} matches unnamed in the order
+in which they appear.
 
-\verb{--<name>=<value>}
-
-for instance
-
-\code{-n=100}
-
-or
-
-\code{--n_iteration=100}
-
-(Note that there are no spaces around the
-equals signs.)
-
-Once \code{cmd_assign()} has processed named
-command line arguments, it matches unnamed
-arguments to unused names in the call to
-\code{cmd_assign()}.
-
-Consider, for instance, the script \code{analysis.R}
+If, for instance, the script \code{analysis.R}
 containing the lines
 
 \if{html}{\out{<div class="sourceCode R">}}\preformatted{cmd_assign(data = "person.csv",
@@ -69,30 +68,33 @@ containing the lines
            max_age = 85)
 }\if{html}{\out{</div>}}
 
-If \code{analysis.R} is launched from the
-command line using
+is launched from the command line using
 
 \if{html}{\out{<div class="sourceCode R">}}\preformatted{Rscript analysis.R --max_age=90 person.csv --impute=TRUE
 }\if{html}{\out{</div>}}
 
-then \code{cmd_assign()} will proceed as follows
+then \code{cmd_assign()} will proceed as follows:
+\enumerate{
+\item Named command-line arguments
 \itemize{
-\item look for a named command line argument \code{impute},
-and, in R, assign the name \code{impute} to whatever
-value was passed (\code{"TRUE"} in this case)
-\item look for a named command line argument \code{max_age},
-and, in R, assign the name \code{max_age} to whatever
-value was passed (\code{"90"} in this case)
-\item look for an unnamed command line argument,
-and, in R, assign the name \code{data} to whatever
-value was passed (\code{"person.csv"} in this case).
+\item \code{--max_age=90}. Look in the call to \code{cmd_assign()}
+for an argument called \code{max_age}. If there is  one,
+create an object called \code{max_age} holding the value
+\code{90}. If not, raise an error.
+\item \code{--impute=TRUE}. Look in the call to \code{cmd_assign()}
+for an argument called \code{imput}. If there is one,
+create an object called \code{impute} holding the value
+\code{TRUE}. If not, raise an error.
 }
-
-\code{cmd_assign()} only reverts to defaults when
-it is in interactive mode. When it is
-in command line mode, every
-\code{cmd_assign()}
-must be supplied with a value at the command line.
+\item Unnamed command-line arguments
+\itemize{
+\item \code{person.csv}. Count the number of unused name-value
+pairs from the call to \code{cmd_assign()}. If there is
+exactly one, then create use the name from that
+pair to create an object holding the value
+\code{"person.csv"}. If not, raise an error.
+}
+}
 }
 
 \section{Creating objects}{
