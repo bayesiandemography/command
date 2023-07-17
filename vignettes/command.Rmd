@@ -20,6 +20,12 @@ library(fs)
 ```
 
 
+
+The only way to write complex software that won't fall on its face is to build it out of simple modules connected by well-defined interfaces, so that most problems are local and you can have some hope of fixing or optimizing a part without breaking the whole.
+http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html
+
+
+
 # The problem of writing safe, flexible data analysis code
 
 - classic example: big file
