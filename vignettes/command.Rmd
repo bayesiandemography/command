@@ -58,6 +58,10 @@ http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html
 
 
 
+https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R.html
+
+"Another way you can be explicit about the requirements of your code and improve it’s reproducibility is to limit the “hard-coding” of the input and output files for your script. If your code will read in data from a file, define a variable early in your code that stores the path to that file. For example"
+
 
 
 
