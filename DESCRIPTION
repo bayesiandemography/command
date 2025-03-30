@@ -1,21 +1,25 @@
 Package: command
 Type: Package
 Title: Process Command Line Arguments in a Function-Like Way
-Version: 0.0.0.9000
+Version: 0.1.0
 Author: John Bryant
-Maintainer: John Bryant <john@bayesiandemography.com>
+Authors@R: 
+    c(person(given = "John",
+             family = "Bryant",
+             role = c("aut", "cre"),
+             email = "john@bayesiandemography.com"),
+      person(given = "Bayesian Demography Limited",
+             role = "cph"))
 Description: Create objects in the current environment
     based on arguments passed at the command line.
-    Allows scripts to behave like functions, which
-    can make workflows clearer and safer.
+    Allows scripts to behave like functions, making
+    analysis pipelines clearer and safer.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
 Imports:
-    checkmate,
-    methods,
-    tools
+    cli,
+    methods
 Suggests: 
     covr,
     fs,
@@ -23,5 +27,7 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+

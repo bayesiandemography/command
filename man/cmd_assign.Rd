@@ -18,7 +18,7 @@ also invisibly returns a named list of objects.
 \description{
 Create objects in the current environment,
 based on arguments passed at the command line.
-For instance, if a script 'tidy_data.R' contains the
+For instance, if a script \code{tidy_data.R} containing the
 lines
 
 \code{cmd_assign(raw_data = "raw_data.rds", unit = "kg")}
@@ -38,7 +38,7 @@ on how it is called:
 being run from the command line, it processes
 values passed at the command line.
 \item If \code{cmd_assign()} is called in an interactive
-session, it reverts to defaults.
+session, it uses the name-value pairs from the call.
 }
 
 \code{cmd_assign()} is typically used interactively
@@ -57,8 +57,8 @@ eg \code{-n=100}, or \verb{--<name>=<value>},
 eg \code{--n_iteration=100}. (Note that there are no
 spaces around the equals signs.)
 
-\code{cmd_assign()} matches unnamed in the order
-in which they appear.
+\code{cmd_assign()} matches unnamed command line arguments
+in the order in which they appear.
 
 If, for instance, the script \code{analysis.R}
 containing the lines
@@ -73,7 +73,7 @@ is launched from the command line using
 \if{html}{\out{<div class="sourceCode R">}}\preformatted{Rscript analysis.R --max_age=90 person.csv --impute=TRUE
 }\if{html}{\out{</div>}}
 
-then \code{cmd_assign()} will proceed as follows:
+then \code{cmd_assign()} proceeds as follows:
 \enumerate{
 \item Named command-line arguments
 \itemize{
@@ -82,7 +82,7 @@ for an argument called \code{max_age}. If there is  one,
 create an object called \code{max_age} holding the value
 \code{90}. If not, raise an error.
 \item \code{--impute=TRUE}. Look in the call to \code{cmd_assign()}
-for an argument called \code{imput}. If there is one,
+for an argument called \code{impute}. If there is one,
 create an object called \code{impute} holding the value
 \code{TRUE}. If not, raise an error.
 }
@@ -90,9 +90,9 @@ create an object called \code{impute} holding the value
 \itemize{
 \item \code{person.csv}. Count the number of unused name-value
 pairs from the call to \code{cmd_assign()}. If there is
-exactly one, then create use the name from that
-pair to create an object holding the value
-\code{"person.csv"}. If not, raise an error.
+exactly one, create an object with that name
+holding the value \code{"person.csv"}. If not,
+raise an error.
 }
 }
 }
@@ -101,13 +101,13 @@ pair to create an object holding the value
 The way that an object is created in the
 current R environment depends on the
 type of value passed at the command line
-and/or the value supplied as a default.
+and sometimes on the value supplied as a default.
 \subsection{Value looks like a \code{.rds} file path}{
 
 If the value looks like the file path
 for an \code{.rds} object (ie an object created
 by a function  such as \link[base:readRDS]{base::saveRDS}),
-then \code{cmd_assign()} tries to load the file.
+then \code{cmd_assign()} tries to load the \code{.rds} file.
 For instance, in an interactive session,
 
 \code{cmd_assign(costs = "costs.rds")}
@@ -117,8 +117,8 @@ is equivalent to
 \code{costs <- readRDS("costs.rds")}
 
 To avoid automatically loading an \code{.rds}
-file, give the argument
-a name starting with a dot. For instance,
+file, give the argument a name  that starts
+with a dot. For instance,
 in an interactive session,
 
 \code{cmd_assign(.costs = "costs.rds")}
@@ -151,16 +151,9 @@ x_dbl <- 2.718
 \subsection{Everything else}{
 
 Otherwise, arguments passed at the command line
-are simply copied into the current environment,
+are copied into the current environment,
 as named strings.
 }
-}
-
-\section{More information}{
-The vignette \code{vignette("command")}
-gives examples of the use of \code{cmd_assign()},
-and discusses how \code{cmd_assign} can be used in the
-workflow for a data analysis.
 }
 
 \examples{
@@ -177,8 +170,15 @@ size <- 12.2
 }
 }
 \seealso{
+The vignette \code{vignette("command")}
+gives examples of the use of \code{cmd_assign()},
+and discusses how \code{cmd_assign} can be used in the
+workflow for a data analysis.#'
+
 Function \code{\link[utils:Rscript]{utils::Rscript()}} and
-package \code{littler} can be used to run
+package
+\href{https://CRAN.R-project.org/package=littler}{littler}
+can be used to run R
 scripts from the command line.
 
 Internally, \code{cmd_assign()} uses

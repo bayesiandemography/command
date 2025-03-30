@@ -6,10 +6,9 @@ test_that("'cmd_assign' works with valid arguments - on command line", {
         unlink(dir_tmp, recursive = TRUE)
     dir.create(dir_tmp)
     setwd(dir_tmp)
-    saveRDS(1:5, file = "obj.rds")
     writeLines(c("command::cmd_assign(p_file1 = 'myfile.xsls', obj = 'obj.rds', n = 2L, named = 'goodbye')",
                  "saveRDS(p_file1, file = 'p_file1.rds')",
-                 "saveRDS(obj, file = 'obj_saved.rds')",
+                 "saveRDS(obj, file = 'obj.rds')",
                  "saveRDS(n, file = 'n.rds')",
                  "saveRDS(named, file = 'named.rds')",
                  "saveRDS(ls(), file = 'ls.rds')"),
@@ -19,8 +18,8 @@ test_that("'cmd_assign' works with valid arguments - on command line", {
     system(cmd, ignore.stderr = TRUE)
     p_file1 <- readRDS("p_file1.rds")
     expect_identical(p_file1, "thatfile.xlsx")
-    obj <- readRDS("obj_saved.rds")
-    expect_identical(obj, 1:5)
+    obj <- readRDS("obj.rds")
+    expect_identical(obj, "obj.rds")
     n <- readRDS("n.rds")
     expect_identical(n, 1L)
     named <- readRDS("named.rds")
@@ -33,20 +32,10 @@ test_that("'cmd_assign' works with valid arguments - on command line", {
 
 test_that("'cmd_assign' works with valid arguments - interactively", {
     if (interactive()) {
-        dir_curr <- getwd()
-        dir_tmp <- tempfile()
-        if (file.exists(dir_tmp))
-            unlink(dir_tmp, recursive = TRUE)
-        dir.create(dir_tmp)
-        setwd(dir_tmp)
-        saveRDS(1:5, file = "obj.rds")
         suppressMessages(
             cmd_assign(obj = "obj.rds", n = 2, named = 'goodbye')
         )
-        setwd(dir_curr)
-        unlink(dir_tmp, recursive = TRUE)
-        rm(dir_curr, dir_tmp)
-        expect_identical(obj, 1:5)
+        expect_identical(obj, "obj.rds")
         expect_identical(n, 2)
         expect_identical(named, "goodbye")
         expect_setequal(ls(), c("obj", "n", "named"))

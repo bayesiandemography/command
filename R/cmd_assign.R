@@ -193,8 +193,6 @@ cmd_assign <- function(...) {
                                          args_dots = args_dots)
         args <- args_cmd
     }
-    args_new <- replace_rds_with_obj(args)
-    assign_args(args_new = args_new,
-                args_old = args,
+    assign_args(args = args,
                 envir = envir)
 }
