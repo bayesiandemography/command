@@ -1,10 +1,5 @@
 ---
 title: "Quick-Start Guide"
-output: rmarkdown::html_document
-vignette: >
-  %\VignetteIndexEntry{Quick-Start Guide}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -19,9 +14,15 @@ dir_copy(path = path_airmiles,
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  engine.opts = "-l",
   comment = ""
 )
 ```
+
+```{r, include = FALSE}
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
+```
+
 
 # Introduction
 
@@ -52,8 +53,10 @@ library(fs)
 
 - Run script as normal
 
-```{r}
-dir_tree()
+
+
+```{r, echo = FALSE}
+dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
 
 ```{r, comment = "", echo = FALSE}
@@ -65,20 +68,24 @@ cat(readLines("src/fig_smoothed.R"), sep = "\n")
 
 
 ```{r}
-dir_tree(regexp = "quickstart|workflow|html", invert = TRUE)
+dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
 
-```{r}
-#knitr::include_graphics("out/fig_smoothed.png")
+```{bash}
+Rscript src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed.png
 ```
 
+```{r, echo = FALSE}
+setwd("out")
+knitr::include_graphics("fig_smoothed.png")
+```
 
 ```{r}
 system2("Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png")
 ```
 
 ```{r}
-dir_tree()
+dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
 
 
