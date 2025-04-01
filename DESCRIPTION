@@ -22,7 +22,9 @@ Imports:
     methods
 Suggests: 
     covr,
+    dplyr,
     fs,
+    ggplot2,
     knitr,
     magick,
     pdftools,
