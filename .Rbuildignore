@@ -6,3 +6,8 @@
 sample_code.R
 ^\.github$
 ^codecov\.yml$
+^doc$
+^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

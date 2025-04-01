@@ -17,6 +17,13 @@ gives examples, and discusses how \code{cmd_assign()} can
 be used to make a data analysis workflow safer
 and more modular.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://bayesiandemography.github.io/command/}
+}
+
+}
 \author{
 \strong{Maintainer}: John Bryant \email{john@bayesiandemography.com}
 

@@ -74,7 +74,7 @@ assign_args <- function(args, envir) {
            envir = envir)
     nm <- sprintf("`%s`", nm)
     nm <- cli::col_blue(nm)
-    msg <- "{.fun cmd_assign} creating object {nm} with value {.val {arg}} and class {.val {class(arg)}}"
+    msg <- "{.fun cmd_assign} created {nm} with value {.val {arg}} and class {.val {class(arg)}}"
     cli::cli_alert_success(msg)
   }
   invisible(args)

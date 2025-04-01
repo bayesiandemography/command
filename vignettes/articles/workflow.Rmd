@@ -1,11 +1,20 @@
 ---
-title: "command"
-output: rmarkdown::html_vignette
+title: "Using 'command' in a Data Analysis Workflow"
+output:
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
+    fig_caption: yes
+    toc: true
+    toc_depth: 2
+    number_sections: true
+pkgdown:
+  as_is: true
 vignette: >
-  %\VignetteIndexEntry{command}
+  %\VignetteIndexEntry{Using 'command' in a Data Analysis Workflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -23,6 +32,10 @@ library(fs)
 
 The only way to write complex software that won't fall on its face is to build it out of simple modules connected by well-defined interfaces, so that most problems are local and you can have some hope of fixing or optimizing a part without breaking the whole.
 http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html
+
+https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R.html
+
+"Another way you can be explicit about the requirements of your code and improve it’s reproducibility is to limit the “hard-coding” of the input and output files for your script. If your code will read in data from a file, define a variable early in your code that stores the path to that file. For example"
 
 
 
@@ -56,29 +69,8 @@ http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html
 - other?
 
 
+Principles of file organization
 
-
-https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R.html
-
-"Another way you can be explicit about the requirements of your code and improve it’s reproducibility is to limit the “hard-coding” of the input and output files for your script. If your code will read in data from a file, define a variable early in your code that stores the path to that file. For example"
-
-
-
-
-```{r, root_dir}
-root_dir <- system.file("extdata/swiss_fertility", 
-                        package = "command")
-dir_tree(root_dir)
-```
-
-
-```{r, echo = FALSE, comment = ""}
-cat(readLines(file.path(root_dir, "run_all.sh")), sep = "\n")
-```
-
-
-
-```{r, echo = FALSE}
-cat(readLines(file.path(root_dir, "src", "dataset.R")), sep = "\n")
-```
-
+- don't distinguish intermediate and final outputs (everything in out)
+- don't number files
+- 

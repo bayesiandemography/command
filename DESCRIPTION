@@ -24,10 +24,13 @@ Suggests:
     covr,
     fs,
     knitr,
+    magick,
+    pdftools,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-
+Config/Needs/website: rmarkdown
+URL: https://bayesiandemography.github.io/command/
