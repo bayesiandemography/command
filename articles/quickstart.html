@@ -106,17 +106,16 @@ e.g. <code>as.POSIXlt("2015-11-03 14:23:03")</code>
 <ul>
 <li>Run script as normal</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">dir_tree</span>()</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a> [<span class="dv">01</span>;<span class="dv">34</span>m. [<span class="dv">0</span>m</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>├── Makefile</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">34</span>mdata [<span class="dv">0</span>m</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>│   └── airmiles.csv</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>├──  [<span class="dv">32</span>mquickstart.Rmd [<span class="dv">0</span>m</span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>├──  [<span class="dv">32</span>mreport_smooth.Rmd [<span class="dv">0</span>m</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">32</span>mrun_all.sh [<span class="dv">0</span>m</span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">34</span>msrc [<span class="dv">0</span>m</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>│   └──  [<span class="dv">32</span>mfig_smoothed.R [<span class="dv">0</span>m</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>└──  [<span class="dv">32</span>mworkflow.Rmd [<span class="dv">0</span>m</span></code></pre></div>
+<pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
+├── Makefile
+├── <span style="color: #0000BB; font-weight: bold;">data</span>
+│   └── airmiles.csv
+├── <span style="color: #0000BB; font-weight: bold;">out</span>
+├── <span style="color: #00BB00;">report_smooth.Rmd</span>
+├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
+└── <span style="color: #0000BB; font-weight: bold;">src</span>
+    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+</code></pre>
 <pre><code>year,passengers
 1937,412
 1938,480
@@ -147,13 +146,13 @@ e.g. <code>as.POSIXlt("2015-11-03 14:23:03")</code>
 <span></span>
 <span><span class="co">## smooth passenger series</span></span>
 <span><span class="va">smoothed</span> <span class="op">&lt;-</span> <span class="va">airmiles</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>smoothed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/smooth.spline.html" class="external-link">smooth.spline</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">passengers</span>, nknots <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>smoothed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/smooth.spline.html" class="external-link">smooth.spline</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">passengers</span>, nknots <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## create a plot</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">smoothed</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">smoothed</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">passengers</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Smoothed using"</span>, <span class="va">n</span>, <span class="st">"knots"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">smoothed</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">smoothed</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">passengers</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Smoothed using"</span>, <span class="va">n</span>, <span class="st">"knots"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## write the plot to a png file</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">.out</span>,</span>
@@ -161,32 +160,52 @@ e.g. <code>as.POSIXlt("2015-11-03 14:23:03")</code>
 <span>    height <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">dir_tree</span>(<span class="at">regexp =</span> <span class="st">"quickstart|workflow|html"</span>, <span class="at">invert =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a> [<span class="dv">01</span>;<span class="dv">34</span>m. [<span class="dv">0</span>m</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>├── Makefile</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">34</span>mdata [<span class="dv">0</span>m</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>│   └── airmiles.csv</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>├──  [<span class="dv">32</span>mreport_smooth.Rmd [<span class="dv">0</span>m</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">32</span>mrun_all.sh [<span class="dv">0</span>m</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>└──  [<span class="dv">01</span>;<span class="dv">34</span>msrc [<span class="dv">0</span>m</span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>    └──  [<span class="dv">32</span>mfig_smoothed.R [<span class="dv">0</span>m</span></code></pre></div>
+<pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
+├── Makefile
+├── <span style="color: #0000BB; font-weight: bold;">data</span>
+│   └── airmiles.csv
+├── <span style="color: #0000BB; font-weight: bold;">out</span>
+├── <span style="color: #00BB00;">report_smooth.Rmd</span>
+├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
+└── <span style="color: #0000BB; font-weight: bold;">src</span>
+    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">Rscript</span> src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed.png</span></code></pre></div>
+<pre class="fansi fansi-output"><code><span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.airmiles`</span> with value <span style="color: #0000BB;">"data/airmiles.csv"</span> and class <span style="color: #0000BB;">"character"</span>
+<span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`n`</span> with value <span style="color: #0000BB;">10</span> and class <span style="color: #0000BB;">"numeric"</span>
+<span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.out`</span> with value <span style="color: #0000BB;">"out/fig_smoothed.png"</span> and class <span style="color: #0000BB;">"character"</span>
+null device 
+          1 
+</code></pre>
+<pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
+├── Makefile
+├── <span style="color: #0000BB; font-weight: bold;">data</span>
+│   └── airmiles.csv
+├── <span style="color: #0000BB; font-weight: bold;">out</span>
+│   └── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
+├── <span style="color: #00BB00;">report_smooth.Rmd</span>
+├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
+└── <span style="color: #0000BB; font-weight: bold;">src</span>
+    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+</code></pre>
+<p><img src="fig_smoothed.png" width="20%"></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">system2</span>(<span class="st">"Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">system2</span>(<span class="st">"Rscript src/fig_smoothed.R data/airmiles.csv 5</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="st">out/fig_smoothed_5.png"</span>)<span class="sc">:</span> error <span class="cf">in</span> running command</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#knitr::include_graphics("out/fig_smoothed.png")</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">system2</span>(<span class="st">"Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png"</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">system2</span>(<span class="st">"Rscript src/fig_smoothed.R data/airmiles.csv 5</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="st">out/fig_smoothed_5.png"</span>)<span class="sc">:</span> error <span class="cf">in</span> running command</span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">dir_tree</span>()</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a> [<span class="dv">01</span>;<span class="dv">34</span>m. [<span class="dv">0</span>m</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>├── Makefile</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">34</span>mdata [<span class="dv">0</span>m</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>│   └── airmiles.csv</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>├──  [<span class="dv">32</span>mquickstart.Rmd [<span class="dv">0</span>m</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>├──  [<span class="dv">32</span>mreport_smooth.Rmd [<span class="dv">0</span>m</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">32</span>mrun_all.sh [<span class="dv">0</span>m</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>├──  [<span class="dv">01</span>;<span class="dv">34</span>msrc [<span class="dv">0</span>m</span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>│   └──  [<span class="dv">32</span>mfig_smoothed.R [<span class="dv">0</span>m</span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>└──  [<span class="dv">32</span>mworkflow.Rmd [<span class="dv">0</span>m</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span>regexp <span class="op">=</span> <span class="st">"quickstart|workflow"</span>, invert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
+├── Makefile
+├── <span style="color: #0000BB; font-weight: bold;">data</span>
+│   └── airmiles.csv
+├── <span style="color: #0000BB; font-weight: bold;">out</span>
+│   └── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
+├── <span style="color: #00BB00;">report_smooth.Rmd</span>
+├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
+└── <span style="color: #0000BB; font-weight: bold;">src</span>
+    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+</code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#system2("Rscript src/fig_smoothed.R data/airmiles.csv out/fig_smoothed_7.png --n=7")</span></span></code></pre></div>
 <pre><code>---
 title: "Smoothed Passenger Miles"
@@ -207,7 +226,7 @@ Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png
 Rscript src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed_10.png 
 
 R --quiet -e "rmarkdown::render('report_smooth.Rmd')"</code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># system2("sh run_all.sh")</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -225,11 +244,11 @@ out/fig_smoothed_10.png: src/fig_smoothed.R data/airmiles.csv
 
 report_smooth.pdf: report_smooth.Rmd out/fig_smoothed_5.png out/fig_smoothed_10.png
     R --quiet -e "rmarkdown::render('$&lt;')"</code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="st">"make"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#system2("touch data/airmiles.csv")</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="st">"make"</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
