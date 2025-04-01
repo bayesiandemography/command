@@ -69,7 +69,7 @@ dir_tree(regexp = "quickstart|workflow|html", invert = TRUE)
 ```
 
 ```{r}
-knitr::include_graphics("out/fig_smoothed.png")
+#knitr::include_graphics("out/fig_smoothed.png")
 ```
 
 
@@ -83,7 +83,7 @@ dir_tree()
 
 
 ```{r, echo = FALSE}
-knitr::include_graphics("out/fig_smoothed_5.png")
+#knitr::include_graphics("out/fig_smoothed_5.png")
 ```
 
 ```{r}
