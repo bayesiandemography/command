@@ -20,6 +20,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+options(knitr.graphics.rel_path = FALSE)
+
 ```{r, include = FALSE}
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
 ```
