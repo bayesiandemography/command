@@ -1,6 +1,6 @@
 ---
 title: "Using 'command' in a Data Analysis Workflow"
-output: rmarkdown::html_document:
+output: rmarkdown::html_document
 vignette: >
   %\VignetteIndexEntry{Using 'command' in a Data Analysis Workflow}
   %\VignetteEngine{knitr::rmarkdown}
