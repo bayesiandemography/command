@@ -9,6 +9,7 @@ path_airmiles <- path_package(package = "command",
 dir_copy(path = path_airmiles,
          new_path = getwd(),
          overwrite = TRUE)
+dir_create("out")	 
 ```
 
 ```{r, include = FALSE}
@@ -65,7 +66,7 @@ cat(readLines("src/fig_smoothed.R"), sep = "\n")
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
 
@@ -74,7 +75,13 @@ Rscript src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed.png
 ```
 
 ```{r, echo = FALSE}
-knitr::include_graphics(here::here("vignettes", "articles", "out", "fig_smoothed.png"))
+dir_tree(regexp = "quickstart|workflow", invert = TRUE)
+```
+
+
+```{r, echo = FALSE, out.width="20%"}
+setwd("out")
+knitr::include_graphics("fig_smoothed.png")
 ```
 
 ```{r}
