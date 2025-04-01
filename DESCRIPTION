@@ -25,6 +25,7 @@ Suggests:
     dplyr,
     fs,
     ggplot2,
+    here,
     knitr,
     magick,
     pdftools,

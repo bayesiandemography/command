@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
 ```
 
-
 # Introduction
 
 
@@ -54,7 +53,6 @@ library(fs)
 - Run script as normal
 
 
-
 ```{r, echo = FALSE}
 dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
@@ -76,8 +74,7 @@ Rscript src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed.png
 ```
 
 ```{r, echo = FALSE}
-setwd("out")
-knitr::include_graphics("fig_smoothed.png")
+knitr::include_graphics(here::here("vignettes", "articles", "out", "fig_smoothed.png"))
 ```
 
 ```{r}
