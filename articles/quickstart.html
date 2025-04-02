@@ -181,9 +181,13 @@ null device
 └── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
 </code></pre>
 <p><img src="fig_smoothed.png" width="20%"></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">system2</span>(<span class="st">"Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">system2</span>(<span class="st">"Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png"</span>)<span class="sc">:</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>error <span class="cf">in</span> running command</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">Rscript</span> fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png</span></code></pre></div>
+<pre class="fansi fansi-output"><code><span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.airmiles`</span> with value <span style="color: #0000BB;">"airmiles.csv"</span> and class <span style="color: #0000BB;">"character"</span>
+<span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`n`</span> with value <span style="color: #0000BB;">5</span> and class <span style="color: #0000BB;">"numeric"</span>
+<span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.out`</span> with value <span style="color: #0000BB;">"fig_smoothed_5.png"</span> and class <span style="color: #0000BB;">"character"</span>
+null device 
+          1 
+</code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span>regexp <span class="op">=</span> <span class="st">"quickstart|workflow"</span>, invert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
@@ -191,9 +195,11 @@ null device
 ├── airmiles.csv
 ├── <span style="color: #00BB00;">fig_smoothed.R</span>
 ├── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
+├── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed_5.png</span>
 ├── <span style="color: #00BB00;">report_smooth.Rmd</span>
 └── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
 </code></pre>
+<p><img src="fig_smoothed_5.png"><!-- --></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#system2("Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7")</span></span></code></pre></div>
 <pre><code>---
