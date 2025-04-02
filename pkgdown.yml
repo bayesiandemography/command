@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   articles/quickstart: quickstart.html
   articles/workflow: workflow.html
-last_built: 2025-04-02T00:45Z
+last_built: 2025-04-02T01:17Z
 urls:
   reference: https://bayesiandemography.github.io/command/reference
   article: https://bayesiandemography.github.io/command/articles
