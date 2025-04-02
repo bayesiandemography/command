@@ -56,7 +56,8 @@ library(fs)
 
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow", invert = TRUE)
+dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
+         invert = TRUE)
 ```
 
 ```{r, comment = "", echo = FALSE}
@@ -68,7 +69,8 @@ cat(readLines("fig_smoothed.R"), sep = "\n")
 
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow", invert = TRUE)
+dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
+         invert = TRUE)
 ```
 
 ```{bash}
@@ -76,7 +78,8 @@ Rscript fig_smoothed.R airmiles.csv 10 fig_smoothed.png
 ```
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow", invert = TRUE)
+dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
+         invert = TRUE)
 ```
 
 
@@ -89,20 +92,30 @@ Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png
 ```
 
 ```{r}
-dir_tree(regexp = "quickstart|workflow", invert = TRUE)
+dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
+         invert = TRUE)
 ```
-
 
 ```{r, echo = FALSE}
 knitr::include_graphics("fig_smoothed_5.png")
 ```
 
 ```{r}
-#system2("Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7")
+Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7
+```
+
+```{r}
+dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
+         invert = TRUE)
 ```
 
 ```{r, echo = FALSE}
-#knitr::include_graphics("fig_smoothed_7.png")
+knitr::include_graphics("fig_smoothed_7.png")
+```
+
+```{r}
+dir_tree(regexp = "quickstart|workflow|Makefile",
+         invert = TRUE)
 ```
 
 ```{r, comment = "", echo = FALSE}
@@ -113,9 +126,13 @@ cat(readLines("report_smooth.Rmd"), sep = "\n")
 cat(readLines("run_all.sh"), sep = "\n")
 ```
 
+```{bash}
+sh run_all.sh
+```
 
 ```{r}
-# system2("sh run_all.sh")
+dir_tree(regexp = "quickstart|workflow|Makefile",
+         invert = TRUE)
 ```
 
 
@@ -134,20 +151,29 @@ cat(readLines("run_all.sh"), sep = "\n")
 
 # Using from a makefile
 
+```{r}
+dir_tree(regexp = "quickstart|workflow",
+         invert = TRUE)
+```
 
 ```{r, comment = "", echo = FALSE}
 cat(readLines("Makefile"), sep = "\n")
 ```
 
 
-```{r}
-system2("make")
+```{bash}
+make
+```
+
+```{bash}
+touch airmiles.csv
+```
+
+```{bash}
+make
 ```
 
 ```{r}
-#system2("touch airmiles.csv")
-```
-
-```{r}
-system2("make")
+dir_tree(regexp = "quickstart|workflow",
+         invert = TRUE)
 ```
