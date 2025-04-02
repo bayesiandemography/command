@@ -84,8 +84,8 @@ dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 knitr::include_graphics("fig_smoothed.png", rel_path = FALSE)
 ```
 
-```{r}
-system2("Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png")
+```{bash}
+Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png
 ```
 
 ```{r}
@@ -94,7 +94,7 @@ dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 
 
 ```{r, echo = FALSE}
-#knitr::include_graphics("fig_smoothed_5.png")
+knitr::include_graphics("fig_smoothed_5.png")
 ```
 
 ```{r}
