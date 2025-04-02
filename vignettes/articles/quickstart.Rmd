@@ -100,7 +100,7 @@ dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
 knitr::include_graphics("fig_smoothed_5.png")
 ```
 
-```{r}
+```{bash}
 Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7
 ```
 
