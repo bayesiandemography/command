@@ -135,23 +135,16 @@ dir_tree(regexp = "quickstart|workflow|Makefile",
          invert = TRUE)
 ```
 
-
-```{r, include = FALSE, results = "asis"}
-#library(magick)
-#image <- image_read_pdf("report_smooth.pdf", density = 150)
-#image_write(image, path = "report_smooth.png", format = "png")
+````{=html}
+```{r, echo = FALSE, results = "asis"}
+cat(readLines("report_smooth.html"), sep = "\n")
 ```
-
-
-
-```{r, echo=FALSE}
-#knitr::include_graphics("report_smooth.png")
-```
+````
 
 
 # Using from a makefile
 
-```{r}
+```{r, echo = FALSE}
 dir_tree(regexp = "quickstart|workflow",
          invert = TRUE)
 ```
@@ -173,7 +166,7 @@ touch airmiles.csv
 make
 ```
 
-```{r}
+```{r, echo = FALSE}
 dir_tree(regexp = "quickstart|workflow",
          invert = TRUE)
 ```

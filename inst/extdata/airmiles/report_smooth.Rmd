@@ -1,6 +1,6 @@
 ---
 title: "Smoothed Passenger Miles"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include = FALSE}
