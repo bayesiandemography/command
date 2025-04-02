@@ -10,6 +10,6 @@ knitr::opts_chunk$set(echo = FALSE)
 Smoothed passenger numbers:
 
 ```{r, echo = FALSE, fig.show = "hold", out.width = "49%"}
-knitr::include_graphics(c("out/fig_smoothed_5.png", "out/fig_smoothed_10.png"))
+knitr::include_graphics(c("fig_smoothed_5.png", "fig_smoothed_10.png"))
 
 

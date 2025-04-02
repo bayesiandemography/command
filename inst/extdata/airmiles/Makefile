@@ -2,12 +2,12 @@
 .PHONY: all
 all: report_smooth.pdf
 
-out/fig_smoothed_5.png: src/fig_smoothed.R data/airmiles.csv
+fig_smoothed_5.png: fig_smoothed.R airmiles.csv
 	Rscript $^ $@ --n=5  
 
-out/fig_smoothed_10.png: src/fig_smoothed.R data/airmiles.csv
+fig_smoothed_10.png: fig_smoothed.R airmiles.csv
 	Rscript $^ $@ --n=10
 
-report_smooth.pdf: report_smooth.Rmd out/fig_smoothed_5.png out/fig_smoothed_10.png
+report_smooth.pdf: report_smooth.Rmd fig_smoothed_5.png fig_smoothed_10.png
 	R --quiet -e "rmarkdown::render('$<')"
 

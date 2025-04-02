@@ -9,7 +9,6 @@ path_airmiles <- path_package(package = "command",
 dir_copy(path = path_airmiles,
          new_path = getwd(),
          overwrite = TRUE)
-dir_create("out")	 
 ```
 
 ```{r, include = FALSE}
@@ -61,10 +60,10 @@ dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
 
 ```{r, comment = "", echo = FALSE}
-cat(readLines("data/airmiles.csv"), sep = "\n")
+cat(readLines("airmiles.csv"), sep = "\n")
 ```
 ```{r, comment = "", echo = FALSE}
-cat(readLines("src/fig_smoothed.R"), sep = "\n")
+cat(readLines("fig_smoothed.R"), sep = "\n")
 ```
 
 
@@ -73,7 +72,7 @@ dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 ```
 
 ```{bash}
-Rscript src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed.png
+Rscript fig_smoothed.R airmiles.csv 10 fig_smoothed.png
 ```
 
 ```{r, echo = FALSE}
@@ -82,12 +81,11 @@ dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 
 
 ```{r, echo = FALSE, out.width="20%"}
-setwd("out")
-knitr::include_graphics("fig_smoothed.png")
+knitr::include_graphics("fig_smoothed.png", rel_path = FALSE)
 ```
 
 ```{r}
-system2("Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png")
+system2("Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png")
 ```
 
 ```{r}
@@ -96,15 +94,15 @@ dir_tree(regexp = "quickstart|workflow", invert = TRUE)
 
 
 ```{r, echo = FALSE}
-#knitr::include_graphics("out/fig_smoothed_5.png")
+#knitr::include_graphics("fig_smoothed_5.png")
 ```
 
 ```{r}
-#system2("Rscript src/fig_smoothed.R data/airmiles.csv out/fig_smoothed_7.png --n=7")
+#system2("Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7")
 ```
 
 ```{r, echo = FALSE}
-#knitr::include_graphics("out/fig_smoothed_7.png")
+#knitr::include_graphics("fig_smoothed_7.png")
 ```
 
 ```{r, comment = "", echo = FALSE}
@@ -147,7 +145,7 @@ system2("make")
 ```
 
 ```{r}
-#system2("touch data/airmiles.csv")
+#system2("touch airmiles.csv")
 ```
 
 ```{r}
