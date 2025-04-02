@@ -109,13 +109,10 @@ e.g. <code>as.POSIXlt("2015-11-03 14:23:03")</code>
 </ul>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
-├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── airmiles.csv
-├── <span style="color: #0000BB; font-weight: bold;">out</span>
+├── airmiles.csv
+├── <span style="color: #00BB00;">fig_smoothed.R</span>
 ├── <span style="color: #00BB00;">report_smooth.Rmd</span>
-├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
-└── <span style="color: #0000BB; font-weight: bold;">src</span>
-    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+└── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
 </code></pre>
 <pre><code>year,passengers
 1937,412
@@ -140,7 +137,7 @@ e.g. <code>as.POSIXlt("2015-11-03 14:23:03")</code>
 <span></span>
 <span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.airmiles <span class="op">=</span> <span class="st">"data/airmiles.csv"</span>,</span>
 <span>           n <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>           .out <span class="op">=</span> <span class="st">"out/fig_smoothed.png"</span><span class="op">)</span></span>
+<span>           .out <span class="op">=</span> <span class="st">"fig_smoothed.png"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## read in the passenger data</span></span>
 <span><span class="va">airmiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">.airmiles</span><span class="op">)</span></span>
@@ -163,51 +160,42 @@ e.g. <code>as.POSIXlt("2015-11-03 14:23:03")</code>
 <span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
-├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── airmiles.csv
-├── <span style="color: #0000BB; font-weight: bold;">out</span>
+├── airmiles.csv
+├── <span style="color: #00BB00;">fig_smoothed.R</span>
 ├── <span style="color: #00BB00;">report_smooth.Rmd</span>
-├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
-└── <span style="color: #0000BB; font-weight: bold;">src</span>
-    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+└── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
 </code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">Rscript</span> src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed.png</span></code></pre></div>
-<pre class="fansi fansi-output"><code><span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.airmiles`</span> with value <span style="color: #0000BB;">"data/airmiles.csv"</span> and class <span style="color: #0000BB;">"character"</span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">Rscript</span> fig_smoothed.R airmiles.csv 10 fig_smoothed.png</span></code></pre></div>
+<pre class="fansi fansi-output"><code><span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.airmiles`</span> with value <span style="color: #0000BB;">"airmiles.csv"</span> and class <span style="color: #0000BB;">"character"</span>
 <span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`n`</span> with value <span style="color: #0000BB;">10</span> and class <span style="color: #0000BB;">"numeric"</span>
-<span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.out`</span> with value <span style="color: #0000BB;">"out/fig_smoothed.png"</span> and class <span style="color: #0000BB;">"character"</span>
+<span style="color: #00BB00;">✔</span> `cmd_assign()` created <span style="color: #0000BB;">`.out`</span> with value <span style="color: #0000BB;">"fig_smoothed.png"</span> and class <span style="color: #0000BB;">"character"</span>
 null device 
           1 
 </code></pre>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
-├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── airmiles.csv
-├── <span style="color: #0000BB; font-weight: bold;">out</span>
-│   └── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
+├── airmiles.csv
+├── <span style="color: #00BB00;">fig_smoothed.R</span>
+├── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
 ├── <span style="color: #00BB00;">report_smooth.Rmd</span>
-├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
-└── <span style="color: #0000BB; font-weight: bold;">src</span>
-    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+└── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
 </code></pre>
 <p><img src="fig_smoothed.png" width="20%"></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">system2</span>(<span class="st">"Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">system2</span>(<span class="st">"Rscript src/fig_smoothed.R data/airmiles.csv 5</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="st">out/fig_smoothed_5.png"</span>)<span class="sc">:</span> error <span class="cf">in</span> running command</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">system2</span>(<span class="st">"Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>Warning <span class="cf">in</span> <span class="fu">system2</span>(<span class="st">"Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png"</span>)<span class="sc">:</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>error <span class="cf">in</span> running command</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span>regexp <span class="op">=</span> <span class="st">"quickstart|workflow"</span>, invert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
-├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── airmiles.csv
-├── <span style="color: #0000BB; font-weight: bold;">out</span>
-│   └── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
+├── airmiles.csv
+├── <span style="color: #00BB00;">fig_smoothed.R</span>
+├── <span style="color: #BB00BB; font-weight: bold;">fig_smoothed.png</span>
 ├── <span style="color: #00BB00;">report_smooth.Rmd</span>
-├── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
-└── <span style="color: #0000BB; font-weight: bold;">src</span>
-    └── <span style="color: #00BB00;">fig_smoothed.R</span>
+└── <span style="color: #00BB00; font-weight: bold;">run_all.sh</span>
 </code></pre>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#system2("Rscript src/fig_smoothed.R data/airmiles.csv out/fig_smoothed_7.png --n=7")</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#system2("Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7")</span></span></code></pre></div>
 <pre><code>---
 title: "Smoothed Passenger Miles"
 output: pdf_document
@@ -220,11 +208,11 @@ knitr::opts_chunk$set(echo = FALSE)
 Smoothed passenger numbers:
 
 ```{r, echo = FALSE, fig.show = "hold", out.width = "49%"}
-knitr::include_graphics(c("out/fig_smoothed_5.png", "out/fig_smoothed_10.png"))</code></pre>
+knitr::include_graphics(c("fig_smoothed_5.png", "fig_smoothed_10.png"))</code></pre>
 <pre><code>
-Rscript src/fig_smoothed.R data/airmiles.csv 5 out/fig_smoothed_5.png 
+Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png 
 
-Rscript src/fig_smoothed.R data/airmiles.csv 10 out/fig_smoothed_10.png 
+Rscript fig_smoothed.R airmiles.csv 10 fig_smoothed_10.png 
 
 R --quiet -e "rmarkdown::render('report_smooth.Rmd')"</code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -237,18 +225,18 @@ R --quiet -e "rmarkdown::render('report_smooth.Rmd')"</code></pre>
 .PHONY: all
 all: report_smooth.pdf
 
-out/fig_smoothed_5.png: src/fig_smoothed.R data/airmiles.csv
+fig_smoothed_5.png: fig_smoothed.R airmiles.csv
     Rscript $^ $@ --n=5  
 
-out/fig_smoothed_10.png: src/fig_smoothed.R data/airmiles.csv
+fig_smoothed_10.png: fig_smoothed.R airmiles.csv
     Rscript $^ $@ --n=10
 
-report_smooth.pdf: report_smooth.Rmd out/fig_smoothed_5.png out/fig_smoothed_10.png
+report_smooth.pdf: report_smooth.Rmd fig_smoothed_5.png fig_smoothed_10.png
     R --quiet -e "rmarkdown::render('$&lt;')"</code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="st">"make"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#system2("touch data/airmiles.csv")</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#system2("touch airmiles.csv")</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="st">"make"</span><span class="op">)</span></span></code></pre></div>
 </div>
