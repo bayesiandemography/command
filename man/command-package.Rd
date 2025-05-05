@@ -7,15 +7,16 @@
 \title{command: Process command line arguments}
 \description{
 Process arguments passed at the command line,
-and make scripts behave a little like functions.
+as part of data analysis workflow.
 }
 \details{
-The package contains a single function: \code{\link[=cmd_assign]{cmd_assign()}}.
-
-The vignette \code{vignette("command", package = "command")}
-gives examples, and discusses how \code{cmd_assign()} can
-be used to make a data analysis workflow safer
-and more modular.
+\itemize{
+\item \code{\link[=cmd_assign]{cmd_assign()}} is the main function in the package.
+\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
+shows how to use \code{cmd_assign()}.
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{A Workflow for Data Analysis}
+presents an approach to the design of data analysis workflows.
+}
 }
 \seealso{
 Useful links:

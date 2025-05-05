@@ -2,14 +2,13 @@
 #' command: Process command line arguments
 #'
 #' Process arguments passed at the command line,
-#' and make scripts behave a little like functions.
+#' as part of data analysis workflow.
 #'
-#' The package contains a single function: [cmd_assign()].
-#'
-#' The vignette `vignette("command", package = "command")`
-#' gives examples, and discusses how `cmd_assign()` can
-#' be used to make a data analysis workflow safer
-#' and more modular.
+#' - [cmd_assign()] is the main function in the package.
+#' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#'   shows how to use `cmd_assign()`.
+#' - [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   presents an approach to the design of data analysis workflows.
 #' 
 #' @keywords internal
 "_PACKAGE"

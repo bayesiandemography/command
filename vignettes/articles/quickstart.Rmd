@@ -24,7 +24,7 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
 
 This article shows how to get started with package **command**. It should ideally be read in combination with the article [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
 
-**command** contains a single function, `cmd_assign()`, which assigns objects to the working environment. `cmd_assign()` can be called in two ways:
+**command** contains a single function, `cmd_assign()`, which assigns objects to the global environment. `cmd_assign()` can be called in two ways:
 
 1. Interatively
 2. Inside a script that is run from the command line
@@ -47,7 +47,7 @@ obj1 <- "orange"
 obj2 <- 1
 ```
 
-Both code snippets add two objects to the working environment, with names `"obj1"` and `"obj2"`, and values `"orange"` and `1`.
+Both code snippets add two objects to the global environment, with names `"obj1"` and `"obj2"`, and values `"orange"` and `1`.
 
 Objects assigned by `cmd_assign()` can have the following classes:
 
@@ -86,6 +86,11 @@ In this example, `--n_iteration=10` is a named argument, and `output.rds` is an 
 Note that there must not be a space between the name, the `=` sign, and the value, so this would be invalid:
 ```{bash, eval = FALSE}
 Rscript myfile.R --n_iteration = 10 output.rds   # invalid!
+```
+
+Named arguments can also have a single dash and single letter, as in
+```{bash, eval = FALSE}
+Rscript myfile.R -n=10
 ```
 
 When Rscript is called with additional arguments, Rscript supplies the names and values for these arguments to the R session. The names and values can be accessed from within the session using base R function [commandArgs()](https://search.r-project.org/R/refmans/base/html/commandArgs.html). Working with `commandArgs()` is, however, tricky. `cmd_assign()` is an alternative to `commandArgs()`, designed specifically for workflows for data analysis.
@@ -146,7 +151,7 @@ When `cmd_assign()` is called in a script that is being run from the command lin
 
 1. **Match** command line arguments against arguments in `cmd_assign()`. 
 2. **Coerce** each value supplied at the command line to have the same class as the corresponding value in the call to `cmd_assign()`.
-3. **Assign** the resulting values to the working environment.
+3. **Assign** the resulting values to the global environment.
 
 Say, for instance, that we have a script called `model.R` containing the following call to `cmd_assign()`.
 
@@ -200,7 +205,7 @@ The values supplied at the command line all start out as text strings. In the **
 | `use_long`   | `TRUE` | `TRUE` |
 | `.out`   | `"out/model.rds"` | `"out/model2.rds"` |
 
-Finally, in the **assign** step, `cmd_assign()` puts the values into the working environment.
+Finally, in the **assign** step, `cmd_assign()` puts the values into the global environment.
 
 The number of arguments passed through the command line must exactly match the number of arguments specified in the call to `cmd_assign()`. Values specified in the call to `cmd_assign()` do *not* act as defaults. For instance, in our example, `cmd_assign()` would not let us omit `use_log`, and the following would be invalid:
 
@@ -241,7 +246,7 @@ Naming conventions like this are common in system programming, and are a good wa
 
 We can create a data analysis workflow by writing a shell script with calls to Rscript.
 
-We illustrate with a simple example. We need two new files. The first file, called `report.qmd`, creates a with two figures. It contains the following code.
+We illustrate with a simple example. We need two new files. The first file, called `report.qmd`, creates a report with two figures. It contains the following code.
 ```{r, echo = FALSE}
 cat(paste(readLines("report.qmd"), collapse = "\n"))
 ```
@@ -250,7 +255,7 @@ The second file, called `workflow.sh`, is a shell script that runs the whole wor
 cat(paste(readLines("workflow.sh"), collapse = "\n"))
 ```
 
-The third line of `workflow.sh` contains an `"-e"` after the `"Rscript"`. The `"-e"` option tells Rscript to work with a single R expression (which follows immediately after the `"-e"`), rather than a file.
+The third command in `workflow.sh` contains an `"-e"` after the `"Rscript"`. The `"-e"` option tells Rscript to use code from one or more quoted R expressions (which follow immediately after the `"-e"`), rather than a file.
 
 We run `workflow.sh`.
 
@@ -294,18 +299,18 @@ make
 
 Whereas the bash script `workflow.sh` would have recreated `fig_smoothed_5.png`, `fig_smoothed_10.png` and `report.html`, Make recognises that `fig_smoothed_10.png` is still up-to-date, so it only recreates `fig_smoothed_5.png` and `report.html`.
 
-Makefiles take some time to master, but they have important advantages, which we discuss in [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
+Makefiles take some time to master, but they have important advantages, discussed in [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
 
 
 # Alternatives to `cmd_assign()` {#sec:alt}
 
 `cmd_assign()` is not the only option for processing command line arguments.
 
-One example is  [commandArgs()](https://search.r-project.org/CRAN/refmans/R.utils/html/commandArgs.html) in package [R.utils](https://cran.r-project.org/web/packages/R.utils/index.html), which is a more user-friendly version of the base R function `commandArgs()`, with many additional processing options.
+One alternative is  [cmdArgs()](https://search.r-project.org/CRAN/refmans/R.utils/html/cmdArgs.html) in package [R.utils](https://cran.r-project.org/web/packages/R.utils/index.html), which is a more user-friendly version of the base R function `commandArgs()`.
 
-Another is package [docopt](https://cran.r-project.org/web/packages/docopt/index.html), which can be used to construct an interface to a script, including processing command line arguments.
+Another is package [docopt](https://cran.r-project.org/web/packages/docopt/index.html), which can be used to construct an interface for script, including the processing of command line arguments.
 
-`cmd_assign()` is more specialised than `commandArgs()` or **docopt**. It focuses specifically on the task of processing command line arguments as part of a data analysis workflow. This allows it to have a simpler interface, with more automation.
+`cmd_assign()` is more specialised than `cmdArgs()` or **docopt**. It focuses specifically on the task of processing command line arguments as part of a data analysis workflow.
 
 
 ```{r, include = FALSE}
@@ -322,9 +327,3 @@ files_to_delete <- c("airmiles.csv",
 path <- path(getwd(), files_to_delete)
 file_delete(path)
 ```
-
-
-
-
-
-
