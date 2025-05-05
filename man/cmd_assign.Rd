@@ -2,7 +2,7 @@
 % Please edit documentation in R/cmd_assign.R
 \name{cmd_assign}
 \alias{cmd_assign}
-\title{Process command line arguments}
+\title{Assign Values Passed at the Command Line or Interactively}
 \usage{
 cmd_assign(...)
 }
@@ -12,147 +12,96 @@ cmd_assign(...)
 \value{
 \code{cmd_assign()} is called
 for its side effect, which is to create objects
-in the current environment. However, \code{cmd_assign()}
+in the global environment. However, \code{cmd_assign()}
 also invisibly returns a named list of objects.
 }
 \description{
-Create objects in the current environment,
-based on arguments passed at the command line.
-For instance, if a script \code{tidy_data.R} containing the
-lines
+Assign values to names in the working environment.
+The values are typically supplied through the command line,
+but can be supplied interactively.
 
-\code{cmd_assign(raw_data = "raw_data.rds", unit = "kg")}
-
-is run at the command line using
-
-\verb{Rscript tidy_data.R raw_data.rds --unit=kg}
-
-then objects called \code{raw_data} and \code{unit} are
-created in the current environment.
+Specifying the inputs and outputs of scripts through the
+command line can contribute to safter, more modular
+workflows.
 }
 \section{Types of session}{
 \code{cmd_assign()} behaves differently depending
-on how it is called:
-\itemize{
-\item If \code{cmd_assign()} is called inside a script
-being run from the command line, it processes
-values passed at the command line.
-\item If \code{cmd_assign()} is called in an interactive
-session, it uses the name-value pairs from the call.
+on how it whether it is called
+\enumerate{
+\item interactively, or
+\item inside an R script that is run from the command line.
 }
 
-\code{cmd_assign()} is typically used interactively
-when developing or testing code, and in command
-line mode once the code is mature.
+For instance, if the code
+
+\code{cmd_assign(use_log = TRUE)}
+
+is run interactively, it creates an object
+called \code{use_log} with value \code{TRUE}.
+
+But if the same code is run inside a
+script via the command
+
+\verb{Rscript tidy_data.R --use_log=FALSE}
+
+it creates an object called \code{use_log}
+with value \code{FALSE}.
+
+\code{cmd_assign()} is typically called interactively
+when a workflow is being developed,
+and through the command line when the
+workflow has matured.
 }
 
 \section{Matching names and values}{
-When used in command line mode, \code{cmd_assign()}
-first processes named command-line arguments,
-and then processes unnamed command-line arguments.
+When used in a script called from the
+command line, \code{cmd_assign()}
+first matches named command line arguments,
+and then matches unnamed command line arguments,
+in the order in which they are supplied.
 
-\code{cmd_assign()} treats a command-line argument as named
-if the argument has the form \verb{-<single-letter>=<value>},
-eg \code{-n=100}, or \verb{--<name>=<value>},
-eg \code{--n_iteration=100}. (Note that there are no
-spaces around the equals signs.)
+If, for instance, the script \code{person.R} contains
+the lines
 
-\code{cmd_assign()} matches unnamed command line arguments
-in the order in which they appear.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(.data = "raw_data.csv",
+           max_age = 85,
+           .out = "person.rds")
+}\if{html}{\out{</div>}}
 
-If, for instance, the script \code{analysis.R}
-containing the lines
+and if \code{person.R} is run from the command line using
 
-\if{html}{\out{<div class="sourceCode R">}}\preformatted{cmd_assign(data = "person.csv",
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Rscript person.R raw_data.csv person.rds --max_age=100
+}\if{html}{\out{</div>}}
+
+then \code{cmd_assign()} first matches named
+command line argument \code{--max_age=100} to \verb{cmd_assign() argument }max_age\verb{, and then matches unnamed command line arguments }raw_data.csv\code{and}person.rds\code{to}cmd_assign()\code{arugments}.data\code{and}.out`.
+}
+
+\section{Coercing values passed at the command line}{
+Values passed at the command line start out as
+text strings. \code{cmd_assign()} coerces these text strings
+to have the same class as the corresponding values
+in the call to \code{cmd_assign()}. For instance,
+if a script called \code{fit.R} contains
+the lines
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(.data = "cleaned.rds",
            impute = TRUE,
-           max_age = 85)
+           date = as.Date("2026-01-01"),
+           .out = "fit.rds")
 }\if{html}{\out{</div>}}
 
-is launched from the command line using
+and if \code{fitted.R} is run from the command line using
 
-\if{html}{\out{<div class="sourceCode R">}}\preformatted{Rscript analysis.R --max_age=90 person.csv --impute=TRUE
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Rscript fitted.R cleaned.rds fit.rds --impute=TRUE --date=2025-01-01
 }\if{html}{\out{</div>}}
 
-then \code{cmd_assign()} proceeds as follows:
-\enumerate{
-\item Named command-line arguments
+then \code{cmd_assign()} will create
 \itemize{
-\item \code{--max_age=90}. Look in the call to \code{cmd_assign()}
-for an argument called \code{max_age}. If there is  one,
-create an object called \code{max_age} holding the value
-\code{90}. If not, raise an error.
-\item \code{--impute=TRUE}. Look in the call to \code{cmd_assign()}
-for an argument called \code{impute}. If there is one,
-create an object called \code{impute} holding the value
-\code{TRUE}. If not, raise an error.
-}
-\item Unnamed command-line arguments
-\itemize{
-\item \code{person.csv}. Count the number of unused name-value
-pairs from the call to \code{cmd_assign()}. If there is
-exactly one, create an object with that name
-holding the value \code{"person.csv"}. If not,
-raise an error.
-}
-}
-}
-
-\section{Creating objects}{
-The way that an object is created in the
-current R environment depends on the
-type of value passed at the command line
-and sometimes on the value supplied as a default.
-\subsection{Value looks like a \code{.rds} file path}{
-
-If the value looks like the file path
-for an \code{.rds} object (ie an object created
-by a function  such as \link[base:readRDS]{base::saveRDS}),
-then \code{cmd_assign()} tries to load the \code{.rds} file.
-For instance, in an interactive session,
-
-\code{cmd_assign(costs = "costs.rds")}
-
-is equivalent to
-
-\code{costs <- readRDS("costs.rds")}
-
-To avoid automatically loading an \code{.rds}
-file, give the argument a name  that starts
-with a dot. For instance,
-in an interactive session,
-
-\code{cmd_assign(.costs = "costs.rds")}
-
-is equivalent to
-
-\code{.costs <- "costs.rds"}
-}
-
-\subsection{Default is logical, integer, or double}{
-
-If the default value is a logical, integer,
-or double, then \code{cmd_assign()} will try to
-convert the value supplied at the command
-line to the same type. For instance,
-if the call to \code{cmd_assign} is
-
-\code{cmd_assign(x_lgl = FALSE, x_int = 3L, x_dbl = 3.142)}
-
-then passing the values \code{"TRUE"}, \code{"2"},
-and \code{"2.718"} at the command line is equivalent
-to
-
-\if{html}{\out{<div class="sourceCode R">}}\preformatted{x_lgl <- TRUE
-x_int <- 2L
-x_dbl <- 2.718
-}\if{html}{\out{</div>}}
-}
-
-\subsection{Everything else}{
-
-Otherwise, arguments passed at the command line
-are copied into the current environment,
-as named strings.
+\item a character vector called \code{.data} with value "cleaned.rds",
+\item a logical vector called \code{impute} with value \code{TRUE},
+\item a date vector called \code{date} with value \code{"2025-01-01"}, and
+\item a character vector called \code{.out} with value `"fit.rds".
 }
 }
 
@@ -164,20 +113,14 @@ if (interactive()) {
 }
 }
 \seealso{
-The vignette \code{vignette("command")}
-gives examples of the use of \code{cmd_assign()},
-and discusses how \code{cmd_assign} can be used in the
-workflow for a data analysis.#'
-
-Function \code{\link[utils:Rscript]{utils::Rscript()}} and
-package
-\href{https://CRAN.R-project.org/package=littler}{littler}
-can be used to run R
-scripts from the command line.
-
-Internally, \code{cmd_assign()} uses
-\code{\link[base:interactive]{base::interactive()}} to decide whether
-the current session is interactive, and uses
-\code{\link[base:commandArgs]{base::commandArgs()}} to access command line
-arguments.
+\itemize{
+\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
+on how to use \code{cmd_assign()}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{A Workflow for Data Analysis}
+on an approach to build data analysis workflows that makes extensive
+uses of \code{cmd_assign()}.
+\item Base R function \code{\link[=commandArgs]{commandArgs()}} uses a more general,
+lower-level approach to processing command line arguments.
+(\code{commandArgs()} is called internally by \code{cmd_assign()}.)
+}
 }
