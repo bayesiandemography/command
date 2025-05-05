@@ -322,8 +322,6 @@ coerce_to_dots_class <- function(args_cmd, args_dots) {
 }            
 
 
-
-
 ## HAS_TESTS
 #' Get command line arguments
 #'
