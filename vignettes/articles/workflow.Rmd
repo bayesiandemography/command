@@ -1,21 +1,8 @@
 ---
-title: "Using 'command' in a Data Analysis Workflow"
-output: rmarkdown::html_document
-vignette: >
-  %\VignetteIndexEntry{Using 'command' in a Data Analysis Workflow}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "A Workflow for Data Analysis"
 ---
 
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
-```{r setup}
+```{r}
 library(command)
 library(fs)
 ```

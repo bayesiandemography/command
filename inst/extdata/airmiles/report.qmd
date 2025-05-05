@@ -1,0 +1,28 @@
+---
+title: "Smoothed Passenger Miles"
+format: html
+---
+
+We use a spline to smooth data on passenger miles.
+
+Here use a spline with 5 knots:
+```{r}
+#| label: fig_smoothed_5
+#| echo: false
+knitr::include_graphics("fig_smoothed_5.png")
+```
+
+Here we use a spline with 10 knots:
+```{r}
+#| label: fig_smoothed_10
+#| echo: false
+knitr::include_graphics("fig_smoothed_10.png")
+```
+
+
+
+
+
+
+
+

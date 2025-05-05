@@ -1,13 +1,13 @@
 
 .PHONY: all
-all: report_smooth.pdf
+all: report.pdf
 
 fig_smoothed_5.png: fig_smoothed.R airmiles.csv
-	Rscript $^ $@ --n=5  
+	Rscript $^ $@ --n_knot=5  
 
 fig_smoothed_10.png: fig_smoothed.R airmiles.csv
-	Rscript $^ $@ --n=10
+	Rscript $^ $@ --n_knot=10
 
-report_smooth.pdf: report_smooth.Rmd fig_smoothed_5.png fig_smoothed_10.png
-	R --quiet -e "rmarkdown::render('$<')"
+report.pdf: report.qmd fig_smoothed_5.png fig_smoothed_10.png
+	Rscript -e "quarto::quarto_render('$<')"
 

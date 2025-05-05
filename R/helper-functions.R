@@ -72,10 +72,12 @@ assign_args <- function(args, envir) {
     assign(x = nm,
            value = arg,
            envir = envir)
+    assigned <- cli::col_grey("Assigned object")
     nm <- sprintf("`%s`", nm)
     nm <- cli::col_blue(nm)
-    msg <- "{.fun cmd_assign} created {nm} with value {.val {arg}} and class {.val {class(arg)}}"
-    cli::cli_alert_success(msg)
+    value <- cli::col_grey("with value")
+    class <- cli::col_grey("and class")
+    cli::cli_alert_success("{assigned} {nm} {value} {.val {arg}} {class} {.val {class(arg)}}.")
   }
   invisible(args)
 }    
@@ -357,7 +359,7 @@ get_args_cmd <- function() {
 #'
 #' @returns TRUE or FALSE
 #'
-#' noRd
+#' @noRd
 is_varname_valid <- function(nm) {
   if (grepl("?", nm, fixed = TRUE)) ## can be interpreted below as call to help
     return(FALSE) 

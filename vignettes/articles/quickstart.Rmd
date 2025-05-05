@@ -1,172 +1,330 @@
 ---
-title: "Quick-Start Guide"
+title: "Quick Start Guide"
 ---
 
 ```{r, include = FALSE}
+library(command)
 library(fs)
+
 path_airmiles <- path_package(package = "command",
                               "extdata/airmiles")
 dir_copy(path = path_airmiles,
          new_path = getwd(),
          overwrite = TRUE)
-```
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  engine.opts = "-l",
-  comment = ""
+knitr::opts_chunk$set(collapse = TRUE,
+                      engine.opts = "-l",
+                      comment = ""
 )
-```
 
-options(knitr.graphics.rel_path = FALSE)
-
-```{r, include = FALSE}
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
 ```
 
 # Introduction
 
+This article shows how to get started with package **command**. It should ideally be read in combination with the article [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
 
-- increasing modularity - make a file behave like a function
+**command** contains a single function, `cmd_assign()`, which assigns objects to the working environment. `cmd_assign()` can be called in two ways:
 
+1. Interatively
+2. Inside a script that is run from the command line
 
-```{r setup}
-library(command)
-library(fs)
+Case 2 is the important one. Case 1 is simpler, however, so we look at that first.
+
+# Calling `cmd_assign()` interactively
+
+Running
+
+```{r, eval = FALSE}
+cmd_assign(obj1 = "a",
+           obj2 = 1"))
 ```
 
-# Using interactively
+has the same effect as running
 
-- Like 'assign', but a list (show example with list())
+```{r, eval = FALSE}
+obj1 <- "orange"
+obj2 <- 1
+```
 
-- Allowable elements:
-    - character string, eg `"Hello world"`
-    - integer scalar, eg `3L`
-    - numeric scalar, eg `3.141593`
-    - date eg `as.Date("2015-11-03")`
-    - date-time using `POSIXct, e.g `as.POSIXct("2015-11-03 14:23:03")`
-    - date-time using `POSIXlt`, e.g. `as.POSIXlt("2015-11-03 14:23:03")`
-    - `NULL`
+Both code snippets add two objects to the working environment, with names `"obj1"` and `"obj2"`, and values `"orange"` and `1`.
+
+Objects assigned by `cmd_assign()` can have the following classes:
+
+- character, eg `"Hello world"`
+- integer, eg `3L`
+- numeric, eg `3.141593`
+- date, eg  `as.Date("2015-11-03")`
+- date-time using POSIXct, eg `as.POSIXct("2015-11-03 14:23:03")`
+- date-time using POSIXlt, eg `as.POSIXlt("2015-11-03 14:23:03")`
+- `NULL`
+
+The objects must have length 1, except for `NULL`, which has length 0.
+
+The typical reason for using `cmd_assign()` interactively is to develop code that will eventually sit in a script that is run from the command line. 
+
+The most common way to run R scripts from the command line is with Rscript, so we take a detour to look at that.
+
+# Rscript
+
+Rscript is an application for running R scripts from the command line. For an introduction to the command line, see episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html). For an introduction to Rscript, see [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html). 
+
+The simplest usage is a command like
+```{bash, eval = FALSE}
+Rscript myfile.R
+```
+This launches a new R session, runs whatever code is in `myfile.R`, and ends the session. When the session ends, all objects in it disappear, unless they were saved to disk.
+
+Rscript accepts additional arguments, which are placed after the path to the file being run, as in
+```{bash, eval = FALSE}
+Rscript myfile.R --n_iteration=10 output.rds
+```
+In this example, `--n_iteration=10` is a named argument, and `output.rds` is an unnamed argument. Named arguments have the format
+```
+--<name>=<value>
+```
+Note that there must not be a space between the name, the `=` sign, and the value, so this would be invalid:
+```{bash, eval = FALSE}
+Rscript myfile.R --n_iteration = 10 output.rds   # invalid!
+```
+
+When Rscript is called with additional arguments, Rscript supplies the names and values for these arguments to the R session. The names and values can be accessed from within the session using base R function [commandArgs()](https://search.r-project.org/R/refmans/base/html/commandArgs.html). Working with `commandArgs()` is, however, tricky. `cmd_assign()` is an alternative to `commandArgs()`, designed specifically for workflows for data analysis.
 
 
-# Using from the command line
+# Calling `cmd_assign()` inside a script
 
-- Run script as normal
+We will work through an example where we call `cmd_assign()` inside a script that is being run from the command line. 
 
+Our current working directory contains two files:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
+dir_tree(regexp = "quickstart|workflow|Makefile|workflow.sh|report.Rmd",
          invert = TRUE)
 ```
 
-```{r, comment = "", echo = FALSE}
-cat(readLines("airmiles.csv"), sep = "\n")
-```
-```{r, comment = "", echo = FALSE}
-cat(readLines("fig_smoothed.R"), sep = "\n")
+The file `airmiles.csv` holds data on annual passenger numbers:
+```{r, echo = FALSE}
+cat(paste(readLines("airmiles.csv"), collapse = "\n"))
 ```
 
+The file `fig_smoothed.R` contains the following code:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
-         invert = TRUE)
+cat(paste(readLines("fig_smoothed.R"), collapse = "\n"))
 ```
+
+This code
+
+- reads in data from a file whose name is specified by `.airmiles`,
+- smooths the passenger data, with the amount of smoothing controlled by `n_knot`, 
+- plots the smoothed and unsmoothed values, and
+- writes the plot out to a file whose name is specified by `.out`.
+
+We use Rscript to run the code from the command line.
 
 ```{bash}
-Rscript fig_smoothed.R airmiles.csv 10 fig_smoothed.png
+Rscript fig_smoothed.R airmiles.csv 8 fig_smoothed_8.png
 ```
+
+Rscript started a new R session, ran the code using the command line arguments we passed in, and ended the session.
+
+The call to `cmd_assign()` in `fig_smoothed.R` created objects `.airmiles`, `n_knot`, and `.out` inside the R session. The values for these objects were taken from the command line, and *not* from the original call to `cmd_assign()`. Hence, `n_knot` equaled `8` rather than `10`, and `.out` equaled `"fig_smoothed_8.png"` rather than `"fig_smoothed.png"`.
+
+Our working directory now looks like this:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
-         invert = TRUE)
+dir_tree(regexp = "quickstart|workflow|Makefile|workflow.sh|report.Rmd",
+         invert = TRUE,
+	 recurse = 0)
 ```
 
+We have a new file called `"fig_smoothed_8.png"`.
 
-```{r, echo = FALSE, out.width="20%"}
-knitr::include_graphics("fig_smoothed.png", rel_path = FALSE)
+# What `cmd_assign()` does when called in a script
+
+When `cmd_assign()` is called in a script that is being run from the command line, it does three things:
+
+1. **Match** command line arguments against arguments in `cmd_assign()`. 
+2. **Coerce** each value supplied at the command line to have the same class as the corresponding value in the call to `cmd_assign()`.
+3. **Assign** the resulting values to the working environment.
+
+Say, for instance, that we have a script called `model.R` containing the following call to `cmd_assign()`.
+
+```{r, eval = FALSE}
+cmd_assign(.data = "data/dataset.csv",
+           n_iter = 5,
+           use_log = TRUE,
+           .out = "out/model.rds")
 ```
+
+We run `model.R` from the command line using
+
+```{bash, eval = FALSE}
+Rscript model.R data/dataset2.csv out/model2.rds --use_log=TRUE --n_iter=10
+```
+
+When it is first called, `cmd_assign()` holds the following values:
+
+| Argument | Value from call | Value from command line |
+|:---------|-----------|-------------|
+| `.data`  | `"data/dataset.csv"` | \<none\> |
+| `n_iter` | `5` | \<none\> |
+| `use_log`   | `TRUE` | \<none\> |
+| `.out`   | `"out/model.rds"` | \<none\> |
+
+In the **match** step, `cmd_assign() finds the values that were passed in from the command line. First it matches named arguments from the command line with named arguments from the call, yielding
+
+
+| Argument | Value from call | Value from command line |
+|:---------|-----------|------------|
+| `.data`  | `"data/dataset.csv"` | \<none\> |
+| `n_iter` | `5` | `10` |
+| `use_log`   | `TRUE` | `"TRUE"` |
+| `.out`   | `"out/model.rds"` | \<none\> |
+
+Then it matches unnamed arguments from the command line with unused arguments from the call. The matching of unnamed arguments is based on the order in which the unnamed arguments were supplied to the command line. In our example, the value `"data/dataset2.csv"` was passed before `"out/model2.rds"`, so `"data/dataset2.csv"` comes before `"out/model2.rds"` in the matched results.
+
+| Argument | Value from call | Value from command line |
+|:---------|-----------|------------|
+| `.data`  | `"data/dataset.csv"` | `"data/dataset2.csv"` |
+| `n_iter` | `5` | `"10"` |
+| `use_log`   | `TRUE` | `"TRUE"` |
+| `.out`   | `"out/model.rds"` | `"out/model2.rds"` |
+
+The values supplied at the command line all start out as text strings. In the **coerce** step, `cmd_assign()` converts these values to have the same classs as the matched values from `cmd_assign()`. In our example, this means coercing `"10"` to `numeric` and coercing `"TRUE"` to `logical`. 
+
+| Argument | Value from call | Value from command line |
+|:---------|-----------|------------|
+| `.data`  | `"data/dataset.csv"` | `"data/dataset2.csv"` |
+| `n_iter` | `5` | `10` |
+| `use_long`   | `TRUE` | `TRUE` |
+| `.out`   | `"out/model.rds"` | `"out/model2.rds"` |
+
+Finally, in the **assign** step, `cmd_assign()` puts the values into the working environment.
+
+The number of arguments passed through the command line must exactly match the number of arguments specified in the call to `cmd_assign()`. Values specified in the call to `cmd_assign()` do *not* act as defaults. For instance, in our example, `cmd_assign()` would not let us omit `use_log`, and the following would be invalid:
+
+```{bash, eval = FALSE}
+Rscript model.R data/dataset2.csv out/model2.rds --n_iter=10  # invalid!
+```
+
+# Naming conventions
+
+## Argument names starting with a dot
+
+In all the examples so far, the objects holding paths or filenames have conformed to a particular naming convention convention: these objects have all had names that start with a dot. For instance:
+
+```{r, eval = FALSE}
+cmd_assign(.data = "data/dataset.csv", # '.data' starts with a dot
+           n_iter = 5,
+           use_log = TRUE,
+           .out = "out/model.rds")     # '.out' starts with a dot
+```
+
+This idea behind the convention is to distinguish between values and references. `n_iter` and `use_log` in the example above hold values that are directly used in the analysis. `.data` and `.out`, in contrast, describe were values are stored. The distinction is analogous to the one between ordinary variables and [pointers](https://w.wiki/DvZK) in C.
+
+To access the values referred to by the "dot" variables, we use a function such as `readRDS()` or `read_csv()`, as in
+```{r, eval = FALSE}
+data <- read_csv(.data)
+```
+
+The dot-name convention is not compulsory, and `cmd_assign()` does not check for it. But the convention is nevertheless worth following, as it can be easy in practice to get confused between a value and a reference to the value.
+
+## Giving code files and outputs the same base name
+
+Another feature of the examples so far is that files with R code have had the same base name as the files they generated as output. File `fig_smoothed.R`, for instance, generated `fig_smooth.png`, `fig_smooth_5.png`, `fig_smooth_8.png`, and `fig_smooth_10.png`, and file `model.R` generated `model.rds` and `model2.rds`. We rely on file extensions (eg `.R` vs `.png`) to distinguish code from outputs, and we use suffixes (eg `_5`, `_8` and `_10`) to distinguish different versions of the same output.
+
+Naming conventions like this are common in system programming, and are a good way to signal the relationship between code and outputs.
+
+
+# Putting calls to Rscript in a shell script
+
+We can create a data analysis workflow by writing a shell script with calls to Rscript.
+
+We illustrate with a simple example. We need two new files. The first file, called `report.qmd`, creates a with two figures. It contains the following code.
+```{r, echo = FALSE}
+cat(paste(readLines("report.qmd"), collapse = "\n"))
+```
+The second file, called `workflow.sh`, is a shell script that runs the whole workflow. It contains the following code:
+```{r, echo = FALSE}
+cat(paste(readLines("workflow.sh"), collapse = "\n"))
+```
+
+The third line of `workflow.sh` contains an `"-e"` after the `"Rscript"`. The `"-e"` option tells Rscript to work with a single R expression (which follows immediately after the `"-e"`), rather than a file.
+
+We run `workflow.sh`.
 
 ```{bash}
-Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png
+bash workflow.sh
 ```
 
-```{r}
-dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
-         invert = TRUE)
-```
+Our working directory now contains the two graphs and the report (plus a directory, called `report_files`, created by quarto.)
 
 ```{r, echo = FALSE}
-knitr::include_graphics("fig_smoothed_5.png")
+dir_tree(regexp = "quickstart|workflow.Rmd|Makefile",
+         invert = TRUE,
+	 recurse = 0)
 ```
 
-```{bash}
-Rscript fig_smoothed.R airmiles.csv fig_smoothed_7.png --n=7
-```
+The report itself looks like this:
 
-```{r}
-dir_tree(regexp = "quickstart|workflow|Makefile|run_all.sh|report.Rmd",
-         invert = TRUE)
-```
-
-```{r, echo = FALSE}
-knitr::include_graphics("fig_smoothed_7.png")
-```
-
-```{r}
-dir_tree(regexp = "quickstart|workflow|Makefile",
-         invert = TRUE)
-```
-
-```{r, comment = "", echo = FALSE}
-cat(readLines("report_smooth.Rmd"), sep = "\n")
-```
-
-```{r, comment = "", echo = FALSE}
-cat(readLines("run_all.sh"), sep = "\n")
-```
-
-```{bash}
-sh run_all.sh
-```
-
-```{r}
-dir_tree(regexp = "quickstart|workflow|Makefile",
-         invert = TRUE)
-```
-
-````{=html}
 ```{r, echo = FALSE, results = "asis"}
-cat(readLines("report_smooth.html"), sep = "\n")
+html <- suppressWarnings(readLines("report.html"))
+html <- html[html != "<!DOCTYPE html>"]
+cat(html, sep = "\n")
 ```
-````
 
 
-# Using from a makefile
+# Putting calls to Rscript in a makefile
+
+An even better way to organize a data analysis workflow is to put the Rscript commands in a makefile. For an introduction to makefiles, see [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make). 
+
+Here the makefile equivalent of the `workflow.sh` file: 
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow",
-         invert = TRUE)
-```
-
-```{r, comment = "", echo = FALSE}
 cat(readLines("Makefile"), sep = "\n")
 ```
 
+We delete `fig_smoothed_5.png` and run the makefile.
 
 ```{bash}
+rm fig_smoothed_5.png
 make
 ```
 
-```{bash}
-touch airmiles.csv
+Whereas the bash script `workflow.sh` would have recreated `fig_smoothed_5.png`, `fig_smoothed_10.png` and `report.html`, Make recognises that `fig_smoothed_10.png` is still up-to-date, so it only recreates `fig_smoothed_5.png` and `report.html`.
+
+Makefiles take some time to master, but they have important advantages, which we discuss in [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
+
+
+# Alternatives to `cmd_assign()` {#sec:alt}
+
+`cmd_assign()` is not the only option for processing command line arguments.
+
+One example is  [commandArgs()](https://search.r-project.org/CRAN/refmans/R.utils/html/commandArgs.html) in package [R.utils](https://cran.r-project.org/web/packages/R.utils/index.html), which is a more user-friendly version of the base R function `commandArgs()`, with many additional processing options.
+
+Another is package [docopt](https://cran.r-project.org/web/packages/docopt/index.html), which can be used to construct an interface to a script, including processing command line arguments.
+
+`cmd_assign()` is more specialised than `commandArgs()` or **docopt**. It focuses specifically on the task of processing command line arguments as part of a data analysis workflow. This allows it to have a simpler interface, with more automation.
+
+
+```{r, include = FALSE}
+files_to_delete <- c("airmiles.csv",
+		     "fig_smoothed_5.png",
+		     "fig_smoothed_8.png",
+		     "fig_smoothed_10.png",
+		     "fig_smoothed.R",
+		     "Makefile",
+		     "report.html",
+		     "report.qmd",
+		     "report_files",
+		     "workflow.sh")
+path <- path(getwd(), files_to_delete)
+file_delete(path)
 ```
 
-```{bash}
-make
-```
 
-```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow",
-         invert = TRUE)
-```
+
+
+
+

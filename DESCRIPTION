@@ -29,11 +29,12 @@ Suggests:
     knitr,
     magick,
     pdftools,
+    quarto,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
-VignetteBuilder: knitr
-Config/Needs/website: rmarkdown
+VignetteBuilder: quarto
 URL: https://bayesiandemography.github.io/command/
+Config/Needs/website: quarto, rmarkdown

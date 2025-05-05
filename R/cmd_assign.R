@@ -165,16 +165,10 @@
 #' arguments.
 #'
 #' @examples
-#' \dontrun{
-#' cmd_assign(p_inputs = "data/inputs.csv",
-#'            fitted_values = "out/fitted_values.rds",
-#'            variant = "low",
-#'            size = 12.2)
-#' ## In an interactive session, this is equivalent to
-#' p_inputs <- "data/inputs.csv"
-#' fitted_values <- readRDS("out/fitted_values.rds")
-#' variant <- "low"
-#' size <- 12.2
+#' if (interactive()) {
+#'   cmd_assign(.data = "mydata.csv",
+#'              n_iter = 2000,
+#'              .out = "results.rds")
 #' }
 #' @export
 cmd_assign <- function(...) {
