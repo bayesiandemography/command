@@ -72,7 +72,7 @@
 the article <a href="https://bayesiandemography.github.io/command/articles/workflow.html">A
 Workflow for Data Analysis</a>.</p>
 <p><strong>command</strong> contains a single function,
-<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>, which assigns objects to the working
+<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>, which assigns objects to the global
 environment. <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> can be called in two ways:</p>
 <ol style="list-style-type: decimal">
 <li>Interatively</li>
@@ -91,7 +91,7 @@ at that first.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obj1</span> <span class="op">&lt;-</span> <span class="st">"orange"</span></span>
 <span><span class="va">obj2</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></code></pre></div>
-<p>Both code snippets add two objects to the working environment, with
+<p>Both code snippets add two objects to the global environment, with
 names <code>"obj1"</code> and <code>"obj2"</code>, and values
 <code>"orange"</code> and <code>1</code>.</p>
 <p>Objects assigned by <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> can have the following
@@ -143,6 +143,9 @@ the format</p>
 <p>Note that there must not be a space between the name, the
 <code>=</code> sign, and the value, so this would be invalid:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">Rscript</span> myfile.R <span class="at">--n_iteration</span> = 10 output.rds   <span class="co"># invalid!</span></span></code></pre></div>
+<p>Named arguments can also have a single dash and single letter, as
+in</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">Rscript</span> myfile.R <span class="at">-n</span><span class="op">=</span>10</span></code></pre></div>
 <p>When Rscript is called with additional arguments, Rscript supplies
 the names and values for these arguments to the R session. The names and
 values can be accessed from within the session using base R function <a href="https://search.r-project.org/R/refmans/base/html/commandArgs.html" class="external-link">commandArgs()</a>.
@@ -228,7 +231,7 @@ by <code>n_knot</code>,</li>
 <code>.out</code>.</li>
 </ul>
 <p>We use Rscript to run the code from the command line.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">Rscript</span> fig_smoothed.R airmiles.csv 8 fig_smoothed_8.png</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">Rscript</span> fig_smoothed.R airmiles.csv 8 fig_smoothed_8.png</span></code></pre></div>
 <pre class="fansi fansi-output"><code><span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.airmiles`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"airmiles.csv"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`n_knot`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">8</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"numeric"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"fig_smoothed_8.png"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
@@ -268,18 +271,18 @@ run from the command line, it does three things:</p>
 have the same class as the corresponding value in the call to
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>.</li>
 <li>
-<strong>Assign</strong> the resulting values to the working
+<strong>Assign</strong> the resulting values to the global
 environment.</li>
 </ol>
 <p>Say, for instance, that we have a script called <code>model.R</code>
 containing the following call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="st">"data/dataset.csv"</span>,</span>
 <span>           n_iter <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>           use_log <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>           .out <span class="op">=</span> <span class="st">"out/model.rds"</span><span class="op">)</span></span></code></pre></div>
 <p>We run <code>model.R</code> from the command line using</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">Rscript</span> model.R data/dataset2.csv out/model2.rds <span class="at">--use_log</span><span class="op">=</span>TRUE <span class="at">--n_iter</span><span class="op">=</span>10</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">Rscript</span> model.R data/dataset2.csv out/model2.rds <span class="at">--use_log</span><span class="op">=</span>TRUE <span class="at">--n_iter</span><span class="op">=</span>10</span></code></pre></div>
 <p>When it is first called, <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> holds the
 following values:</p>
 <table class="table">
@@ -416,7 +419,7 @@ converts these values to have the same classs as the matched values from
 </tbody>
 </table>
 <p>Finally, in the <strong>assign</strong> step,
-<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> puts the values into the working
+<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> puts the values into the global
 environment.</p>
 <p>The number of arguments passed through the command line must exactly
 match the number of arguments specified in the call to
@@ -424,7 +427,7 @@ match the number of arguments specified in the call to
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> do <em>not</em> act as defaults. For instance,
 in our example, <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> would not let us omit
 <code>use_log</code>, and the following would be invalid:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">Rscript</span> model.R data/dataset2.csv out/model2.rds <span class="at">--n_iter</span><span class="op">=</span>10  <span class="co"># invalid!</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">Rscript</span> model.R data/dataset2.csv out/model2.rds <span class="at">--n_iter</span><span class="op">=</span>10  <span class="co"># invalid!</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="naming-conventions">Naming conventions<a class="anchor" aria-label="anchor" href="#naming-conventions"></a>
@@ -435,7 +438,7 @@ in our example, <code><a href="../reference/cmd_assign.html">cmd_assign()</a></c
 <p>In all the examples so far, the objects holding paths or filenames
 have conformed to a particular naming convention convention: these
 objects have all had names that start with a dot. For instance:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="st">"data/dataset.csv"</span>, <span class="co"># '.data' starts with a dot</span></span>
 <span>           n_iter <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>           use_log <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -450,7 +453,7 @@ C.</p>
 <p>To access the values referred to by the “dot” variables, we use a
 function such as <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS()</a></code> or <code>read_csv()</code>, as
 in</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
 <p>The dot-name convention is not compulsory, and
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> does not check for it. But the convention is
@@ -480,8 +483,8 @@ are a good way to signal the relationship between code and outputs.</p>
 <p>We can create a data analysis workflow by writing a shell script with
 calls to Rscript.</p>
 <p>We illustrate with a simple example. We need two new files. The first
-file, called <code>report.qmd</code>, creates a with two figures. It
-contains the following code.</p>
+file, called <code>report.qmd</code>, creates a report with two figures.
+It contains the following code.</p>
 <pre><code>---
 title: "Smoothed Passenger Miles"
 format: html
@@ -489,18 +492,11 @@ format: html
 
 We use a spline to smooth data on passenger miles.
 
-Here use a spline with 5 knots:
 ```{r}
-#| label: fig_smoothed_5
+#| label: fig_smoothed_side_by_side
 #| echo: false
-knitr::include_graphics("fig_smoothed_5.png")
-```
-
-Here we use a spline with 10 knots:
-```{r}
-#| label: fig_smoothed_10
-#| echo: false
-knitr::include_graphics("fig_smoothed_10.png")
+#| layout-ncol: 2
+knitr::include_graphics(c("fig_smoothed_5.png", "fig_smoothed_10.png"))
 ```</code></pre>
 <p>The second file, called <code>workflow.sh</code>, is a shell script
 that runs the whole workflow. It contains the following code:</p>
@@ -510,13 +506,13 @@ Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png
 Rscript fig_smoothed.R airmiles.csv 10 fig_smoothed_10.png 
 
 Rscript -e "quarto::quarto_render('report.qmd')"</code></pre>
-<p>The third line of <code>workflow.sh</code> contains an
+<p>The third command in <code>workflow.sh</code> contains an
 <code>"-e"</code> after the <code>"Rscript"</code>. The
-<code>"-e"</code> option tells Rscript to work with a single R
-expression (which follows immediately after the <code>"-e"</code>),
-rather than a file.</p>
+<code>"-e"</code> option tells Rscript to use code from one or more
+quoted R expressions (which follow immediately after the
+<code>"-e"</code>), rather than a file.</p>
 <p>We run <code>workflow.sh</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">bash</span> workflow.sh</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">bash</span> workflow.sh</span></code></pre></div>
 <pre class="fansi fansi-output"><code><span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.airmiles`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"airmiles.csv"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`n_knot`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">5</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"numeric"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"fig_smoothed_5.png"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
@@ -530,11 +526,9 @@ null device
 <span style="color: #BB0000;">
 
 processing file: report.qmd
-1/5                  
-2/5 [fig_smoothed_5] 
-3/5                  
-4/5 [fig_smoothed_10]
-5/5                  
+1/3                            
+2/3 [fig_smoothed_side_by_side]
+3/3                            
 output file: report.knit.md
 
 </span><span style="color: #BB0000; font-weight: bold;">pandoc </span><span style="color: #BB0000;">
@@ -611,27 +605,15 @@ Smoothed Passenger Miles
 </header><p>
 We use a spline to smooth data on passenger miles.
 </p>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p>
-Here use a spline with 5 knots:
-</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p>
-<img src="fig_smoothed_5.png" class="img-fluid figure-img"></p>
-</figure>
+<img src="fig_smoothed_5.png" class="img-fluid"></p>
 </div>
-</div>
-</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p>
-Here we use a spline with 10 knots:
-</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p>
-<img src="fig_smoothed_10.png" class="img-fluid figure-img"></p>
-</figure>
+<img src="fig_smoothed_10.png" class="img-fluid"></p>
 </div>
 </div>
 </div>
@@ -1060,8 +1042,8 @@ fig_smoothed_10.png: fig_smoothed.R airmiles.csv
 report.pdf: report.qmd fig_smoothed_5.png fig_smoothed_10.png
     Rscript -e "quarto::quarto_render('$&lt;')"</code></pre>
 <p>We delete <code>fig_smoothed_5.png</code> and run the makefile.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">rm</span> fig_smoothed_5.png</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">rm</span> fig_smoothed_5.png</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
 <pre class="fansi fansi-output"><code>Rscript fig_smoothed.R airmiles.csv fig_smoothed_5.png --n_knot=5  
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.airmiles`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"airmiles.csv"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`n_knot`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">5</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"numeric"</span>.
@@ -1072,11 +1054,9 @@ Rscript -e "quarto::quarto_render('report.qmd')"
 <span style="color: #BB0000;">
 
 processing file: report.qmd
-1/5                  
-2/5 [fig_smoothed_5] 
-3/5                  
-4/5 [fig_smoothed_10]
-5/5                  
+1/3                            
+2/3 [fig_smoothed_side_by_side]
+3/3                            
 output file: report.knit.md
 
 </span><span style="color: #BB0000; font-weight: bold;">pandoc </span><span style="color: #BB0000;">
@@ -1107,7 +1087,7 @@ Output created: report.html
 recreates <code>fig_smoothed_5.png</code> and
 <code>report.html</code>.</p>
 <p>Makefiles take some time to master, but they have important
-advantages, which we discuss in <a href="https://bayesiandemography.github.io/command/articles/workflow.html">A
+advantages, discussed in <a href="https://bayesiandemography.github.io/command/articles/workflow.html">A
 Workflow for Data Analysis</a>.</p>
 </div>
 <div class="section level2">
@@ -1115,18 +1095,17 @@ Workflow for Data Analysis</a>.</p>
 </h2>
 <p><code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> is not the only option for processing
 command line arguments.</p>
-<p>One example is <a href="https://search.r-project.org/CRAN/refmans/R.utils/html/commandArgs.html" class="external-link">commandArgs()</a>
+<p>One alternative is <a href="https://search.r-project.org/CRAN/refmans/R.utils/html/cmdArgs.html" class="external-link">cmdArgs()</a>
 in package <a href="https://cran.r-project.org/web/packages/R.utils/index.html" class="external-link">R.utils</a>,
 which is a more user-friendly version of the base R function
-<code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code>, with many additional processing options.</p>
+<code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code>.</p>
 <p>Another is package <a href="https://cran.r-project.org/web/packages/docopt/index.html" class="external-link">docopt</a>,
-which can be used to construct an interface to a script, including
-processing command line arguments.</p>
+which can be used to construct an interface for script, including the
+processing of command line arguments.</p>
 <p><code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> is more specialised than
-<code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code> or <strong>docopt</strong>. It focuses
+<code>cmdArgs()</code> or <strong>docopt</strong>. It focuses
 specifically on the task of processing command line arguments as part of
-a data analysis workflow. This allows it to have a simpler interface,
-with more automation.</p>
+a data analysis workflow.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
