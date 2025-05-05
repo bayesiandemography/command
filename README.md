@@ -12,9 +12,15 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/bayesiandemography/command/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bayesiandemography/command?branch=main)
 <!-- badges: end -->
 
-Turn arguments passed at the command line into objects in the current
-environment. Scripts behave like functions, leading to a safer, more
-modular workflow.
+Process command line arguments as part of data analysis workflow.
+
+- \[cmd_assign()\] is the main function.
+- [Quick Start
+  Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
+  shows how to use `cmd_assign()`.
+- [A Workflow for Data
+  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  presents an approach to the design of data analysis workflows.
 
 ## Installation
 
@@ -25,7 +31,8 @@ devtools::install_github("bayesiandemography/command")
 ## Example
 
 ``` r
-cmd_assign(survey_file = "out/survey_file.rds",
-           n_iterations = 1000,
-           trim_outliers = TRUE)
+cmd_assign(.data = "data/raw_data.csv",
+           date_start = "2025-01-01",
+           trim_outliers = TRUE,
+       .out = "out/cleaned_data.rds")
 ```
