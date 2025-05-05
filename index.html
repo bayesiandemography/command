@@ -56,7 +56,14 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>Turn arguments passed at the command line into objects in the current environment. Scripts behave like functions, leading to a safer, more modular workflow.</p>
+<p>Process command line arguments as part of data analysis workflow.</p>
+<ul>
+<li>[cmd_assign()] is the main function.</li>
+<li>
+<a href="https://bayesiandemography.github.io/command/articles/quickstart.html">Quick Start Guide</a> shows how to use <code><a href="reference/cmd_assign.html">cmd_assign()</a></code>.</li>
+<li>
+<a href="https://bayesiandemography.github.io/command/articles/workflow.html">A Workflow for Data Analysis</a> presents an approach to the design of data analysis workflows.</li>
+</ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -67,9 +74,10 @@
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>survey_file <span class="op">=</span> <span class="st">"out/survey_file.rds"</span>,</span>
-<span>           n_iterations <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>           trim_outliers <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.data <span class="op">=</span> <span class="st">"data/raw_data.csv"</span>,</span>
+<span>           date_start <span class="op">=</span> <span class="st">"2025-01-01"</span>,</span>
+<span>           trim_outliers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>       .out <span class="op">=</span> <span class="st">"out/cleaned_data.rds"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
