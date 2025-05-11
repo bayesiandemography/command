@@ -11,7 +11,7 @@ as part of data analysis workflow.
 }
 \details{
 \itemize{
-\item \code{\link[=cmd_assign]{cmd_assign()}} is the main function in the package.
+\item \code{\link[=cmd_assign]{cmd_assign()}} is the main function.
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
 shows how to use \code{cmd_assign()}.
 \item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{A Workflow for Data Analysis}

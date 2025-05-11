@@ -11,13 +11,14 @@ Authors@R:
       person(given = "Bayesian Demography Limited",
              role = "cph"))
 Description: Process command line arguments,
-    as part of a data analysis workflow.
+    as part of a data analysis pipeline.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
     cli,
-    methods
+    methods,
+    tools
 Suggests: 
     covr,
     dplyr,
@@ -30,6 +31,6 @@ Suggests:
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
-VignetteBuilder: quarto
+VignetteBuilder: knitr
 URL: https://bayesiandemography.github.io/command/
 Config/Needs/website: quarto, rmarkdown

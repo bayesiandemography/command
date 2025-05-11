@@ -107,10 +107,9 @@
 #'
 #' @seealso
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
-#'   on how to use `cmd_assign()`
+#'   How to use `cmd_assign()`
 #' - [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   on an approach to build data analysis workflows that makes extensive
-#'   uses of `cmd_assign()`.
+#'   Build data analysis pipelines using `cmd_assign()`.
 #' - Base R function [commandArgs()] uses a more general,
 #'   lower-level approach to processing command line arguments.
 #'   (`commandArgs()` is called internally by `cmd_assign()`.)
