@@ -31,15 +31,17 @@ test_that("'cmd_assign' works with valid arguments - on command line", {
 })
 
 test_that("'cmd_assign' works with valid arguments - interactively", {
-    if (interactive()) {
-        suppressMessages(
-            cmd_assign(obj = "obj.rds", n = 2, named = 'goodbye')
-        )
-        expect_identical(obj, "obj.rds")
-        expect_identical(n, 2)
-        expect_identical(named, "goodbye")
-        expect_setequal(ls(), c("obj", "n", "named"))
-    }
+  if (interactive()) {
+    suppressMessages(
+      cmd_assign(obj = "obj.rds", n = 2, named = 'goodbye')
+    )
+    expect_identical(obj, "obj.rds")
+    expect_identical(n, 2)
+    expect_identical(named, "goodbye")
+    expect_setequal(ls(), c("obj", "n", "named"))
+  }
+  else
+    expect_true(TRUE)
 })
 
 

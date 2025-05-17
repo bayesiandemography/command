@@ -17,12 +17,12 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     cli,
+    fs,
     methods,
     tools
 Suggests: 
     covr,
     dplyr,
-    fs,
     ggplot2,
     knitr,
     quarto,
