@@ -31,6 +31,8 @@
 #' creates the Makefile the current working directory.
 #' @param name_make The name of the Makefile.
 #' The default is `"Makefile"`.
+#' @param overwrite Whether to overwrite
+#' an existing file. Default is `FALSE`.
 #' 
 #' @returns `makefile()` is called for its
 #' side effect, which is to create a
@@ -95,7 +97,8 @@
 #' @export
 makefile <- function(files = NULL,
                      dir_make = NULL,
-                     name_make = "Makefile") {
+                     name_make = "Makefile",
+                     overwrite = FALSE) {
   has_dir_make <- !is.null(dir_make)
   if (has_dir_make)
     check_dir(dir_make, nm = "dir_make")
@@ -111,6 +114,8 @@ makefile <- function(files = NULL,
   if (has_name_make)
     check_valid_filename(x = name_make,
                          nm = "name_make")
+  check_flag(x = overwrite,
+             nm = "overwrite")
   lines <- c("",
              ".PHONY: all",
              "all:\n\n")
@@ -129,6 +134,10 @@ makefile <- function(files = NULL,
              "\tmkdir out\n\n")
   if (has_name_make) {
     path_make <- fs::path(dir_make, name_make)
+    if (fs::file_exists(path_make) && !overwrite)
+      cli::cli_abort(c(paste("Directory {.file {dir_make}} already contains a",
+                             "file called {.file {name_make}}."),
+                       i = "To overwrite an existing file, set {.arg overwrite} to {.val {TRUE}}."))
     writeLines(lines, con = path_make)
   }
   lines <- paste(lines, collapse = "\n")

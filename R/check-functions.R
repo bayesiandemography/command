@@ -160,7 +160,7 @@ check_file_exists <- function(file, dir, nm_dir, has_dir_arg) {
     else
       msg2 <- paste("No value for {.arg {nm_dir}} supplied, so path to",
                     "R code file assumed to start from current working directory.")
-    msg3 <- "Path to R code file: {.file {path_file}}."
+    msg3 <- "Path to R code file: {.file {path_file}}"
     msg <- c(msg1, i = msg2, i = msg3)
     cli::cli_abort(msg)
   }
@@ -200,12 +200,35 @@ check_files_exists <- function(files, dir, nm_dir, has_dir_arg) {
       msg2 <- paste("No value for {.arg {nm_dir}} supplied, so path to",
                     "{.arg files} directory assumed to start",
                     "from current working directory.")
-    msg3 <- "Path to {.arg files} directory: {.file {path_files}}."
+    msg3 <- "Path to {.arg files} directory: {.file {path_files}}"
     msg <- c(msg1, i = msg2, i = msg3)
     cli::cli_abort(msg)
   }
   invisible(TRUE)
-}  
+}
+
+
+
+## HAS_TESTS
+#' Check a Logical Flag
+#'
+#' @param x TRUE or FALSE
+#' @param nm Name for 'x' to use in error messages.
+#'
+#' @returns TRUE, invisibly
+#' 
+#' @noRd
+check_flag <- function(x, nm) {
+  if (!identical(length(x), 1L))
+    cli::cli_abort(c("{.arg {nm}} does not have length 1",
+                     i = "{.arg {nm}} has length {length(x)}."))
+  if (!is.logical(x))
+    cli::cli_abort(c("{.arg {nm}} does not have class {.cls logical}.",
+                     i = "{.arg {nm}} has class {.cls {class(x)}}"))
+  if (is.na(x))
+    cli::cli_abort("{.arg {nm}} is {.val {NA}}")
+  invisible(TRUE)
+}
 
 
 ## HAS_TESTS

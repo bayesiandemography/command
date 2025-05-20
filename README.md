@@ -14,13 +14,26 @@ coverage](https://codecov.io/gh/bayesiandemography/command/branch/main/graph/bad
 
 Process command line arguments as part of data analysis workflow.
 
-- \[cmd_assign()\] is the main function.
+- [cmd_assign()](https://bayesiandemography.github.io/command/reference/cmd_assign.html)
+  The main function.
 - [Quick Start
-  Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
-  shows how to use `cmd_assign()`.
-- [A Workflow for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
-  presents an approach to the design of data analysis workflows.
+  Guide](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
+  How to use `cmd_assign()`.
+- [Creating a Shell
+  Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html)
+  How to use
+  [cmd_shell()](https://bayesiandemography.github.io/command/reference/cmd_shell.html)
+  and
+  [shell_script()](https://bayesiandemography.github.io/command/reference/shell_script.html)
+- [Creating a Makefile
+  Script](https://bayesiandemography.github.io/command/articles/a3_shell_script.html)
+  How to use
+  [cmd_make()](https://bayesiandemography.github.io/command/reference/cmd_make.html)
+  and
+  [makefile()](https://bayesiandemography.github.io/command/reference/makefile.html)
+- [Modular
+  Workflows](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
+  Safe, transparent, flexible workflows for data analysis.
 
 ## Installation
 
@@ -34,5 +47,5 @@ devtools::install_github("bayesiandemography/command")
 cmd_assign(.data = "data/raw_data.csv",
            date_start = "2025-01-01",
            trim_outliers = TRUE,
-       .out = "out/cleaned_data.rds")
+           .out = "out/cleaned_data.rds")
 ```

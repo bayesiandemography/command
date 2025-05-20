@@ -1,0 +1,92 @@
+---
+title: "Creating a Shell Script"
+---
+
+```{r, include = FALSE}
+library(command)
+library(fs)
+
+path_swiss <- path_package(package = "command",
+                           "extdata/swiss")
+dir_copy(path = path_swiss,
+         new_path = getwd(),
+         overwrite = TRUE)
+dir_create("out")	 
+
+knitr::opts_chunk$set(collapse = TRUE,
+                      engine.opts = "-l",
+                      comment = ""
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
+nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
+```
+
+# Introduction
+
+```{r, echo = FALSE}
+dir_tree(regexp = nms_articles,
+         invert = TRUE)
+```
+
+```{r, echo = FALSE}
+cat(paste(readLines("src/model.R"), collapse = "\n"))
+```
+
+
+```{r}
+cmd_shell("src/model.R")
+```
+
+```{r}
+cmd_shell("src/fig_fitted.R")
+```
+
+We call
+<!-- Messages don't display properly, so don't print real output -->
+```{r, eval = FALSE}
+shell_script("src")
+```
+```{r, include = FALSE}
+shell_script("src")
+```
+
+```{r, echo = FALSE}
+dir_tree(regexp = nms_articles,
+         invert = TRUE)
+```
+
+```{r, echo = FALSE}
+lines <- readLines("workflow.sh")
+cat(paste(lines, collapse = "\n"))
+```
+
+```{r, echo = FALSE}
+lines <- lines[c(10:13, 5:9, 14:17, 23:27, 1:4, 18:22, 28)]
+lines <- c(lines,
+	   "Rscript -e \"quarto::quarto_render('report.qmd')\"",
+	   "")
+cat(paste(lines, collapse = "\n"))
+writeLines(lines, con = "workflow.sh")
+```
+
+```{bash}
+bash workflow.sh
+```
+
+
+```{r, echo = FALSE}
+dir_tree(regexp = nms_articles,
+         invert = TRUE,
+	 recurse = 1L)
+```
+
+
+```{r, include = FALSE}
+files_to_delete <- dir_ls(regexp = nms_articles, 
+                          invert = TRUE)
+file_delete(files_to_delete)
+```
+
+
+

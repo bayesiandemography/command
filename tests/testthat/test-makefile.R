@@ -78,3 +78,23 @@ test_that("'makefile' works with no dir_make, no files", {
   unlink(dir_tmp, recursive = TRUE)
   setwd(dir_curr)
 })
+
+test_that("'makefile' throws appropriate error when file already exists", {
+  dir_tmp <- tempfile()
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  dir.create(fs::path(dir_tmp, "src"))
+  file_path <- fs::path(dir_tmp, "src/script.R")
+  writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
+             con = file_path)
+  writeLines("bla",
+             con = fs::path(dir_tmp, "Makefile"))
+  expect_error(suppressMessages(makefile(files = "src", dir_make = dir_tmp)),
+               "already contains a file called")
+  suppressMessages(makefile(files = "src", dir_make = dir_tmp, overwrite = TRUE))
+  ans <- readLines(fs::path(dir_tmp, "Makefile"))
+  expect_identical(ans[[2]], ".PHONY: all")
+  unlink(dir_tmp, recursive = TRUE)
+})
+

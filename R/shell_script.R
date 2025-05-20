@@ -30,6 +30,8 @@
 #' creates the shell script the current working directory.
 #' @param name_shell The name of the shell script.
 #' The default is `"workflow.sh"`.
+#' @param overwrite Whether to overwrite
+#' an existing file. Default is `FALSE`.
 #' 
 #' @returns `shell_script()` is called for its
 #' side effect, which is to create a
@@ -92,7 +94,8 @@
 #' @export
 shell_script <- function(files,
                          dir_shell = NULL,
-                         name_shell = "workflow.sh") {
+                         name_shell = "workflow.sh",
+                         overwrite = FALSE) {
   has_dir_shell <- !is.null(dir_shell)
   if (has_dir_shell)
     check_dir(dir_shell, nm = "dir_shell")
@@ -106,6 +109,8 @@ shell_script <- function(files,
   if (has_name_shell)
     check_valid_filename(x = name_shell,
                          nm = "name_shell")
+  check_flag(x = overwrite,
+             nm = "overwrite")
   lines <- ""
   commands <- make_commands(files = files,
                             dir_shell = dir_shell)
@@ -116,6 +121,10 @@ shell_script <- function(files,
              "")
   if (has_name_shell) {
     path_shell <- fs::path(dir_shell, name_shell)
+    if (fs::file_exists(path_shell) && !overwrite)
+      cli::cli_abort(c(paste("Directory {.file {dir_shell}} already contains a",
+                             "file called {.file {name_shell}}."),
+                       i = "To overwrite an existing file, set {.arg overwrite} to {.val {TRUE}}."))
     writeLines(lines, con = path_shell)
   }
   lines <- paste(lines, collapse = "\n")

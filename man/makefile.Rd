@@ -4,7 +4,12 @@
 \alias{makefile}
 \title{Create a Makefile}
 \usage{
-makefile(files = NULL, dir_make = NULL, name_make = "Makefile")
+makefile(
+  files = NULL,
+  dir_make = NULL,
+  name_make = "Makefile",
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{files}{A path from \code{dir_make} to a
@@ -18,6 +23,9 @@ creates the Makefile the current working directory.}
 
 \item{name_make}{The name of the Makefile.
 The default is \code{"Makefile"}.}
+
+\item{overwrite}{Whether to overwrite
+an existing file. Default is \code{FALSE}.}
 }
 \value{
 \code{makefile()} is called for its

@@ -1,5 +1,5 @@
 ---
-title: "A Workflow for Data Analysis"
+title: "Modular Workflows"
 ---
 
 ```{r}

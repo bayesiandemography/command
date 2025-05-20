@@ -213,6 +213,37 @@ test_that("'check_files_exists' throws correct error, with dir not specified", {
 })
 
 
+## 'check_flag' ---------------------------------------------------------------
+
+test_that("'check_flag' returns TRUE with valid inputs", {
+  x <- TRUE
+  expect_true(check_flag(x, nm = "x"))
+  x <- FALSE
+  expect_true(check_flag(x))
+})
+
+test_that("'check_flag' throws expected error non-length-1", {
+  y <- logical()
+  expect_error(check_flag(y, nm = "z"),
+               "`z` does not have length 1")
+  z <- c(TRUE, TRUE)
+  expect_error(check_flag(z, nm = "z"),
+               "`z` does not have length 1")
+})
+
+test_that("'check_flag' throws expected error non-logical", {
+  x <- "hello"
+  expect_error(check_flag(x, nm = "x"),
+               "`x` does not have class <logical>")
+})
+
+test_that("'check_flag' throws expected error NA", {
+  x <- NA
+  expect_error(check_flag(x, nm = "xx"),
+               "`xx` is NA")
+})
+
+
 ## 'check_is_r_code' -------------------------------------------------------------
 
 test_that("'check_is_r_code' works with valid inputs", {

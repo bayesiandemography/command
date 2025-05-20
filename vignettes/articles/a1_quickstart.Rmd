@@ -9,7 +9,7 @@ library(fs)
 path_airmiles <- path_package(package = "command",
                               "extdata/airmiles")
 dir_copy(path = path_airmiles,
-         new_path = getwd(),
+         new_path = ".",
          overwrite = TRUE)
 
 knitr::opts_chunk$set(collapse = TRUE,
@@ -18,13 +18,14 @@ knitr::opts_chunk$set(collapse = TRUE,
 )
 
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
+nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
 ```
 
 # Introduction
 
-This article shows how to get started with package **command**. It should ideally be read in combination with the article [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
+This article shows how to get started with package **command**.
 
-**command** contains a single function, `cmd_assign()`, which assigns objects to the global environment. `cmd_assign()` can be called in two ways:
+The main function in **command**  is `cmd_assign()`, which assigns objects to the global environment. `cmd_assign()` can be called in two ways:
 
 1. Interatively
 2. Inside a script that is run from the command line
@@ -47,7 +48,7 @@ obj1 <- "orange"
 obj2 <- 1
 ```
 
-Both code snippets add two objects to the global environment, with names `"obj1"` and `"obj2"`, and values `"orange"` and `1`.
+Both snippets add two objects to the global environment with names `"obj1"` and `"obj2"` and values `"orange"` and `1`.
 
 Objects assigned by `cmd_assign()` can have the following classes:
 
@@ -103,7 +104,7 @@ We will work through an example where we call `cmd_assign()` inside a script tha
 Our current working directory contains two files:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow|Makefile|workflow.sh|report.Rmd",
+dir_tree(regexp = paste(nms_articles, "Makefile|workflow.sh|report.Rmd", sep = "|"),	
          invert = TRUE)
 ```
 
@@ -138,7 +139,7 @@ The call to `cmd_assign()` in `fig_smoothed.R` created objects `.airmiles`, `n_k
 Our working directory now looks like this:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow|Makefile|workflow.sh|report.Rmd",
+dir_tree(regexp = paste(nms_articles, "Makefile|workflow.sh|report.Rmd", sep = "|"),
          invert = TRUE,
 	 recurse = 0)
 ```
@@ -266,7 +267,7 @@ bash workflow.sh
 Our working directory now contains the two graphs and the report (plus a directory, called `report_files`, created by quarto.)
 
 ```{r, echo = FALSE}
-dir_tree(regexp = "quickstart|workflow.Rmd|Makefile",
+dir_tree(regexp = paste(nms_articles, "Makefile", sep = "|"),
          invert = TRUE,
 	 recurse = 0)
 ```
@@ -314,16 +315,9 @@ Another is package [docopt](https://cran.r-project.org/web/packages/docopt/index
 
 
 ```{r, include = FALSE}
-files_to_delete <- c("airmiles.csv",
-		     "fig_smoothed_5.png",
-		     "fig_smoothed_8.png",
-		     "fig_smoothed_10.png",
-		     "fig_smoothed.R",
-		     "Makefile",
-		     "report.html",
-		     "report.qmd",
-		     "report_files",
-		     "workflow.sh")
-path <- path(getwd(), files_to_delete)
-file_delete(path)
+files_to_delete <- dir_ls(regexp = nms_articles, 
+                          invert = TRUE)
+file_delete(files_to_delete)
 ```
+
+

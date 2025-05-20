@@ -4,7 +4,12 @@
 \alias{shell_script}
 \title{Create a Shell Script}
 \usage{
-shell_script(files, dir_shell = NULL, name_shell = "workflow.sh")
+shell_script(
+  files,
+  dir_shell = NULL,
+  name_shell = "workflow.sh",
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{files}{A path from \code{dir_shell} to a
@@ -17,6 +22,9 @@ creates the shell script the current working directory.}
 
 \item{name_shell}{The name of the shell script.
 The default is \code{"workflow.sh"}.}
+
+\item{overwrite}{Whether to overwrite
+an existing file. Default is \code{FALSE}.}
 }
 \value{
 \code{shell_script()} is called for its
