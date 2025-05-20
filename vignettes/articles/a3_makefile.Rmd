@@ -1,5 +1,5 @@
 ---
-title: "Creating a Shell Script"
+title: "Creating a Makefile"
 ---
 
 ```{r, include = FALSE}
@@ -35,20 +35,20 @@ cat(paste(readLines("src/model.R"), collapse = "\n"))
 
 
 ```{r}
-cmd_shell("src/model.R")
+cmd_make("src/model.R")
 ```
 
 ```{r}
-cmd_shell("src/fig_fitted.R")
+cmd_make("src/fig_fitted.R")
 ```
 
 We call
 <!-- Messages don't display properly, so don't print real output -->
 ```{r, eval = FALSE}
-shell_script("src")
+makefile("src")
 ```
 ```{r, include = FALSE}
-shell_script("src")
+makefile("src")
 ```
 
 ```{r, echo = FALSE}
@@ -57,23 +57,9 @@ dir_tree(regexp = nms_articles,
 ```
 
 ```{r, echo = FALSE}
-lines <- readLines("workflow.sh")
+lines <- readLines("Makefile")
 cat(paste(lines, collapse = "\n"))
 ```
-
-```{r, echo = FALSE}
-lines <- lines[c(10:13, 5:9, 14:17, 23:27, 1:4, 18:22, 28)]
-lines <- c(lines,
-	   "Rscript -e \"quarto::quarto_render('report.qmd')\"",
-	   "")
-cat(paste(lines, collapse = "\n"))
-writeLines(lines, con = "workflow.sh")
-```
-
-```{bash}
-bash workflow.sh
-```
-
 
 ```{r, echo = FALSE}
 dir_tree(regexp = nms_articles,
