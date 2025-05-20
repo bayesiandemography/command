@@ -2,9 +2,11 @@ pandoc: 3.1.11
 pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
-  articles/quickstart: quickstart.html
-  articles/workflow: workflow.html
-last_built: 2025-05-17T03:28Z
+  articles/a1_quickstart: a1_quickstart.html
+  articles/a2_shell_script: a2_shell_script.html
+  articles/a3_makefile: a3_makefile.html
+  articles/a4_workflow: a4_workflow.html
+last_built: 2025-05-20T23:45Z
 urls:
   reference: https://bayesiandemography.github.io/command/reference
   article: https://bayesiandemography.github.io/command/articles
