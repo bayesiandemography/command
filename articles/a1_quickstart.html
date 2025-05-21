@@ -1022,12 +1022,12 @@ We use a spline to smooth data on passenger miles.
 
 </div>
 <div class="section level2">
-<h2 id="putting-calls-to-rscript-in-a-makefile">Putting calls to Rscript in a makefile<a class="anchor" aria-label="anchor" href="#putting-calls-to-rscript-in-a-makefile"></a>
+<h2 id="putting-calls-to-rscript-in-a-makefile">Putting calls to Rscript in a Makefile<a class="anchor" aria-label="anchor" href="#putting-calls-to-rscript-in-a-makefile"></a>
 </h2>
 <p>An even better way to organize a data analysis workflow is to put the
-Rscript commands in a makefile. For an introduction to makefiles, see <a href="https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make" class="external-link">Project
+Rscript commands in a Makefile. For an introduction to Makefiles, see <a href="https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make" class="external-link">Project
 Management with Make</a>.</p>
-<p>Here the makefile equivalent of the <code>workflow.sh</code>
+<p>Here the Makefile equivalent of the <code>workflow.sh</code>
 file:</p>
 <pre><code>
 .PHONY: all
@@ -1041,7 +1041,7 @@ fig_smoothed_10.png: fig_smoothed.R airmiles.csv
 
 report.pdf: report.qmd fig_smoothed_5.png fig_smoothed_10.png
     Rscript -e "quarto::quarto_render('$&lt;')"</code></pre>
-<p>We delete <code>fig_smoothed_5.png</code> and run the makefile.</p>
+<p>We delete <code>fig_smoothed_5.png</code> and run the Makefile.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">rm</span> fig_smoothed_5.png</span>
 <span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
 <pre class="fansi fansi-output"><code>Rscript fig_smoothed.R airmiles.csv fig_smoothed_5.png --n_knot=5  
