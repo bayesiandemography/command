@@ -40,13 +40,12 @@
 #' shell script.
 #'
 #' @seealso
-#' - [cmd_shell()] Turn a [cmd_assign()] call
-#'   into a shell command
-#' - [makefile()] Create a Makefile
-#'   for a data analysis workflow
+#' - [Creating a Shell Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html) More on `shell_script()`
+#' - [cmd_shell()] Turn a [cmd_assign()] call into a shell command
+#' - [makefile()] Makefile equivalent of `shell_script()`
 #' - [cmd_assign()] Process command line arguments
-#' - [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Data analysis workflows using `cmd_assign()`.
+#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible workflows using `cmd_assign()`
 #' - Episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html)
 #'   Introduction to the command line
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)

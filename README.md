@@ -15,25 +15,13 @@ coverage](https://codecov.io/gh/bayesiandemography/command/branch/main/graph/bad
 Process command line arguments as part of data analysis workflow.
 
 - [cmd_assign()](https://bayesiandemography.github.io/command/reference/cmd_assign.html)
-  The main function.
+  The main function
 - [Quick Start
   Guide](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
   How to use `cmd_assign()`.
-- [Creating a Shell
-  Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html)
-  How to use
-  [cmd_shell()](https://bayesiandemography.github.io/command/reference/cmd_shell.html)
-  and
-  [shell_script()](https://bayesiandemography.github.io/command/reference/shell_script.html)
-- [Creating a Makefile
-  Script](https://bayesiandemography.github.io/command/articles/a3_shell_script.html)
-  How to use
-  [cmd_make()](https://bayesiandemography.github.io/command/reference/cmd_make.html)
-  and
-  [makefile()](https://bayesiandemography.github.io/command/reference/makefile.html)
-- [Modular
+- [Data Analysis
   Workflows](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
-  Safe, transparent, flexible workflows for data analysis.
+  Safe, flexible workflows using `cmd_assign()`
 
 ## Installation
 

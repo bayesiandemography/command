@@ -281,17 +281,17 @@ cat(html, sep = "\n")
 ```
 
 
-# Putting calls to Rscript in a makefile
+# Putting calls to Rscript in a Makefile
 
-An even better way to organize a data analysis workflow is to put the Rscript commands in a makefile. For an introduction to makefiles, see [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make). 
+An even better way to organize a data analysis workflow is to put the Rscript commands in a Makefile. For an introduction to Makefiles, see [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make). 
 
-Here the makefile equivalent of the `workflow.sh` file: 
+Here the Makefile equivalent of the `workflow.sh` file: 
 
 ```{r, echo = FALSE}
 cat(readLines("Makefile"), sep = "\n")
 ```
 
-We delete `fig_smoothed_5.png` and run the makefile.
+We delete `fig_smoothed_5.png` and run the Makefile.
 
 ```{bash}
 rm fig_smoothed_5.png

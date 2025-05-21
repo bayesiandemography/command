@@ -80,19 +80,20 @@
 #' invisibly returns a text string with the rule.
 #'
 #' @seealso
-#' - [cmd_shell()] Turn a [cmd_assign()] call
-#'   into a command to use in a shell script
-#' - [makefile()] Create a Makefile for a
-#'   data analysis workflow
+#' - [cmd_shell()] Shell script equivalent of `cmd_make()`
+#' - [makefile()] Create a Makefile
+#'   from calls to [cmd_assign()]
 #' - [cmd_assign()] Process command line arguments
-#' - [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Data analysis workflows using `cmd_assign()`.
+#' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#'   How to use `cmd_assign()`
+#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible workflows using `cmd_assign()`
+#' - [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)
+#'   Makefiles in data analysis workflows
+#' - [GNU make](https://www.gnu.org/software/make/manual/make.html#SEC_Contents)
+#'   Definitive guide
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
 #'   Introduction to Rscript
-#' - [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)
-#'   `make` in data analysis pipelines.
-#' - [GNU make](https://www.gnu.org/software/make/manual/make.html#SEC_Contents)
-#'   Definitive guide to (GNU) make
 #'
 #' @examples
 #' library(fs)

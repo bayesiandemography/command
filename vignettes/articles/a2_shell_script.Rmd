@@ -8,41 +8,75 @@ library(fs)
 
 path_swiss <- path_package(package = "command",
                            "extdata/swiss")
-dir_copy(path = path_swiss,
-         new_path = getwd(),
-         overwrite = TRUE)
+dir_copy(path = path(path_swiss, "data"),
+         new_path = ".")
+dir_create("src")	 
+file_copy(path = path(path_swiss, "src/scaled.R"),
+          new_path = "src/scaled.R")
+file_copy(path = path(path_swiss, "src/model.R"),
+          new_path = "src/model.R")	
+file_copy(path = path(path_swiss, "src/tab_coef.R"),
+          new_path = "src/tab_coef.R")	
 dir_create("out")	 
+file_copy(path = path(path_swiss, "report_short.qmd"),
+          new_path = "report.qmd")
 
 knitr::opts_chunk$set(collapse = TRUE,
                       engine.opts = "-l",
-                      comment = ""
-)
+                      comment = "")
 
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
+
 nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
 ```
 
 # Introduction
+
+Functions `cmd_shell()` and `shell_script()` help with writing a shell script to control a data analysis workflow. `cmd_shell()` and `shell_script()` do most of the work, but bit of editing may be necessary. 
+
+# An example workflow
+
+To demonstrate, we use a simple workflow where all the code, aside from the shell script, has already been written. The project directory contains the following files:
 
 ```{r, echo = FALSE}
 dir_tree(regexp = nms_articles,
          invert = TRUE)
 ```
 
+The workflow has four steps:
+
+1. `src/scaled.R` reads in the raw data, scales it, and creates `out/scaled.rds`
+2. `src/model.R` fits a model to the scaled data, and creates `out/model.rds`
+3. `src/tab_coef.R` extracts estimates from the model, and creates `out/tab_coef.rds`
+4. `report.qmd` uses `out/tab_coef.rds` to create a report, and creates `report.html`
+
+`scaled.R`, `model.R`, and `tab_coef.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
+
 ```{r, echo = FALSE}
-cat(paste(readLines("src/model.R"), collapse = "\n"))
+lines <- readLines("src/model.R")
+cat(paste(c(lines[7:9], ""), collapse = "\n"))
 ```
 
+# cmd_shell()
 
-```{r}
+`cmd_shell()` extracts the call to `cmd_assign()` from an R file, and turns it into a shell command. For instance, the call
+
+```{r, eval = FALSE}
+cmd_shell("src/model.R")
+```
+has return value
+```{r, eval = TRUE, echo = FALSE}
 cmd_shell("src/model.R")
 ```
 
-```{r}
-cmd_shell("src/fig_fitted.R")
-```
+The easiest way to use `cmd_shell()` is to call it from the R console, and then cut-and-paste the results into the shell script.
 
-We call
+
+# shell_script()
+
+`shell_script()` creates a draft of the whole shell script. `shell_script()` loops through all the R files in a directory, extracting `cmd_assign()` calls and converting them into shell commands. It then puts the shell commands into a script.
+
+For instance, the call
 <!-- Messages don't display properly, so don't print real output -->
 ```{r, eval = FALSE}
 shell_script("src")
@@ -50,19 +84,16 @@ shell_script("src")
 ```{r, include = FALSE}
 shell_script("src")
 ```
-
-```{r, echo = FALSE}
-dir_tree(regexp = nms_articles,
-         invert = TRUE)
-```
-
+creates a new file called `workflow.sh` with the lines
 ```{r, echo = FALSE}
 lines <- readLines("workflow.sh")
 cat(paste(lines, collapse = "\n"))
 ```
 
+Here, as in most cases, the output from `shell_script()` needs some editing before it is ready for use. The order of the commands in `workflow.sh` reflects the order of the files in the `src` directory, not the order in which they should carry out. We need to reorder the commands, so that `scaled.rds` is created before `model.rds`:
+
 ```{r, echo = FALSE}
-lines <- lines[c(10:13, 5:9, 14:17, 23:27, 1:4, 18:22, 28)]
+lines <- lines[c(6:9, 1:5, 10:14)]
 lines <- c(lines,
 	   "Rscript -e \"quarto::quarto_render('report.qmd')\"",
 	   "")
@@ -70,16 +101,42 @@ cat(paste(lines, collapse = "\n"))
 writeLines(lines, con = "workflow.sh")
 ```
 
-```{bash}
-bash workflow.sh
-```
+# Running the shell script
 
+Through some combination of `cmd_shell()`, `shell_script()`, and hand editing, we have created a valid shell script. Our project directory looks like this.
 
 ```{r, echo = FALSE}
 dir_tree(regexp = nms_articles,
          invert = TRUE,
 	 recurse = 1L)
 ```
+
+We run the shell script.
+
+```{bash}
+bash workflow.sh
+```
+
+Our project directory now looks like this.
+
+```{r, echo = FALSE}
+dir_tree(regexp = nms_articles,
+         invert = TRUE,
+	 recurse = 1L)
+```
+
+We have created `scaled.rds`, `model.rds`, and `tab_coef` in the `out` directory, and `report.html` in the main directory.
+
+# Other resources
+
+- [makefile()](https://bayesiandemography.github.io/command/reference/makefile.html) The Makefile equivalent of `shell_script()`
+- [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Safe, flexible workflows for data analysis
+- Episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html)
+  Introduction to the command line
+- [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
+  Introduction to Rscript
+
 
 
 ```{r, include = FALSE}

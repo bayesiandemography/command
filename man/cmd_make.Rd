@@ -125,18 +125,19 @@ dir_delete(path_project)
 }
 \seealso{
 \itemize{
-\item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call
-into a command to use in a shell script
-\item \code{\link[=makefile]{makefile()}} Create a Makefile for a
-data analysis workflow
+\item \code{\link[=cmd_shell]{cmd_shell()}} Shell script equivalent of \code{cmd_make()}
+\item \code{\link[=makefile]{makefile()}} Create a Makefile
+from calls to \code{\link[=cmd_assign]{cmd_assign()}}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{A Workflow for Data Analysis}
-Data analysis workflows using \code{cmd_assign()}.
+\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
+How to use \code{cmd_assign()}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Data Analysis Workflows}
+Safe, flexible workflows using \code{cmd_assign()}
+\item \href{https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make}{Project Management with Make}
+Makefiles in data analysis workflows
+\item \href{https://www.gnu.org/software/make/manual/make.html#SEC_Contents}{GNU make}
+Definitive guide
 \item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
 Introduction to Rscript
-\item \href{https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make}{Project Management with Make}
-\code{make} in data analysis pipelines.
-\item \href{https://www.gnu.org/software/make/manual/make.html#SEC_Contents}{GNU make}
-Definitive guide to (GNU) make
 }
 }

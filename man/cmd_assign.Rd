@@ -116,8 +116,8 @@ if (interactive()) {
 \itemize{
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{A Workflow for Data Analysis}
-Build data analysis pipelines using \code{cmd_assign()}.
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Data Analysis Workflows}
+Safe, flexible workflows using \code{cmd_assign()}.
 \item Base R function \code{\link[=commandArgs]{commandArgs()}} uses a more general,
 lower-level approach to processing command line arguments.
 (\code{commandArgs()} is called internally by \code{cmd_assign()}.)

@@ -11,11 +11,15 @@ as part of data analysis workflow.
 }
 \details{
 \itemize{
-\item \code{\link[=cmd_assign]{cmd_assign()}} is the main function.
+\item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
+\item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{cmd_assign()} call into a shell command
+\item \code{\link[=cmd_make]{cmd_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
+\item \code{\link[=shell_script]{shell_script()}} Create a shell script
+\item \code{\link[=makefile]{makefile()}} Create a Makefile
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
-shows how to use \code{cmd_assign()}.
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{A Workflow for Data Analysis}
-presents an approach to the design of data analysis workflows.
+How to use \code{cmd_assign()}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Data Analysis Workflows}
+Safe, flexible workflows using \code{cmd_assign()}
 }
 }
 \seealso{

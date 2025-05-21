@@ -67,15 +67,14 @@
 #' invisibly returns a text string with the command.
 #'
 #' @seealso
-#' - [cmd_make()] Turn a [cmd_assign()] call
-#'   into a Makefile rule
-#' - [shell_script()] Create shell script
-#'   for a data analysis workflow
+#' - [cmd_make()] Makefile equivalent of `cmd_shell()`
+#' - [shell_script()] Create a shell script
+#'   from calls to [cmd_assign()]
 #' - [cmd_assign()] Process command line arguments
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Data analysis workflows using `cmd_assign()`.
+#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible workflows using `cmd_assign()`
 #' - Episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html)
 #'   Introduction to the command line
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
