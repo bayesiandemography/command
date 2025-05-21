@@ -8,41 +8,76 @@ library(fs)
 
 path_swiss <- path_package(package = "command",
                            "extdata/swiss")
-dir_copy(path = path_swiss,
-         new_path = getwd(),
-         overwrite = TRUE)
+dir_copy(path = path(path_swiss, "data"),
+         new_path = ".")
+dir_create("src")	 
+file_copy(path = path(path_swiss, "src/scaled.R"),
+          new_path = "src/scaled.R")
+file_copy(path = path(path_swiss, "src/model.R"),
+          new_path = "src/model.R")	
+file_copy(path = path(path_swiss, "src/tab_coef.R"),
+          new_path = "src/tab_coef.R")	
 dir_create("out")	 
+file_copy(path = path(path_swiss, "report_short.qmd"),
+          new_path = "report.qmd")
 
 knitr::opts_chunk$set(collapse = TRUE,
                       engine.opts = "-l",
-                      comment = ""
-)
+                      comment = "")
 
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
+
 nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
 ```
 
+
 # Introduction
+
+Functions `cmd_make()` and `makefile()` help with writing a Makefile to control a data analysis workflow. `cmd_make()` and `makefile()` do much of the work, but some extra hand coding is also necessary.
+
+# An example workflow
+
+To demonstrate, we use a simple workflow where all the code, aside from the shell script, has already been written. The project directory contains the following files:
 
 ```{r, echo = FALSE}
 dir_tree(regexp = nms_articles,
          invert = TRUE)
 ```
 
+The workflow has four steps:
+
+1. `src/scaled.R` reads in the raw data, scales it, and creates `out/scaled.rds`
+2. `src/model.R` fits a model to the scaled data, and creates `out/model.rds`
+3. `src/tab_coef.R` extracts estimates from the model, and creates `out/tab_coef.rds`
+4. `report.qmd` uses `out/tab_coef.rds` to create a report, and creates `report.html`
+
+`scaled.R`, `model.R`, and `tab_coef.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
+
 ```{r, echo = FALSE}
-cat(paste(readLines("src/model.R"), collapse = "\n"))
+lines <- readLines("src/model.R")
+cat(paste(c(lines[7:9], ""), collapse = "\n"))
 ```
 
+# cmd_make()
 
-```{r}
+`cmd_make()` extracts the call to `cmd_assign()` from an R file, and turns it into a Makefile rule. For instance, the call
+
+```{r, eval = FALSE}
+cmd_make("src/model.R")
+```
+has return value
+```{r, eval = TRUE, echo = FALSE}
 cmd_make("src/model.R")
 ```
 
-```{r}
-cmd_make("src/fig_fitted.R")
-```
+The easiest way to use `cmd_make()` is to call it from the R console, and then cut-and-paste the results into Makefile.
 
-We call
+
+# makefile()
+
+`makefile()` creates a draft of the whole Makefile. `makefile()` loops through all the R files in a directory, extracting `cmd_assign()` calls and converting them into Makefile rules. It then puts the rules into a Makefile.
+
+For instance, the call
 <!-- Messages don't display properly, so don't print real output -->
 ```{r, eval = FALSE}
 makefile("src")
@@ -50,22 +85,73 @@ makefile("src")
 ```{r, include = FALSE}
 makefile("src")
 ```
-
-```{r, echo = FALSE}
-dir_tree(regexp = nms_articles,
-         invert = TRUE)
-```
-
+creates a new file called `Makefile` with the lines
 ```{r, echo = FALSE}
 lines <- readLines("Makefile")
 cat(paste(lines, collapse = "\n"))
 ```
+
+The output from `makefile()` needs some editing before it is ready for use. We need to a rule for creating the report, and make that report a prerequisite for `all:` at the top of the file:
+
+```{r, echo = FALSE}
+lines[[3L]] <- "all: report.html"
+lines <- c(lines[1:17],
+           "report.html: report.qmd \\",
+	   "  out/tab_coef.rds",
+	   "\tRscript -e \"quarto::quarto_render('$<')\"",
+	   "",
+	   lines[-(1:17)])
+cat(paste(lines, collapse = "\n"))
+```
+
+The ordering of the rules in the Makefile reflects the ordering of the files in the `src` directory, not the order in which the rules should be executed. This does not matter to `make`, which constructs its own dependency map. But to clarify the logic of the workflow for human readers, we rearrange the rules to match the execution order.
+
+
+```{r, echo = FALSE}
+lines <- lines[c(1:5, 10:13, 6:9, 14:27)]
+cat(paste(lines, collapse = "\n"))
+writeLines(lines, con = "Makefile")
+```
+
+
+# Running the Makefile
+
+Our project directory looks like this.
 
 ```{r, echo = FALSE}
 dir_tree(regexp = nms_articles,
          invert = TRUE,
 	 recurse = 1L)
 ```
+
+We run the Makefile.
+
+```{bash}
+make
+```
+
+Our project directory now looks like this.
+
+```{r, echo = FALSE}
+dir_tree(regexp = nms_articles,
+         invert = TRUE,
+	 recurse = 1L)
+```
+
+We have created `scaled.rds`, `model.rds`, and `tab_coef` in the `out` directory, and `report.html` in the main directory.
+
+
+# Other resources
+
+- [shell_script()](https://bayesiandemography.github.io/command/reference/makefile.html) The shell script equivalent of `makefile()`
+- [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Safe, flexible workflows for data analysis
+- [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)
+  Makefiles in data analysis workflows
+- [GNU make](https://www.gnu.org/software/make/manual/make.html#SEC_Contents)
+  Definitive guide
+- [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
+  Introduction to Rscript
 
 
 ```{r, include = FALSE}

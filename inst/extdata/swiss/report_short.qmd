@@ -1,0 +1,25 @@
+---
+title: "Swiss Fertility"
+format: html
+---
+
+## Introduction
+
+We examine predictors of fertility levels in nineteenth century Swizterland.
+
+## Methods
+
+We use a robust linear model to analyse provincial-level data.
+
+## Results
+
+Here are the coefficient estimates:
+```{r}
+#| echo: false
+tab_coef <- readRDS("out/tab_coef.rds")
+knitr::kable(tab_coef, digits = 2, caption = "Coefficients")
+```
+
+## Discussion
+
+Fertility in Switzerland was positively correlated with agriculture and infant mortality.

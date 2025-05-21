@@ -32,7 +32,7 @@ nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workfl
 
 # Introduction
 
-Functions `cmd_shell()` and `shell_script()` help with writing a shell script to control a data analysis workflow. `cmd_shell()` and `shell_script()` do most of the work, but bit of editing may be necessary. 
+Functions `cmd_shell()` and `shell_script()` help with writing a shell script to control a data analysis workflow. `cmd_shell()` and `shell_script()` do most of the work, but some additional editing is usually necessary.
 
 # An example workflow
 
@@ -90,7 +90,7 @@ lines <- readLines("workflow.sh")
 cat(paste(lines, collapse = "\n"))
 ```
 
-Here, as in most cases, the output from `shell_script()` needs some editing before it is ready for use. The order of the commands in `workflow.sh` reflects the order of the files in the `src` directory, not the order in which they should carry out. We need to reorder the commands, so that `scaled.rds` is created before `model.rds`:
+Here, as in most cases, the output from `shell_script()` needs some editing before it is ready for use. The ordering of the commands in `workflow.sh` reflects the ordering of the files in the `src` directory. We need to rearrange the commands to instead reflect the order in which they need to be executed. We also add instructions on rendering the file `report.qmd`.
 
 ```{r, echo = FALSE}
 lines <- lines[c(6:9, 1:5, 10:14)]
@@ -103,7 +103,7 @@ writeLines(lines, con = "workflow.sh")
 
 # Running the shell script
 
-Through some combination of `cmd_shell()`, `shell_script()`, and hand editing, we have created a valid shell script. Our project directory looks like this.
+Our project directory looks like this.
 
 ```{r, echo = FALSE}
 dir_tree(regexp = nms_articles,
