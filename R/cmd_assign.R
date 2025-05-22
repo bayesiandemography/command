@@ -113,6 +113,9 @@
 #' - Base R function [commandArgs()] uses a more general,
 #'   lower-level approach to processing command line arguments.
 #'   (`commandArgs()` is called internally by `cmd_assign()`.)
+#' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
+#'   Introduction to Rscript
+#' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'   
 #' @examples
 #' if (interactive()) {

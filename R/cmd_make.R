@@ -94,6 +94,7 @@
 #'   Definitive guide
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
 #'   Introduction to Rscript
+#' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'
 #' @examples
 #' library(fs)

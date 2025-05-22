@@ -96,6 +96,8 @@ Rscript myfile.R -n=10
 
 When Rscript is called with additional arguments, Rscript supplies the names and values for these arguments to the R session. The names and values can be accessed from within the session using base R function [commandArgs()](https://search.r-project.org/R/refmans/base/html/commandArgs.html). Working with `commandArgs()` is, however, tricky. `cmd_assign()` is an alternative to `commandArgs()`, designed specifically for workflows for data analysis.
 
+One alternative for running R scripts on from the command line is the package [littler](https://CRAN.R-project.org/package=littler). **littler** does not run on Windows, and requires some fiddling with symbolic links before it runs on macOS. `cmd_assign()` works as normal with **littler**. 
+
 
 # Calling `cmd_assign()` inside a script
 
