@@ -14,7 +14,6 @@ Description: Process command line arguments,
     as part of a data analysis pipeline.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Imports:
     cli,
     fs,
