@@ -153,6 +153,12 @@ Working with <code><a href="https://rdrr.io/r/base/commandArgs.html" class="exte
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> is an alternative to
 <code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code>, designed specifically for workflows for data
 analysis.</p>
+<p>One alternative for running R scripts on from the command line is the
+package <a href="https://CRAN.R-project.org/package=littler" class="external-link">littler</a>.
+<strong>littler</strong> does not run on Windows, and requires some
+fiddling with symbolic links before it runs on macOS.
+<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> works as normal with
+<strong>littler</strong>.</p>
 </div>
 <div class="section level2">
 <h2 id="calling-cmd_assign-inside-a-script">Calling <code>cmd_assign()</code> inside a script<a class="anchor" aria-label="anchor" href="#calling-cmd_assign-inside-a-script"></a>
