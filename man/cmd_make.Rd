@@ -139,5 +139,6 @@ Makefiles in data analysis workflows
 Definitive guide
 \item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
 Introduction to Rscript
+\item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }
 }

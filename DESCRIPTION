@@ -25,6 +25,7 @@ Suggests:
     dplyr,
     ggplot2,
     knitr,
+    littler,
     quarto,
     readr,
     rmarkdown,

@@ -376,7 +376,12 @@ format_args_shell <- function(file, args) {
 #' @noRd
 get_args_cmd <- function() {
   p <- "^-{1,2}(.*)=(.*)$"
-  args <- commandArgs(trailingOnly = TRUE)
+  is_littler <- (exists("argv", inherits = FALSE)
+    || identical(commandArgs()[[1L]], "littler"))
+  if (is_littler)
+    args <- argv
+  else
+    args <- commandArgs(trailingOnly = TRUE)
   if (length(args) == 0L)
     return(list())
   is_named <- grepl(p, args)

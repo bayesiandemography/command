@@ -121,5 +121,8 @@ Safe, flexible workflows using \code{cmd_assign()}.
 \item Base R function \code{\link[=commandArgs]{commandArgs()}} uses a more general,
 lower-level approach to processing command line arguments.
 (\code{commandArgs()} is called internally by \code{cmd_assign()}.)
+\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
+Introduction to Rscript
+\item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }
 }
