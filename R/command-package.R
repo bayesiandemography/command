@@ -11,8 +11,8 @@
 #' - [makefile()] Create a Makefile
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Safe, flexible workflows using `cmd_assign()`
+#' - [Modular Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible data analysis workflows
 #' 
 #' @keywords internal
 "_PACKAGE"

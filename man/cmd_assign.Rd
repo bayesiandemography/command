@@ -112,17 +112,25 @@ if (interactive()) {
              .out = "results.rds")
 }
 }
+\references{
+\itemize{
+\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
+Introduction to Rscript
+}
+}
 \seealso{
 \itemize{
+\item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{cmd_assign()} call into a shell command
+\item \code{\link[=cmd_make]{cmd_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
+\item \code{\link[=shell_script]{shell_script()}} Create a shell script
+\item \code{\link[=makefile]{makefile()}} Create a Makefile
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Data Analysis Workflows}
-Safe, flexible workflows using \code{cmd_assign()}.
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+Safe, flexible data analysis workflows.
 \item Base R function \code{\link[=commandArgs]{commandArgs()}} uses a more general,
 lower-level approach to processing command line arguments.
 (\code{commandArgs()} is called internally by \code{cmd_assign()}.)
-\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
-Introduction to Rscript
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }
 }

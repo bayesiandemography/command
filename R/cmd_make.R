@@ -86,15 +86,17 @@
 #' - [cmd_assign()] Process command line arguments
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Safe, flexible workflows using `cmd_assign()`
+#' - [Modular Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible data analysis workflows
+#' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
+#'
+#' @references
 #' - [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)
 #'   Makefiles in data analysis workflows
 #' - [GNU make](https://www.gnu.org/software/make/manual/make.html#SEC_Contents)
 #'   Definitive guide
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
 #'   Introduction to Rscript
-#' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'
 #' @examples
 #' library(fs)

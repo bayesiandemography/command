@@ -96,18 +96,22 @@ cat(text)
 ## Clean up
 dir_delete(path_project)
 }
+\references{
+\itemize{
+\item Episodes 1--3 of \href{https://swcarpentry.github.io/shell-novice/index.html}{The Unix Shell}
+Introduction to the command line
+\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
+Introduction to Rscript
+}
+}
 \seealso{
 \itemize{
 \item \href{https://bayesiandemography.github.io/command/articles/a2_shell_script.html}{Creating a Shell Script} More on \code{shell_script()}
 \item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a shell command
 \item \code{\link[=makefile]{makefile()}} Makefile equivalent of \code{shell_script()}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Data Analysis Workflows}
-Safe, flexible workflows using \code{cmd_assign()}
-\item Episodes 1--3 of \href{https://swcarpentry.github.io/shell-novice/index.html}{The Unix Shell}
-Introduction to the command line
-\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
-Introduction to Rscript
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+Safe, flexible data analysis workflows
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }
 }

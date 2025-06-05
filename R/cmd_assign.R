@@ -106,16 +106,22 @@
 #' also invisibly returns a named list of objects.
 #'
 #' @seealso
+#' - [cmd_shell()] Turn a `cmd_assign()` call into a shell command
+#' - [cmd_make()] Turn a `cmd_assign()` call into a Makefile rule
+#' - [shell_script()] Create a shell script
+#' - [makefile()] Create a Makefile
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Safe, flexible workflows using `cmd_assign()`.
+#' - [Modular Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible data analysis workflows.
 #' - Base R function [commandArgs()] uses a more general,
 #'   lower-level approach to processing command line arguments.
 #'   (`commandArgs()` is called internally by `cmd_assign()`.)
+#' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
+#'
+#' @references
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
 #'   Introduction to Rscript
-#' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'   
 #' @examples
 #' if (interactive()) {

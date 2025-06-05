@@ -73,8 +73,10 @@
 #' - [cmd_assign()] Process command line arguments
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
-#'   Safe, flexible workflows using `cmd_assign()`
+#' - [Modular Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#'   Safe, flexible data analysis workflows
+#'
+#' @references
 #' - Episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html)
 #'   Introduction to the command line
 #' - [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)

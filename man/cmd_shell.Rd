@@ -111,6 +111,15 @@ cmd_shell(file = "src/results.R",
 ## clean up
 dir_delete(path_project)
 }
+\references{
+\itemize{
+\item Episodes 1--3 of \href{https://swcarpentry.github.io/shell-novice/index.html}{The Unix Shell}
+Introduction to the command line
+\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
+Introduction to Rscript
+\item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
+}
+}
 \seealso{
 \itemize{
 \item \code{\link[=cmd_make]{cmd_make()}} Makefile equivalent of \code{cmd_shell()}
@@ -119,12 +128,7 @@ from calls to \code{\link[=cmd_assign]{cmd_assign()}}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Data Analysis Workflows}
-Safe, flexible workflows using \code{cmd_assign()}
-\item Episodes 1--3 of \href{https://swcarpentry.github.io/shell-novice/index.html}{The Unix Shell}
-Introduction to the command line
-\item \href{https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html}{Command-Line Programs}
-Introduction to Rscript
-\item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+Safe, flexible data analysis workflows
 }
 }

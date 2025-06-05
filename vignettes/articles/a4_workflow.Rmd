@@ -1,61 +1,223 @@
 ---
-title: "Modular Workflows"
+title: "Modular Workflows for Data Analysis"
+bibliography: references.bib
 ---
 
-```{r}
-library(command)
-library(fs)
+> The computations and the software for data analysis should be trustworthy: they should do what they claim, and be seen to do so. [@chambers2008software, p.3]
+
+> The only way to write complex software that won't fall on its face is to build it out of simple modules connected by well-defined interfaces, so that most problems are local and you can have some hope of fixing or optimizing a part without breaking the whole. [@raymond2003art, ch. 1]
+
+
+# Introduction
+
+Code for a data analysis needs to be reliable, transparent, and flexible. It needs to faithfully implement the procedures described in the analysis report. It needs to be comprehensible to a reader who wants to maintain or extend the code, or to verify that it is performing as advertised. And it needs to be able to maintain reliability and transperency, as the analysis evolves.
+
+Writing reliable, transparent, flexible code for data analysis requires paying attention to large scale design issues. Code where every line, considered in isolation, is well written can still be unreliable and opaque if the overall structure of the workflow is poor.
+
+One of the key design concepts of software engineering, and of the literature on robust systems more generally, is modularity [@simon2019sciences]. Modularity is the strategy of building a system out of many small units, each of which has a single purpose and well-defined inputs and outputs. Units are independent, in that they have minimial knowledge of other units, or of the system as a whole. REFERENCES
+
+The principle of modularity underlies much of the standard R advice about workflows for data analysis. RStudio-style projects, for instance, where each analysis has its own directory, and subdirectories for data, code, and outputs, are a nice example of modular design [@wilson2017good; @wickham2023r; @projecttemplate2025project].
+
+Much actual data analysis code written in R is not, however, particularly modular. Many analyses contain single multi-page R script that import data, fit models, generate outputs, and construct plots. Abundant use of `source()` blurs the boundaries between scripts, so that no script can be understood on its own. R Markdown or Quarto files containing all text and code for an analysis have advantages, but they are the opposite of modular.
+
+This vignette presents a strategy for making data analysis workflows more strictly modular. The key idea is that each script should perform one small task, with its inputs and outputs strictly controlled. The workflow is orchestrated through a shell script or Makefile. Each script runs in its own environment, and data and intermediate outputs are passed around by reading from and writing to disk.
+
+The vignette focuses on projects where the data is static, and sits in a database or a set of files that are not subject to continuous revision. Some of the advice would need to be modified for projects that involved streaming or real time data. 
+
+The vignette starts by setting out the basic principles of the strategy. It then presents a simple example, and gives some stylistic suggestions.
+
+# How to make a workflow more modular
+
+## Lots of small scripts
+
+A data analyis workflow should be composed of many small scripts, rather than a few large ones. Each of these small scripts should have a single well-defined task. In almost all cases, the task will be to create a single new output. The new output could in turn be an input for subsequent steps in the workflow, or it could a final product, such as a report. In either case, it should be self-contained, in the sense that it can be interpreted and used on its own.
+
+Some possible inputs and outputs for a data analysis might be:
+
+| Inputs     |   Output       |
+|:-----------|:---------------|
+| Raw dataset | Cleaned dataset |
+| Two cleaned datasets | Single merged dataset |
+| Cleaned dataset | CSV file |
+| Cleaned dataset | Values for plotting |
+| Value for plotting | Plot |
+| Cleaned dataset | Fitted model object |
+| Cleaned dataset and fitted model object | Actual and predicted values |
+| Actual and predicted values | Plot |
+| Multiple fitted model objects | Scores for performance metrics |
+| Scores for performance metrics | Values for table |
+| Values for table | Table |
+
+
+Assembling values for a plot or a table often involves some non-trivial coding, such as calculating summaries, or filtering and reformating. In such cases, it is better to split the code off into its own script, rather than combine it with the code for creating the plot or the table.
+
+The one-task-one-script rule often results in scripts that are very short. A script to merge two cleaned datasets, for instance, might only contain a few lines of code.
+
+Some scripts are, however, difficult to split into smaller ones, because of the nature of their task. For instance, tasks that involve loops, such as simulations, are often hard to break into smaller pieces. In such cases, the best strategy may be to tolerate a long script. The script should, however, be treated with suspicion, and receive extra checking. It should include a comment explaining to future mainteainers why it needs to be long.
+
+## Each script runs in a new session
+
+Each script should run in a new, clean R session that ends when script is completed. The sessions shart with no packages loaded, and no data. When the session ends, all objects that were created during the session but were not saved to disk are destroyed.
+
+The best way to give its own session is to run it from the command line, using an application such as Rscript or littler. The call
+```{bash, eval = FALSE}
+Rscript myscript.R
+```
+for instance, starts a new R session, runs the code in `myscript.R`, and ends the session. 
+
+
+## Strict definition of inputs and outputs
+
+Inputs and outputs for a script should all be defined using command line arguments. Instead of just specifying the script to be run, as in, 
+```{bash, eval = FALSE}
+Rscript myscript.R
+```
+the call to Rscript should also specify the names of files to be read in or written out, plus any additional options, as in
+```{bash, eval = FALSE}
+Rscript myscript.R mydata.csv myresults.rds --n_digits=3
+```
+
+Values for the command line arguments can be retrieved within the script itself using base R function `commandArgs()`, or with higher-level functions in packages **argparse**, **docopt**, **getopt**, **optparse**, or **R.utils**, [@dejonge2018docopt, @david2023optparse, @pav2023argparse, @david2020getopt, @bengtsson2023rutils]. Function `cmd_assign()` in **command** also parses command line arguments, but is specifically designed for use in work flows for data analysis. Among other things, it automatically checks and coerces arguments, and assigns them to the working environment.
+
+A script that uses command line arguments and `cmd_assign()` contains code of the form
+```{r, eval = FALSE}
+cmd_assign(.data = "somedata.csv",
+           --n_digits = 2,
+	   .out = "someresults.csv")
+
+data <- read_csv(.data) ## '.data' holds the file path, not the data
+# <some calculations>
+someresults <- round(someresults, n_digits = n_digits)
+readRDS(someresults, file = .out)
+```
+
+All inputs and outputs are defined in the call to `cmd_assign()`. Values passed in the original call to `cmd_assign()`, such as `"somedata.csv"` and `2` are overwritten when the script is called from the command line.
+
+
+## Everything run from an orchestration file
+
+Each R script knows about its own task, but nothing else. All the higher-level information about how the scripts fit together is held in the orchestration file. It should be possible to reproduce the entire analysis, from the injesting of the raw data to the compilation of the final report, by running the orchestration file.
+
+The orchestration file can be an ordinary shell script,
+```{bash, eval = FALSE}
+Rscript cleaned_data.R raw_data.rds cleaned_data.rds
+
+Rscript model.R cleaned_data.rds model.rds --n_iter=2000
+
+Rscript preformance.R model.rds performance.rds
+
+Rscript -e 'quarto::render_quarto("report.qmd")' performance.rds
 ```
 
 
-https://r4ds.hadley.nz/workflow-scripts.html
+ 
 
+## Reports
 
-https://www.tidyverse.org/blog/2017/12/workflow-vs-script/
-
-
-
-The only way to write complex software that won't fall on its face is to build it out of simple modules connected by well-defined interfaces, so that most problems are local and you can have some hope of fixing or optimizing a part without breaking the whole.
-http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html
-
-https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R.html
-
-"Another way you can be explicit about the requirements of your code and improve it’s reproducibility is to limit the “hard-coding” of the input and output files for your script. If your code will read in data from a file, define a variable early in your code that stores the path to that file. For example"
+- doing everything in R Markdown, quarto, Jupyter, etc breaks modularitiy
+- fine for simple analysis, but does not scale
+    - Good for simple analysis
+    - Does not scale [https://stemurphy.com/post/rep_manu_think_about/] - for same reason that any big file doesn't work (plus more - extra layers of errors)
+- do work outside report, and read in
+- can tip balance back towards LaTeX
 
 
 
-# The problem of writing safe, flexible data analysis code
+# The benefits
 
-- classic example: big file
-    - difficult to understand
-    - slow or confusing/unreliable - have to re-run
-    - difficult to debug
-- split into logical parts (modular), then source
-    - helps
-    - but doesn't totally solve - confusing environment
-- better: break into pieces, and run each in own environment
-- a bit like functions (but without global environment)
-- push harder - make inputs outputs completely transparenet
+## Writing
 
-    have to re-run - slow
-    - 
-    - difficult to change
-    - polluted environment
-- classic software solution: break into small files
-- but if 
-- how to run them?
-
-[https://stemurphy.com/post/rep_manu_think_about/]
-
-# Other solutions
-
-- commandArgs
-- docopt
-- other?
-
-
-Principles of file organization
-
-- don't distinguish intermediate and final outputs (everything in out)
-- don't number files
+- can work from bottom up
+- don't have to think too far ahead
+    - more flexible, future-proofed, eg intermediate turn intermediate file into table, eg substitute different file
 - 
+
+
+## Reading
+
+Script level
+- goal of each script clear: create this
+- small manageable pieces
+- can pick up part way through
+
+Project level
+  - one place to look to understand overall structure
+  - executable documentation - much more likely to be accurate than a README
+  - makefile-specific benefits
+     - specify outputs as well as inputs
+     - fussier
+     - only updating relevant parts etc
+
+## Debugging
+
+Script level
+- problem is local
+- know what's in the working environment
+- know the inputs and outputs
+- can quickly work out what a script is trying to do
+
+Project level
+- clear what correct behavior should be
+
+## Flexibility
+
+- composible
+- the smaller the pieces, the more flexible (limited by comprehensibility)
+- reusable - different inputs, same data (see function discussion)
+
+## Scalability
+
+- Not continually recreating outputs - especially if using makefile
+- Holding minimum amount necessary in memory
+
+The time needed to start and end an R session is negligible compared to most steps in a data analysis. Reading in large data files can, however, be slow enough to require attention. Creating intermediate outputs is often helpful. For instance, if a plotting script takes as its input a data frame containing the values that will be plotted, rather than the entire original dataset, then there will be no need to read in the original dataset every time the plotting script changes.
+
+
+# Files as functions?
+
+- approach suggested here makes files similar to functions
+  - well definined inputs (actually more defined, since no global variables)
+  - one output
+- can in fact use as functions
+  - call with different arguments
+- much of claims about benefits of functional programming carry through
+
+- so why not just use normal functions?
+    - normal functions require passing around in memory
+    - file approach grows more naturally out of exploratory
+
+
+# Illustration
+
+- show files
+- standard features: separate folders, orchestration script
+- show individual file
+    - defined inputs
+    - fussier than function: eg no defaults
+- show shell script
+- show makefile
+
+
+
+# Some stylistic suggestions
+
+- one big 'out' folder - use Makefile and filenames to impose order
+    - more flexible, extensible
+    - don't number files
+- use same filename with different extensions
+    - clear, conventional
+    - save effort trying to think of names
+- refrain from using advanced Makefile features
+    - self-documenting, easier for others
+    - no pattern rules
+    - no vpath
+- put makefile and report at project level (feels right, plus avoids fighting against complicated paths etc)
+- minimal documentation
+
+
+# References
+
+
+
+
+
