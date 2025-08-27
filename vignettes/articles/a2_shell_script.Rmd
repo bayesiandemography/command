@@ -27,7 +27,7 @@ knitr::opts_chunk$set(collapse = TRUE,
 
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
 
-nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
+nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd|references.bib|makefile_deps.png"
 ```
 
 # Introduction
@@ -95,7 +95,7 @@ Here, as in most cases, the output from `shell_script()` needs some editing befo
 ```{r, echo = FALSE}
 lines <- lines[c(6:9, 1:5, 10:14)]
 lines <- c(lines,
-	   "Rscript -e \"quarto::quarto_render('report.qmd')\"",
+	   "quarto render report.qmd",
 	   "")
 cat(paste(lines, collapse = "\n"))
 writeLines(lines, con = "workflow.sh")

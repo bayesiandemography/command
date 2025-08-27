@@ -27,7 +27,7 @@ knitr::opts_chunk$set(collapse = TRUE,
 
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
 
-nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
+nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd|references.bib|makefile_deps.png"
 ```
 
 
@@ -98,7 +98,7 @@ lines[[3L]] <- "all: report.html"
 lines <- c(lines[1:17],
            "report.html: report.qmd \\",
 	   "  out/tab_coef.rds",
-	   "\tRscript -e \"quarto::quarto_render('$<')\"",
+	   "\tquarto render $<",
 	   "",
 	   lines[-(1:17)])
 cat(paste(lines, collapse = "\n"))

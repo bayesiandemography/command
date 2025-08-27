@@ -9,10 +9,13 @@ cmd_assign(.vals_fitted = "out/vals_fitted.rds",
 
 vals_fitted <- readRDS(.vals_fitted)
 
-p <- ggplot(vals_fitted, aes(x = fitted, y = residuals)) +
-  geom_point() +
-  geom_hline(yintercept = 0)
-            
-png(file = .out)
+p <- ggplot(vals_fitted, aes(x = agriculture)) +
+  facet_wrap(vars(variant)) +
+  geom_point(aes(y = fertility)) +
+  geom_line(aes(y = fitted))
+               
+png(file = .out,
+    width = 600,
+    height = 300)
 plot(p)
 dev.off()

@@ -14,11 +14,10 @@ dir_copy(path = path_airmiles,
 
 knitr::opts_chunk$set(collapse = TRUE,
                       engine.opts = "-l",
-                      comment = ""
-)
+                      comment = "")
 
 old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks) ## so colors work
-nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd"
+nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workflow.Rmd|references.bib|makefile_deps.png"
 ```
 
 # Introduction
@@ -106,7 +105,9 @@ We will work through an example where we call `cmd_assign()` inside a script tha
 Our current working directory contains two files:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = paste(nms_articles, "Makefile|workflow.sh|report.Rmd", sep = "|"),	
+dir_tree(regexp = paste(nms_articles, 
+                        "Makefile|workflow.sh|report.Rmd", 
+                         sep = "|"),	
          invert = TRUE)
 ```
 
@@ -258,7 +259,7 @@ The second file, called `workflow.sh`, is a shell script that runs the whole wor
 cat(paste(readLines("workflow.sh"), collapse = "\n"))
 ```
 
-The third command in `workflow.sh` contains an `"-e"` after the `"Rscript"`. The `"-e"` option tells Rscript to use code from one or more quoted R expressions (which follow immediately after the `"-e"`), rather than a file.
+The third command in `workflow.sh` calls the `quarto` application directly, rather than through the R function [quarto_render](https://quarto-dev.github.io/quarto-r/reference/quarto_render.html).
 
 We run `workflow.sh`.
 

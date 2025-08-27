@@ -4,15 +4,15 @@ suppressPackageStartupMessages({
   library(command)
 })
 
-cmd_assign(.scaled = "out/scaled.rds",
+cmd_assign(.cleaned_data = "out/cleaned_data.rds",
            method = "M",
-           .out = "out/model.rds")
+           .out = "out/model_m.rds")
 
-scaled <- readRDS(.scaled)
+cleaned_data <- readRDS(.cleaned_data)
 
-model <- rlm(fertility ~ agriculture + infant_mort, 
-             data = scaled,
-             method = method)
+model <- rlm(fertility ~ agriculture, 
+             data = cleaned_data,
+             method = "M")
 
 saveRDS(model, file = .out)
 
