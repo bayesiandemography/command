@@ -7,7 +7,7 @@ bibliography: references.bib
 library(command)
 library(fs)
 path_swiss <- path_package(package = "command",
-                           "extdata/swiss")
+                           "extdata/swiss2")
 dir_copy(path = path_swiss,
          new_path = ".",
          overwrite = TRUE)

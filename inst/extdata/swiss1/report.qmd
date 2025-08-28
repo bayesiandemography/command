@@ -1,0 +1,25 @@
+---
+title: "Swiss Fertility"
+---
+
+## Introduction
+
+We examine the relationship between agriculture and fertility in nineteenth century Swizterland.
+
+## Methods
+
+We fit a robust linear model to provincial-level data.
+
+## Results
+
+Here are the raw data and the fitted values:
+
+```{r}
+#| echo: false
+#| out.width: 60%
+knitr::include_graphics("out/fig_fitted.png")
+```
+
+## Discussion
+
+Fertility was positively correlated with agriculture.

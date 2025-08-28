@@ -6,7 +6,7 @@ suppressPackageStartupMessages({
 
 cmd_assign(.cleaned_data = "out/cleaned_data.rds",
            method = "M",
-           .out = "out/model_m.rds")
+           .out = "out/model.rds")
 
 cleaned_data <- readRDS(.cleaned_data)
 

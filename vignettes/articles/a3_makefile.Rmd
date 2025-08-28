@@ -7,18 +7,20 @@ library(command)
 library(fs)
 
 path_swiss <- path_package(package = "command",
-                           "extdata/swiss")
+                           "extdata/swiss1")
 dir_copy(path = path(path_swiss, "data"),
          new_path = ".")
 dir_create("src")	 
-file_copy(path = path(path_swiss, "src/scaled.R"),
-          new_path = "src/scaled.R")
+file_copy(path = path(path_swiss, "src/cleaned_data.R"),
+          new_path = "src/cleaned_data.R")
 file_copy(path = path(path_swiss, "src/model.R"),
           new_path = "src/model.R")	
-file_copy(path = path(path_swiss, "src/tab_coef.R"),
-          new_path = "src/tab_coef.R")	
+file_copy(path = path(path_swiss, "src/vals_fitted.R"),
+          new_path = "src/vals_fitted.R")	
+file_copy(path = path(path_swiss, "src/fig_fitted.R"),
+          new_path = "src/fig_fitted.R")	
 dir_create("out")	 
-file_copy(path = path(path_swiss, "report_short.qmd"),
+file_copy(path = path(path_swiss, "report.qmd"),
           new_path = "report.qmd")
 
 knitr::opts_chunk$set(collapse = TRUE,
@@ -44,18 +46,19 @@ dir_tree(regexp = nms_articles,
          invert = TRUE)
 ```
 
-The workflow has four steps:
+1. `src/cleaned_data.R` reads in the raw data, cleans it, and creates `out/cleaned_data.rds`
+2. `src/model.R` fits a model to the cleaned data, and creates `out/model.rds`
+3. `src/vals_fitted.R` extract fitted values from the model, and creates `vals_fitted.rds`
+4. `src/fig_fitted.R` uses `vals_fitted.rds` to create the plot in `out/fig_fitted.png`
+5. `report.qmd` uses `out/fig_fitted.png` to create the document `report.html`
 
-1. `src/scaled.R` reads in the raw data, scales it, and creates `out/scaled.rds`
-2. `src/model.R` fits a model to the scaled data, and creates `out/model.rds`
-3. `src/tab_coef.R` extracts estimates from the model, and creates `out/tab_coef.rds`
-4. `report.qmd` uses `out/tab_coef.rds` to create a report, and creates `report.html`
+`cleaned_data.R`, `model.R`, and `vals_fitted.R`, and `fig_fitted.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
 
-`scaled.R`, `model.R`, and `tab_coef.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
+`cleaned_data.R`, `model.R`, and `vals_fitted.R`, and `fig_fitted.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
 
 ```{r, echo = FALSE}
 lines <- readLines("src/model.R")
-cat(paste(c(lines[7:9], ""), collapse = "\n"))
+cat(paste(c(lines[7:8], ""), collapse = "\n"))
 ```
 
 # cmd_make()
@@ -95,20 +98,20 @@ The output from `makefile()` needs some editing before it is ready for use. We n
 
 ```{r, echo = FALSE}
 lines[[3L]] <- "all: report.html"
-lines <- c(lines[1:17],
+lines <- c(lines[1:22],
            "report.html: report.qmd \\",
 	   "  out/tab_coef.rds",
 	   "\tquarto render $<",
 	   "",
-	   lines[-(1:17)])
+	   lines[-(1:22)])
 cat(paste(lines, collapse = "\n"))
 ```
 
-The ordering of the rules in the Makefile reflects the ordering of the files in the `src` directory, not the order in which the rules should be executed. This does not matter to `make`, which constructs its own dependency map. But to clarify the logic of the workflow for human readers, we rearrange the rules to match the execution order.
+The ordering of the rules in the Makefile reflects the ordering of the files in the `src` directory, not the order in which the rules should be executed. This does not matter to `make`, which constructs its own dependency map. But for the benefit of human readers, we rearrange the rules to match the execution order.
 
 
 ```{r, echo = FALSE}
-lines <- lines[c(1:5, 10:13, 6:9, 14:27)]
+lines <- lines[c(2:9, 14:22, 10:13, 1, 23:31)]
 cat(paste(lines, collapse = "\n"))
 writeLines(lines, con = "Makefile")
 ```
@@ -127,7 +130,7 @@ dir_tree(regexp = nms_articles,
 We run the Makefile.
 
 ```{bash}
-make
+#make
 ```
 
 Our project directory now looks like this.

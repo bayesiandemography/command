@@ -7,18 +7,20 @@ library(command)
 library(fs)
 
 path_swiss <- path_package(package = "command",
-                           "extdata/swiss")
+                           "extdata/swiss1")
 dir_copy(path = path(path_swiss, "data"),
          new_path = ".")
 dir_create("src")	 
-file_copy(path = path(path_swiss, "src/scaled.R"),
-          new_path = "src/scaled.R")
+file_copy(path = path(path_swiss, "src/cleaned_data.R"),
+          new_path = "src/cleaned_data.R")
 file_copy(path = path(path_swiss, "src/model.R"),
           new_path = "src/model.R")	
-file_copy(path = path(path_swiss, "src/tab_coef.R"),
-          new_path = "src/tab_coef.R")	
+file_copy(path = path(path_swiss, "src/vals_fitted.R"),
+          new_path = "src/vals_fitted.R")	
+file_copy(path = path(path_swiss, "src/fig_fitted.R"),
+          new_path = "src/fig_fitted.R")	
 dir_create("out")	 
-file_copy(path = path(path_swiss, "report_short.qmd"),
+file_copy(path = path(path_swiss, "report.qmd"),
           new_path = "report.qmd")
 
 knitr::opts_chunk$set(collapse = TRUE,
@@ -43,18 +45,19 @@ dir_tree(regexp = nms_articles,
          invert = TRUE)
 ```
 
-The workflow has four steps:
+The workflow has five steps:
 
-1. `src/scaled.R` reads in the raw data, scales it, and creates `out/scaled.rds`
-2. `src/model.R` fits a model to the scaled data, and creates `out/model.rds`
-3. `src/tab_coef.R` extracts estimates from the model, and creates `out/tab_coef.rds`
-4. `report.qmd` uses `out/tab_coef.rds` to create a report, and creates `report.html`
+1. `src/cleaned_data.R` reads in the raw data, cleans it, and creates `out/cleaned_data.rds`
+2. `src/model.R` fits a model to the cleaned data, and creates `out/model.rds`
+3. `src/vals_fitted.R` extract fitted values from the model, and creates `vals_fitted.rds`
+4. `src/fig_fitted.R` uses `vals_fitted.rds` to create the plot in `out/fig_fitted.png`
+5. `report.qmd` uses `out/fig_fitted.png` to create the document `report.html`
 
-`scaled.R`, `model.R`, and `tab_coef.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
+`cleaned_data.R`, `model.R`, and `vals_fitted.R`, and `fig_fitted.R` all contain calls to `cmd_assign()`. For instance, `src/model.R` contains the lines
 
 ```{r, echo = FALSE}
 lines <- readLines("src/model.R")
-cat(paste(c(lines[7:9], ""), collapse = "\n"))
+cat(paste(c(lines[7:8], ""), collapse = "\n"))
 ```
 
 # cmd_shell()
@@ -93,7 +96,7 @@ cat(paste(lines, collapse = "\n"))
 Here, as in most cases, the output from `shell_script()` needs some editing before it is ready for use. The ordering of the commands in `workflow.sh` reflects the ordering of the files in the `src` directory. We need to rearrange the commands to instead reflect the order in which they need to be executed. We also add instructions on rendering the file `report.qmd`.
 
 ```{r, echo = FALSE}
-lines <- lines[c(6:9, 1:5, 10:14)]
+lines <- lines[c(2:5, 10:17, 1, 6:9)]
 lines <- c(lines,
 	   "quarto render report.qmd",
 	   "")
@@ -125,7 +128,7 @@ dir_tree(regexp = nms_articles,
 	 recurse = 1L)
 ```
 
-We have created `scaled.rds`, `model.rds`, and `tab_coef` in the `out` directory, and `report.html` in the main directory.
+We have created `cleaned_data.rds`, `model.rds`, and `vals_fitted.rds`, and `fig_fitted.png` in the `out` directory, and `report.html` in the main directory. The `report_files` directory was created by quarto.
 
 # Other resources
 
