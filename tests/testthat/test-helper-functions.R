@@ -474,26 +474,25 @@ test_that("'get_args_cmd' works when no arguments passed", {
 
 test_that("'get_args_cmd' works with littler", {
   is_linux <- identical(Sys.info()[["sysname"]], "Linux")
-  if (is_linux) {
-    dir_curr <- getwd()
-    dir_tmp <- tempfile()
-    if (file.exists(dir_tmp))
-      unlink(dir_tmp, recursive = TRUE)
-    dir.create(dir_tmp)
-    setwd(dir_tmp)
-    writeLines(c("args <- command:::get_args_cmd()",
-                 "saveRDS(args, file = 'args.rds')"),
-               con = "script.R")
-    cmd <- 'lr script.R unnamed1 -n=1 unnamed2 --named1=hello --named2="kia ora"'
-    system(cmd)
-    ans_obtained <- readRDS("args.rds")
-    ans_expected <- list("unnamed1", n = "1", "unnamed2", named1 = "hello", named2 = "kia ora")
-    expect_identical(ans_obtained, ans_expected)
-    setwd(dir_curr)
+  has_littler <- nzchar(Sys.which("r"))
+  if (!is_linux || !has_littler)
+    testthat::skip("littler not found")
+  dir_curr <- getwd()
+  dir_tmp <- tempfile()
+  if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
-  }
-  else
-    expect_true(TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("args <- command:::get_args_cmd()",
+               "saveRDS(args, file = 'args.rds')"),
+             con = "script.R")
+  cmd <- 'lr script.R unnamed1 -n=1 unnamed2 --named1=hello --named2="kia ora"'
+  system(cmd)
+  ans_obtained <- readRDS("args.rds")
+  ans_expected <- list("unnamed1", n = "1", "unnamed2", named1 = "hello", named2 = "kia ora")
+  expect_identical(ans_obtained, ans_expected)
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
 })
 
 
