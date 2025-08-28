@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Modular Workflows • command</title>
+<title>Modular Workflows for Data Analysis • command</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modular Workflows">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modular Workflows for Data Analysis">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -36,7 +36,7 @@
 <li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start Guide</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
-    <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows</a></li>
+    <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
   </ul>
 </li>
       </ul>
@@ -57,7 +57,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Modular Workflows</h1>
+      <h1>Modular Workflows for Data Analysis</h1>
             
       
 
@@ -66,75 +66,816 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/command/">command</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span></span></code></pre></div>
-<p><a href="https://r4ds.hadley.nz/workflow-scripts.html" class="external-link uri">https://r4ds.hadley.nz/workflow-scripts.html</a></p>
-<p><a href="https://www.tidyverse.org/blog/2017/12/workflow-vs-script/" class="external-link uri">https://www.tidyverse.org/blog/2017/12/workflow-vs-script/</a></p>
+<blockquote>
+<p>The computations and the software for data analysis should be
+trustworthy: they should do what they claim, and be seen to do so <span class="citation">(Chambers 2008, 2:3)</span>.</p>
+</blockquote>
+<blockquote>
 <p>The only way to write complex software that won’t fall on its face is
 to build it out of simple modules connected by well-defined interfaces,
 so that most problems are local and you can have some hope of fixing or
-optimizing a part without breaking the whole. <a href="http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html" class="external-link uri">http://catb.org/%7Eesr/writings/taoup/html/modularitychapter.html</a></p>
-<p><a href="https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R.html" class="external-link uri">https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R.html</a></p>
-<p>“Another way you can be explicit about the requirements of your code
-and improve it’s reproducibility is to limit the “hard-coding” of the
-input and output files for your script. If your code will read in data
-from a file, define a variable early in your code that stores the path
-to that file. For example”</p>
+optimizing a part without breaking the whole <span class="citation">(Raymond 2003, ch. 1)</span>.</p>
+</blockquote>
 <div class="section level2">
-<h2 id="the-problem-of-writing-safe-flexible-data-analysis-code">The problem of writing safe, flexible data analysis code<a class="anchor" aria-label="anchor" href="#the-problem-of-writing-safe-flexible-data-analysis-code"></a>
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<ul>
-<li>
-<p>classic example: big file</p>
-<ul>
-<li>difficult to understand</li>
-<li>slow or confusing/unreliable - have to re-run</li>
-<li>difficult to debug</li>
-</ul>
-</li>
-<li>
-<p>split into logical parts (modular), then source</p>
-<ul>
-<li>helps</li>
-<li>but doesn’t totally solve - confusing environment</li>
-</ul>
-</li>
-<li><p>better: break into pieces, and run each in own
-environment</p></li>
-<li><p>a bit like functions (but without global environment)</p></li>
-<li>
-<p>push harder - make inputs outputs completely transparenet</p>
-<p>have to re-run - slow</p>
-<ul>
-<li>
-</li>
-<li>difficult to change</li>
-<li>polluted environment</li>
-</ul>
-</li>
-<li><p>classic software solution: break into small files</p></li>
-<li><p>but if</p></li>
-<li><p>how to run them?</p></li>
-</ul>
-<p>[<a href="https://stemurphy.com/post/rep_manu_think_about/" class="external-link uri">https://stemurphy.com/post/rep_manu_think_about/</a>]</p>
+<p>Code for a data analysis should be accurate, transparent, and
+flexible. It should do what the report on the analysis say it does, and
+it should be written in a way that makes it easy to understand and
+modify. In software engineering, and in the design of systems more
+generally, one of the key ways of achieving accuracy, transparency, and
+flexibility is through modularity <span class="citation">(Simon
+2019)</span>. A modular system is built out of many small,
+self-contained units. Each of these units has a single purpose, has
+well-defined inputs and outputs, and has only limited knowledge about
+other units.</p>
+<p>Ideas about modularity underlie much standard R advice about writing
+code for data analysis. RStudio-style projects, for instance, are an
+example of modular design <span class="citation">(Wilson et al. 2017;
+Wickham, Çetinkaya-Rundel, and Grolemund 2023; ProjectTemplate
+contributors 2025)</span>. However, many actual data analyses written in
+R are the opposite of modular. For instance, the entire workflow is
+often contained in a single, huge script that is responsible for
+everything from importing data to fitting to creating plots. Even when
+code for an analysis is divided into smaller scripts, these smaller
+scripts often have diffuse aims and complex inputs and outputs. Heavy
+use of <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> commands mean that many scripts contribute
+objects to the current working environment, and no script can be
+understood in isolation. Changes to one part of a workflow have large,
+unexpected implications for other parts of the workflow.</p>
+<p>This article presents a strategy for making data analysis workflows
+more strictly modular. The basic unit in this strategy is a script. Each
+script is responsible for one small task, with inputs and outputs
+tightly controlled. Each script runs in its own environment, and data
+and intermediate outputs are passed around by reading from and writing
+to disk. Information about the project as a whole is held in a single
+orchestration file, which serves as an executable description of the
+analysis.</p>
+<p>The article describes the main elements of the strategy, presents an
+example, and lists some costs and benefits. The final section gives some
+suggestions.</p>
 </div>
 <div class="section level2">
-<h2 id="other-solutions">Other solutions<a class="anchor" aria-label="anchor" href="#other-solutions"></a>
+<h2 id="a-strategy-for-constructing-a-modular-workflow">A strategy for constructing a modular workflow<a class="anchor" aria-label="anchor" href="#a-strategy-for-constructing-a-modular-workflow"></a>
 </h2>
+<div class="section level3">
+<h3 id="use-lots-of-small-scripts">Use lots of small scripts<a class="anchor" aria-label="anchor" href="#use-lots-of-small-scripts"></a>
+</h3>
+<p>A data analysis workflow should be composed of many small scripts.
+Each of these small scripts should have a single well-defined task. In
+most cases, the task will be to turn some inputs into an output. The new
+output could itself be an input for other tasks, or it could a final
+product, such as a report. In either case, each script should be
+self-contained, in the sense that it can be interpreted and used on its
+own.</p>
+<p>Some typical inputs and outputs in data analyses are:</p>
+<table class="table">
+<colgroup>
+<col width="42%">
+<col width="57%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Inputs</th>
+<th align="left">Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Raw data set</td>
+<td align="left">Cleaned data set</td>
+</tr>
+<tr class="even">
+<td align="left">Two cleaned data sets</td>
+<td align="left">Single merged data set</td>
+</tr>
+<tr class="odd">
+<td align="left">Cleaned data set</td>
+<td align="left">CSV file for distribution</td>
+</tr>
+<tr class="even">
+<td align="left">Cleaned data set</td>
+<td align="left">Values for plotting</td>
+</tr>
+<tr class="odd">
+<td align="left">Values for plotting</td>
+<td align="left">Plot</td>
+</tr>
+<tr class="even">
+<td align="left">Cleaned data set</td>
+<td align="left">Fitted model object</td>
+</tr>
+<tr class="odd">
+<td align="left">Cleaned data set and fitted model object</td>
+<td align="left">Actual and predicted values</td>
+</tr>
+<tr class="even">
+<td align="left">Actual and predicted values</td>
+<td align="left">Plot</td>
+</tr>
+<tr class="odd">
+<td align="left">Multiple fitted model objects</td>
+<td align="left">Scores for performance metrics</td>
+</tr>
+<tr class="even">
+<td align="left">Scores for performance metrics</td>
+<td align="left">Values for table</td>
+</tr>
+<tr class="odd">
+<td align="left">Values for table</td>
+<td align="left">Table</td>
+</tr>
+</tbody>
+</table>
+<p>The one-task-one-script rule can lead to scripts that are very short.
+For instance, if the task is to merge two cleaned datasets, then the
+script might contain only a few lines of code.</p>
+<p>Occasionally, a script does need to be long, because breaking the
+task into subtasks increases, rather than decreases, complexity. A long
+script should, however, be subjected to extra checking, and should
+include a comment explaining to future maintainers why the length was
+necessary.</p>
+</div>
+<div class="section level3">
+<h3 id="use-rscript-or-littler-to-run-each-script-in-a-new-session">Use Rscript or littler to run each script in a new session<a class="anchor" aria-label="anchor" href="#use-rscript-or-littler-to-run-each-script-in-a-new-session"></a>
+</h3>
+<p>Each script should run in a new, clean R session that ends when
+script has finished running. Any packages (aside from base R packages)
+that are required by a script should be loaded explicitly. Running each
+script in its own session implies that, when the script completes, all
+objects created during by the script, which were not saved to disk,
+disappear.</p>
+<p>The best way to give each script its own session is to run the script
+from the command line, using an application such as <a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html" class="external-link">Rscript</a>
+or <a href="https://CRAN.R-project.org/package=littler" class="external-link">littler</a>. For
+instance, the call</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">Rscript</span> my-script.R</span></code></pre></div>
+<p>starts a new R session, runs the code in <code>my-script.R</code>,
+and ends the session.</p>
+<p>For an introduction to Rscript see <a href="https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html" class="external-link">here</a>,
+and for an introduction to littler, see <a href="https://CRAN.R-project.org/package=littler" class="external-link">here</a>.</p>
+</div>
+<div class="section level3">
+<h3 id="use-command-line-arguments-to-define-inputs-and-outputs">Use command line arguments to define inputs and outputs<a class="anchor" aria-label="anchor" href="#use-command-line-arguments-to-define-inputs-and-outputs"></a>
+</h3>
+<p>Rscript and littler both allow the user to supply command line
+arguments to the script being run. Values for these arguments are
+accessible inside the session. The command</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">Rscript</span> my-script.R my-data.csv my-output.rds <span class="at">--n_digits</span><span class="op">=</span>3</span></code></pre></div>
+<p>for instance, makes the strings <code>"my-data.csv"</code>,
+<code>"myoutput.rds"</code>, and <code>"3"</code> accessible inside the
+session where <code>my-script.R</code> is run. Expressions of the form
+<code>--&lt;name&gt;=&lt;object&gt;</code> can be used to assign names
+to the strings. In the command above, for example, the strings
+<code>"my-data.csv"</code> and <code>"myoutput.rds"</code> have no
+names, and the string <code>"3"</code> has the name
+<code>n_digits</code>.</p>
+<p>Values for command line arguments can be retrieved within the session
+using base R function <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/commandArgs.html" class="external-link">commandArgs()</a>,
+followed by some manipulation and reformatting. For instance, values
+from the call above can be retrieved using</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs</a></span><span class="op">(</span>trailingOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">filename_input</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">filename_output</span> <span class="op">&lt;-</span> <span class="va">args</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">n_digits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">args</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, split <span class="op">=</span> <span class="st">"="</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p>As this example illustrates, using base R function
+<code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code> to parse command line arguments can be
+fiddly. Packages <code>argparse</code>, <code>docopt</code>,
+<code>getopt</code>, <code>optparse</code>, and <code>R.utils</code> all
+implement high-level alternatives to base R <code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code>
+<span class="citation">(Jonge, Fowler, and Keleshev 2018; Davis 2023;
+Pav 2023; Davis and Day 2020; Bengtsson 2023)</span>.</p>
+<p>The <code>command</code> package is one further alternative, designed
+specifically for data analysis workflows. Function
+<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> in <code>command</code> automatically checks
+and reformats arguments, and assigns values within the working
+environment. For an introduction to <code>command</code>, see <a href="https://bayesiandemography.github.io/command/articles/a1_quickstart.html">Quick
+Start Guide</a>.</p>
+<p>The ability to pass arguments to scripts essentially turns the
+scripts into functions. If, for instance, we want to run the code in
+<code>my-script.R</code> on <code>my-other-data.csv</code>, rather than
+<code>my-data.csv</code>, then we use something like</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">Rscript</span> my-script.R my-other-data.csv my-other-output.rds <span class="at">--n_digits</span><span class="op">=</span>3</span></code></pre></div>
+<p>If we want to process <code>my_data.csv</code>, but we want to use 5
+digits rather than 3, then we use something like</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">Rscript</span> my-script.R my-data.csv my-output.rds <span class="at">--n_digits</span><span class="op">=</span>5</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="run-everything-from-an-orchestration-file">Run everything from an orchestration file<a class="anchor" aria-label="anchor" href="#run-everything-from-an-orchestration-file"></a>
+</h3>
+<p>An orchestration file controls a workflow. Running the orchestration
+file for an analysis should reproduce the entire analysis, from the
+ingesting of the raw data to the compilation of the final report.</p>
+<p>Orchestration files are often written in R, and take the form</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"cleaned_data.R"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"model.R"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"performance.R"</span><span class="op">)</span></span>
+<span><span class="fu">quarto</span><span class="fu">::</span><span class="fu"><a href="https://quarto-dev.github.io/quarto-r/reference/quarto_render.html" class="external-link">quarto_render</a></span><span class="op">(</span><span class="st">"report.qmd"</span><span class="op">)</span></span></code></pre></div>
+<p>The script runs <code>cleaned_data.R</code> to create a cleaned
+dataset, runs <code>model.R</code> to fit a model to this dataset, runs
+<code>performance.R</code> to collect information on model performance,
+and renders the <code>report.qmd</code> file to create the analysis
+report.</p>
+<p>Orchestration files consisting of a succession of
+<code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> calls have major some disadvantages. Repeated use
+of <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> means that all code is run in the same
+environment, breaking modularity. The lack of definitions of inputs or
+outputs make the workflow harder to understand or control.</p>
+<p>A better approach is to use a shell script, such as</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">Rscript</span> cleaned_data.R raw_data.rds cleaned_data.rds</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="ex">Rscript</span> model.R cleaned_data.rds model.rds <span class="at">--n_iter</span><span class="op">=</span>2000</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="ex">Rscript</span> performance.R model.rds performance.rds</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="ex">quarto</span> render report.qmd</span></code></pre></div>
+<p>An even better approach is to use a Makefile. A Makefile version of
+the shell script above is</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">.PHONY:</span> all</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="ex">all:</span> report.html</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="ex">cleaned_data.rds:</span> cleaned_data.R raw_data.rds</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>        <span class="ex">Rscript</span> $^ <span class="va">$@</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="ex">model.rds:</span> model.R cleaned_data.rds</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>        <span class="ex">Rscript</span> $^ <span class="va">$@</span> <span class="at">--n_iter</span><span class="op">=</span>2000</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="ex">performance.rds:</span> performance.R model.rds</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>        <span class="ex">Rscript</span> $^ <span class="va">$@</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="ex">report.html:</span> report.qmd performance.rds</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>        <span class="ex">Rscript</span> $<span class="op">&lt;</span></span></code></pre></div>
+<p>The lines</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">.PHONY:</span> all</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="ex">all:</span> report.html</span></code></pre></div>
+<p>at the top of the Makefile define the final output or outputs from
+the workflow. Lines such as</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">cleaned_data.rds:</span> cleaned_data.R raw_data.rds</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>        <span class="ex">Rscript</span> $^ <span class="va">$@</span></span></code></pre></div>
+<p>specify a Makefile <em>rule</em>. A rule contains a</p>
 <ul>
-<li>commandArgs</li>
-<li>docopt</li>
-<li>other?</li>
-</ul>
-<p>Principles of file organization</p>
-<ul>
-<li>don’t distinguish intermediate and final outputs (everything in
-out)</li>
-<li>don’t number files</li>
+<li>a <em>target</em>, in this case <code>cleaned_data.rds</code>;</li>
 <li>
-</li>
+<em>prerequisites</em>, in this case <code>cleaned_data.R</code> and
+<code>raw_data.rds</code>; and</li>
+<li>a <em>recipe</em> for creating the target from the prerequisites, in
+this case <code>Rscript $^ $@</code>.</li>
 </ul>
+<p>The <code>$^</code> and <code>$@</code> in <code>Rscript $^ $@</code>
+are “automatic variables”. When the Makefile runs, the phrase
+<code>Rscript $^ $@</code> expands to
+<code>Rscript cleaned_data.R raw_data.rds cleaned_data.rds</code>.</p>
+<p>The <code>make</code> application uses the Makefile to construct a
+dependency graph for the inputs and outputs in the workflow. The
+Makefile above yields the graph
+<img src="makefile_deps.png" width="45%" style="display: block; margin: auto;"></p>
+<p>If <code>make</code> sees that a dependency is older than one of the
+prerequisites, then it will recreate that dependency, and all
+dependencies downstream of it. For instance, in the example above, if
+<code>make</code> saw that <code>performance.rds</code> was older than
+<code>model.rds</code>, then it would recreate
+<code>performance.rds</code> and <code>report.html</code>. It would not,
+however, create <code>model.rds</code> itself, or
+<code>cleaned_data.rds</code>. For more on Makefiles, see, for instance,
+<span class="citation">Broman (2013)</span>, <span class="citation">Baker (2020)</span>, <span class="citation">Janssens
+(2021)</span>, and <span class="citation">The Turing Way Community
+(2025)</span>.</p>
+</div>
+<div class="section level3">
+<h3 id="reports">Reports<a class="anchor" aria-label="anchor" href="#reports"></a>
+</h3>
+<p>Applications such as R Markdown <span class="citation">(Xie, Allaire,
+and Grolemund 2018)</span> and Quarto <span class="citation">(Posit
+Software, PBC 2025)</span> allow authors to combine code and text within
+a single document. It is common to see authors put <em>all</em> the code
+for an analysis in an R Markdown or Quarto document. This can be
+effective with small analyses, such as the exploration of a new dataset.
+But it does not scale well. Analyses where all the code is contained in
+a single R Markdown or Quarto file suffer from all the usual pathologies
+of a large, complicated code file, along with the extra challenge of
+coping with markdown errors.</p>
+<p>A more modular, scalable alternative is to do the analysis outside
+the report, and to limit code within the report to snippets that read in
+results and apply formatting. A plot, for instance, can be constructed
+in its own script, and then read into the report using a command like
+<code>![](out/myplot.pdf)</code>.</p>
+<p>Unfortunately, R Markdown and Quarto do not currently allow users to
+supply command line arguments in the way that Rscript and littler
+do.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="an-example">An example<a class="anchor" aria-label="anchor" href="#an-example"></a>
+</h2>
+<p>We use a small example to illustrate the various components of the
+strategy described in this paper. The project folder for the example
+looks like this:</p>
+<pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
+├── Makefile
+├── <span style="color: #0000BB; font-weight: bold;">data</span>
+│   └── raw_data.csv
+├── <span style="color: #0000BB; font-weight: bold;">out</span>
+│   ├── cleaned_data.rds
+│   ├── <span style="color: #BB00BB; font-weight: bold;">fig_fitted.png</span>
+│   ├── model_m.rds
+│   ├── model_mm.rds
+│   └── vals_fitted.rds
+├── report.html
+├── report.qmd
+└── <span style="color: #0000BB; font-weight: bold;">src</span>
+    ├── <span style="color: #00BB00;">cleaned_data.R</span>
+    ├── <span style="color: #00BB00;">fig_fitted.R</span>
+    ├── <span style="color: #00BB00;">model.R</span>
+    └── <span style="color: #00BB00;">vals_fitted.R</span>
+</code></pre>
+<p>The Makefile and report sit at the top level. There are subfolders
+folders for the raw data (<code>data</code>), the code
+(<code>src</code>) and the outputs (<code>out</code>).</p>
+<p>The flow of data and outputs is set out in the Makefile:</p>
+<pre><code>
+.PHONY: all
+all: report.html
+
+out/cleaned_data.rds: src/cleaned_data.R \
+  data/raw_data.csv
+    Rscript $^ $@
+
+out/model_m.rds: src/model.R \
+  out/cleaned_data.rds
+    Rscript $^ $@ --method=M
+
+out/model_mm.rds: src/model.R \
+  out/cleaned_data.rds
+    Rscript $^ $@ --method=MM
+
+out/vals_fitted.rds: src/vals_fitted.R \
+  out/cleaned_data.rds \
+  out/model_m.rds \
+  out/model_mm.rds
+    Rscript $^ $@
+
+out/fig_fitted.png: src/fig_fitted.R \
+  out/vals_fitted.rds
+    Rscript $^ $@
+
+report.html: report.qmd \
+  out/fig_fitted.png
+    quarto render report.qmd
+
+
+.PHONY: clean
+clean:
+    rm -rf out
+    mkdir out</code></pre>
+<p>The ultimate goal is to produce file <code>report.html</code>. To get
+there, we go through the following steps:</p>
+<ul>
+<li>produce <code>cleaned_data.rds</code> by applying
+<code>cleaned_data.R</code> to <code>raw_data.csv</code>;</li>
+<li>produce <code>model_m.rds</code> by applying <code>model.R</code> to
+<code>cleaned_data.rds</code>, with setting
+<code>--method=M</code>;</li>
+<li>produce <code>model_mm.rds</code> by applying <code>model.R</code>
+to <code>cleaned_data.rds</code>, with setting
+<code>--method=MM</code>;</li>
+<li>produce <code>vals_fitted.rds</code> by applying
+<code>vals_fitted.R</code> to <code>cleaned_data.rds</code>,
+<code>model_m.rds</code>, and <code>model_mm.rds</code>;</li>
+<li>produce <code>fig_fitted.png</code> by applying
+<code>fig_fitted.R</code> to <code>vals_fitted.rds</code>; and</li>
+<li>produce <code>report.html</code> by applying <code>report.qmd</code>
+to <code>fig_fitted.png</code>.</li>
+</ul>
+<p>File <code>cleaned_data.R</code> contains the following code:</p>
+<pre><code><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/command/">command</a></span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.raw_data <span class="op">=</span> <span class="st">"data/raw_data.csv"</span>,</span>
+<span>           .out <span class="op">=</span> <span class="st">"out/cleaned_data.rds"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">.raw_data</span>, show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cleaned_data</span> <span class="op">&lt;-</span> <span class="va">raw_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>agriculture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Agriculture</span><span class="op">)</span>,</span>
+<span>         fertility <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">Fertility</span><span class="op">)</span>,</span>
+<span>         agriculture <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">agriculture</span><span class="op">)</span>,</span>
+<span>         fertility <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">fertility</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>province <span class="op">=</span> <span class="va">Province</span>, <span class="va">agriculture</span>, <span class="va">fertility</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">cleaned_data</span>, file <span class="op">=</span> <span class="va">.out</span><span class="op">)</span></span></code></pre>
+<p>This code</p>
+<ul>
+<li>loads the packages needed for this script;</li>
+<li>uses function <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> from package
+<code>command</code> to extract the values that were passed at the
+command line, giving them names <code>.raw_data</code>, and
+<code>.out</code>;</li>
+<li>reads in the raw data, using the filename specified by
+<code>.raw_data</code>;</li>
+<li>transforms the raw data into cleaned data; and</li>
+<li>writes out the cleaned data, using the filename specified by
+<code>.out</code>.</li>
+</ul>
+<p>File <code>model.R</code> contains the code</p>
+<pre><code><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/command/">command</a></span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.cleaned_data <span class="op">=</span> <span class="st">"out/cleaned_data.rds"</span>,</span>
+<span>           method <span class="op">=</span> <span class="st">"M"</span>,</span>
+<span>           .out <span class="op">=</span> <span class="st">"out/model.rds"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cleaned_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">.cleaned_data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MASS/man/rlm.html" class="external-link">rlm</a></span><span class="op">(</span><span class="va">fertility</span> <span class="op">~</span> <span class="va">agriculture</span>, </span>
+<span>             data <span class="op">=</span> <span class="va">cleaned_data</span>,</span>
+<span>             method <span class="op">=</span> <span class="st">"M"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">model</span>, file <span class="op">=</span> <span class="va">.out</span><span class="op">)</span></span></code></pre>
+<p>The overall structure is similar to that of
+<code>cleaned_data.R</code>. Unlike <code>cleaned_data.R</code>,
+however, <code>model.R</code> is called twice. On the first call, the
+named argument <code>method</code> is set to <code>M</code>, and the
+output is captured in file <code>model_m.rds</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="ex">out/model_m.rds:</span> src/model.R <span class="dt">\</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  out/cleaned_data.rds</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="ex">Rscript</span> $^ <span class="va">$@</span> <span class="at">--method</span><span class="op">=</span>M</span></code></pre></div>
+<p>On the second call, <code>method</code> is set to <code>MM</code>,
+and the output is captured in file <code>model_mm.rds</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="ex">out/model_mm.rds:</span> src/model.R <span class="dt">\</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  out/cleaned_data.rds</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>    <span class="ex">Rscript</span> $^ <span class="va">$@</span> <span class="at">--method</span><span class="op">=</span>MM</span></code></pre></div>
+<p>By passing arguments to <code>model.R</code> when we run it, we can
+make <code>model.R</code> behave like a function.</p>
+<p>The two remaining R scripts, <code>fig_fitted.R</code> and
+<code>vals_fitted.R</code>, follow the same basic format as
+<code>cleaned_data.R</code> and <code>model.R</code>, and are discussed
+in the Appendix.</p>
+<p>The Quarto file <code>report.qmd</code> looks like this:</p>
+<pre><code>---
+title: "Swiss Fertility"
+---
+
+## Introduction
+
+We examine the relationship between agriculture and fertility in nineteenth century Swizterland.
+
+## Methods
+
+We fit a robust linear model to provincial-level data, using methods "M" and "MM".
+
+## Results
+
+Here are the raw data and the fitted values:
+
+```{r}
+#| echo: false
+#| out.width: 60%
+knitr::include_graphics("out/fig_fitted.png")
+```
+
+## Discussion
+
+Fertility was positively correlated with agriculture.</code></pre>
+<p>The file focuses on text rather than code. The single piece of R code
+is a call to <code><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">knitr::include_graphics()</a></code>.</p>
+</div>
+<div class="section level2">
+<h2 id="costs-of-the-strategy">Costs of the strategy<a class="anchor" aria-label="anchor" href="#costs-of-the-strategy"></a>
+</h2>
+<div class="section level3">
+<h3 id="learning-new-tools">Learning new tools<a class="anchor" aria-label="anchor" href="#learning-new-tools"></a>
+</h3>
+<p>Analysts who are not familiar with the command line, shell scripts,
+and Makefiles will need to devote time to learning them about them.
+Makefiles, in particular, can take some time to get used to, with their
+mysterious <code>$^</code> and <code>$@</code> symbols and their tricky
+use of tabs. Learning these tools, and finding solutions when something
+goes wrong, has, however, become much easier with the advent of AI-based
+assistants.</p>
+</div>
+<div class="section level3">
+<h3 id="extra-overhead">Extra overhead<a class="anchor" aria-label="anchor" href="#extra-overhead"></a>
+</h3>
+<p>The strategy described in this paper requires some writing some extra
+code. Every script in an analysis requires a few extra lines to deal
+with command line arguments, and needs a mention in the orchestration
+file.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="benefits-of-the-strategy">Benefits of the strategy<a class="anchor" aria-label="anchor" href="#benefits-of-the-strategy"></a>
+</h2>
+<div class="section level3">
+<h3 id="writing-code">Writing code<a class="anchor" aria-label="anchor" href="#writing-code"></a>
+</h3>
+<p>Modularity makes code easier to write. Breaking the analysis into
+smaller pieces makes it feel more manageable. A small script that has
+one job is much places fewer demands on a programmer’s memory and
+concentration than a large script with many jobs. The more
+self-contained a script is, and the fewer assumptions it makes about the
+rest of the project, the less likely it is to need revision as the
+project evolves.</p>
+<p>Modularity also helps with one of the most difficult tasks in
+programming: naming things <span class="citation">(McConnell 2004, chap.
+11)</span>. The challenge of finding appropriate names, and avoiding
+name clashes, is particularly acute in a long file carrying out multiple
+tasks, where it becomes necessary to distinguish, for instance, between
+<code>model_baseline</code>, <code>model_revised</code>,
+<code>model_revised_subset</code>, and so on. Having short scripts, each
+run in its own session, allows analysts to re-use clashes, and the need
+to search for distinct names.</p>
+</div>
+<div class="section level3">
+<h3 id="reading-code">Reading code<a class="anchor" aria-label="anchor" href="#reading-code"></a>
+</h3>
+<p>Code that takes the form of small, self-contained units is also much
+easier to read. A small script with a single objective makes can be
+understood much more quickly than a large script with several
+objectives. Code constructed out of semi-independent units can be picked
+up part way through, sparing the reader the need to read all of the code
+just to understand one part of it. Having a separate orchestration file
+allows the reader to see the overall structure of the analysis,
+including the main steps, and the flow of information.</p>
+</div>
+<div class="section level3">
+<h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h3>
+<p>Computer code should ideally by ‘self-documenting’: it should make
+the programmer’s intent sufficiently clear that the need for additional
+aids, such as inline comments or README files, is minimized <span class="citation">(McConnell 2004, chap. 32)</span>. Many of the
+techniques described in this paper lead to code that is
+self-documenting. The orchestration file, for instance, serves as a
+summary of the overall workflow, and the command line arguments serve as
+a description of the inputs and outputs. In addition, when a script is
+short and has a single objective, the reader needs much less assistance
+than when a script is long and has multiple objectives.</p>
+</div>
+<div class="section level3">
+<h3 id="debugging">Debugging<a class="anchor" aria-label="anchor" href="#debugging"></a>
+</h3>
+<p>Keeping scripts short, running each script in its own session, and
+explicitly defining the inputs to that session mean that, if something
+goes wrong, there should only be a few objects in the working
+environment, and the origins of these objects should be clear. Debugging
+is a lot less painful than it might otherwise be.</p>
+</div>
+<div class="section level3">
+<h3 id="flexibility">Flexibility<a class="anchor" aria-label="anchor" href="#flexibility"></a>
+</h3>
+<p>Small scripts, with clearly-defined inputs, outputs, and tasks are
+composable: they can be combined with other scripts in many different
+ways. Consider, for instance, the problem of extracting performance
+measures from a model object and then plotting them. If we have one
+script to derive the performance measures, and a second script to plot
+these measures, then it is easy to add a third script to display the
+measures in a table. This sort of flexibility is particularly helpful in
+data analyses where there is uncertainty about the nature of the data
+the the most appropriate models, plots, and so forth.</p>
+</div>
+<div class="section level3">
+<h3 id="scalability">Scalability<a class="anchor" aria-label="anchor" href="#scalability"></a>
+</h3>
+<p>Saving intermediate outputs to disk reduces the amount of memory
+needed, and reduces the need to re-run calculations from the beginning.
+These savings can be important in projects with large datasets or long
+computation times. Makefiles are particularly helpful in such settings,
+since they make sure that computations are carried out when they are
+needed, but only then.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="some-stylistic-suggestions">Some stylistic suggestions<a class="anchor" aria-label="anchor" href="#some-stylistic-suggestions"></a>
+</h2>
+<div class="section level3">
+<h3 id="let-the-orchestration-file-impose-order">Let the orchestration file impose order<a class="anchor" aria-label="anchor" href="#let-the-orchestration-file-impose-order"></a>
+</h3>
+<p>A common recommendation in advice on writing analysis code is to
+number files, such as <code>01-ingest-data.R</code>,
+<code>02-clean-data.R</code>, <code>03-fit-model.R</code>, and so on.
+The problem with this recommendation is that data analysis is
+unpredictable, and new files often need to be added, or existing files
+deleted. If, for instance, we insert an impute-missing-values step
+between the clean-data step and the fit-model step, then we need to redo
+our numbering. This quickly becomes annoying.</p>
+<p>An alternative is to rely entirely on the orchestration file to
+record the order in which files are run. The analyst needs to update the
+orchestration file anyway, each time a script is added or removed. When
+there is an orchestration file, numbering becomes redundant.</p>
+<p>One quirk in the case of Makefiles is that, when building a
+dependency graph, the <code>make</code> application relies entirely on
+targets and prerequisites, and ignores the physical position of rules
+within the file. As a courtesy to human readers, however, a Makefile
+should list the rules in the order in which they are executed.</p>
+</div>
+<div class="section level3">
+<h3 id="re-use-base-names">Re-use base names<a class="anchor" aria-label="anchor" href="#re-use-base-names"></a>
+</h3>
+<p>The computer science convention where related files are given the
+same base name and different extensions – e.g. <code>report.tex</code>,
+<code>report.aux</code>, <code>report.toc</code>,
+<code>report.log</code>, and <code>report.pdf</code> – can also be
+applied in data analysis workflows. For instance, a file named
+<code>model_baseline.R</code> creates a model object, which is stored in
+a file named <code>model_baseline.rds</code>. As well as signaling
+relationships, re-using base names reduces the need to think up new
+names.</p>
+</div>
+<div class="section level3">
+<h3 id="refrain-from-using-advanced-makefile-features">Refrain from using advanced Makefile features<a class="anchor" aria-label="anchor" href="#refrain-from-using-advanced-makefile-features"></a>
+</h3>
+<p>Makefiles have an enormous range of features. The extra power tends,
+however, to come at the expense of readability. Moreover, most data
+analysis projects have a sufficiently simple structure that the extra
+power may not be needed. If ‘VPATH directives’ are added to a Makefile,
+for instance, then directory names can be omitted from file paths, so
+that <code>model.R</code> can be used instead of
+<code>src/model.R</code> <span class="citation">(Free Software
+Foundation 2024, sec. 4.5)</span>. However, while this makes the
+Makefiles more concise, it also makes them harder to understand for
+readers who are not Makefile experts.</p>
+</div>
+<div class="section level3">
+<h3 id="orchestration-and-report-files-at-the-top">Orchestration and report files at the top<a class="anchor" aria-label="anchor" href="#orchestration-and-report-files-at-the-top"></a>
+</h3>
+<p>The orchestration file, and any report files in LaTeX, R Markdown,
+Quarto, or similar, should sit at the top level of the project, rather
+than in a subfolder with the other code. See, for instance, the file
+structure in the Example section above. There are pragmatic reasons for
+placing orchestration and report files at the top level: Makefiles,
+LaTeX files, and markdown files all generally assume that they are at
+the top level, and require special handling they are not. But
+orchestration and report files also earn special treatment, because they
+have a special status within the project. Orchestration files control
+all the other files, and the report is typically the ultimate objective
+of the project.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="appendix">Appendix<a class="anchor" aria-label="anchor" href="#appendix"></a>
+</h2>
+<p>File <code>vals_fitted.R</code> from the example contains the
+following code:</p>
+<pre><code><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/command/">command</a></span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.cleaned_data <span class="op">=</span> <span class="st">"out/cleaned_data.rds"</span>,</span>
+<span>           .model_m <span class="op">=</span> <span class="st">"out/model_m.rds"</span>,</span>
+<span>           .model_mm <span class="op">=</span> <span class="st">"out/model_mm.rds"</span>,</span>
+<span>           .out <span class="op">=</span> <span class="st">"out/vals_fitted.rds"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cleaned_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">.cleaned_data</span><span class="op">)</span></span>
+<span><span class="va">model_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">.model_m</span><span class="op">)</span></span>
+<span><span class="va">model_mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">.model_mm</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">vals_fitted</span> <span class="op">&lt;-</span> <span class="va">cleaned_data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">model_m</span><span class="op">)</span>,</span>
+<span>         mm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">model_mm</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">mm</span><span class="op">)</span>,</span>
+<span>               names_to <span class="op">=</span> <span class="st">"variant"</span>,</span>
+<span>               values_to <span class="op">=</span> <span class="st">"fitted"</span><span class="op">)</span></span>
+<span>           </span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">vals_fitted</span>, file <span class="op">=</span> <span class="va">.out</span><span class="op">)</span></span></code></pre>
+<p>This code</p>
+<ul>
+<li>loads the packages that are used in the code;</li>
+<li>creates strings called <code>.cleaned_data</code>,
+<code>.model_m</code>, <code>.model_mm</code>, and <code>.out</code>,
+based on values passed at the command line;</li>
+<li>creates objects <code>cleaned_data</code>, <code>model_m</code>, and
+<code>model_mm</code>, by reading from files specified by
+<code>.cleaned_data</code>, <code>.model_m</code>, and
+<code>.model_mm</code>;</li>
+<li>combines and reformats the contents of <code>cleaned_data</code>,
+<code>model_m</code>, and <code>model_mm</code>; and</li>
+<li>writes out the result, to a file specified by
+<code>.out</code>.</li>
+</ul>
+<p>File <code>fig_fitted.R</code> contains the code</p>
+<pre><code><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bayesiandemography.github.io/command/">command</a></span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.vals_fitted <span class="op">=</span> <span class="st">"out/vals_fitted.rds"</span>,</span>
+<span>           .out <span class="op">=</span> <span class="st">"out/fig_fitted.png"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">vals_fitted</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">.vals_fitted</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">vals_fitted</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">agriculture</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">variant</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">fertility</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">fitted</span><span class="op">)</span><span class="op">)</span></span>
+<span>               </span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">.out</span>,</span>
+<span>    width <span class="op">=</span> <span class="fl">600</span>,</span>
+<span>    height <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
+<p>This code</p>
+<ul>
+<li>loads the packages that are used in the code;</li>
+<li>creates strings called <code>.vals_fitted</code> and
+<code>.out</code>, based on values passed at the command line;</li>
+<li>creates object <code>vals_fitted</code>, by reading from the file
+specified by `.vals_fitted;</li>
+<li>creates a plot, based on <code>vals_fitted</code>; and</li>
+<li>prints the plot in a file specified by <code>.out</code>.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-baker2020using" class="csl-entry">
+Baker, Peter. 2020. <span>“Using GNU Make to Manage the Workflow of Data
+Analysis Projects.”</span> <em>Journal of Statistical Software</em> 94
+(1): 1–46. <a href="https://doi.org/10.18637/jss.v094.c01" class="external-link">https://doi.org/10.18637/jss.v094.c01</a>.
+</div>
+<div id="ref-bengtsson2023rutils" class="csl-entry">
+Bengtsson, Henrik. 2023. <em>R.utils: Various Programming
+Utilities</em>. <a href="https://CRAN.R-project.org/package=R.utils" class="external-link">https://CRAN.R-project.org/package=R.utils</a>.
+</div>
+<div id="ref-broman2013minimal" class="csl-entry">
+Broman, Karl W. 2013. <span>“Minimal Make: A Minimal Tutorial on GNU
+Make.”</span> <a href="https://kbroman.org/minimal_make/" class="external-link">https://kbroman.org/minimal_make/</a>.
+</div>
+<div id="ref-chambers2008software" class="csl-entry">
+Chambers, John M. 2008. <em>Software for Data Analysis: Programming with
+r</em>. Vol. 2. 1. Springer.
+</div>
+<div id="ref-david2023optparse" class="csl-entry">
+Davis, Trevor L. 2023. <em>Optparse: Command Line Option Parser</em>. <a href="https://CRAN.R-project.org/package=optparse" class="external-link">https://CRAN.R-project.org/package=optparse</a>.
+</div>
+<div id="ref-david2020getopt" class="csl-entry">
+Davis, Trevor L., and Allen Day. 2020. <em>Getopt: C-Like ’Getopt’
+Behavior</em>. <a href="https://CRAN.R-project.org/package=getopt" class="external-link">https://CRAN.R-project.org/package=getopt</a>.
+</div>
+<div id="ref-gnu2024make" class="csl-entry">
+Free Software Foundation. 2024. <em>GNU Make: A Program for Directed
+Compilation</em>. <a href="https://www.gnu.org/software/make/manual/" class="external-link">https://www.gnu.org/software/make/manual/</a>.
+</div>
+<div id="ref-janssens2021data" class="csl-entry">
+Janssens, Jeroen. 2021. <em>Data Science at the Command Line: Obtain,
+Scrub, Explore, and Model Data with Unix Power Tools</em>. 2nd ed.
+O’Reilly Media. <a href="https://jeroenjanssens.com/dsatcl/" class="external-link">https://jeroenjanssens.com/dsatcl/</a>.
+</div>
+<div id="ref-dejonge2018docopt" class="csl-entry">
+Jonge, Edwin de, Martin Fowler, and Vladimir Keleshev. 2018. <em>Docopt:
+Command-Line Interface Specification Language</em>. <a href="https://CRAN.R-project.org/package=docopt" class="external-link">https://CRAN.R-project.org/package=docopt</a>.
+</div>
+<div id="ref-mcconnell2004code" class="csl-entry">
+McConnell, Steve. 2004. <em>Code Complete</em>. 2nd ed. Redmond, WA:
+Microsoft Press.
+</div>
+<div id="ref-pav2023argparse" class="csl-entry">
+Pav, Steven E. 2023. <em>Argparse: Command Line Optional and Positional
+Argument Parser</em>. <a href="https://CRAN.R-project.org/package=argparse" class="external-link">https://CRAN.R-project.org/package=argparse</a>.
+</div>
+<div id="ref-posit2025quarto" class="csl-entry">
+Posit Software, PBC. 2025. <em>Quarto</em>. <a href="https://quarto.org" class="external-link">https://quarto.org</a>.
+</div>
+<div id="ref-projecttemplate2025project" class="csl-entry">
+ProjectTemplate contributors. 2025. <span>“ProjectTemplate.”</span> <a href="http://projecttemplate.net/" class="external-link">http://projecttemplate.net/</a>.
+</div>
+<div id="ref-raymond2003art" class="csl-entry">
+Raymond, Eric S. 2003. <span>“The Art of Unix Programming.”</span> In
+<em>The Art of Unix Programming</em>. <a href="http://catb.org/~esr/writings/taoup/html/index.html" class="external-link uri">http://catb.org/~esr/writings/taoup/html/index.html</a>;
+Addison-Wesley.
+</div>
+<div id="ref-simon2019sciences" class="csl-entry">
+Simon, Herbert A. 2019. <em>The Sciences of the Artificial, Reissue of
+the Third Edition with a New Introduction by John Laird</em>. MIT press.
+</div>
+<div id="ref-turing2025make" class="csl-entry">
+The Turing Way Community. 2025. <span>“Make Examples.”</span> <a href="https://book.the-turing-way.org/reproducible-research/make/make-examples.html" class="external-link">https://book.the-turing-way.org/reproducible-research/make/make-examples.html</a>.
+</div>
+<div id="ref-wickham2023r" class="csl-entry">
+Wickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023.
+<em>R for Data Science</em>. 2nd ed. O’Reilly Media. <a href="https://r4ds.hadley.nz/" class="external-link">https://r4ds.hadley.nz/</a>.
+</div>
+<div id="ref-wilson2017good" class="csl-entry">
+Wilson, Greg, Jennifer Bryan, Karen Cranston, Justin Kitzes, Lex
+Nederbragt, and Tracy K. Teal. 2017. <span>“Good Enough Practices in
+Scientific Computing.”</span> <em>PLOS Computational Biology</em> 13
+(6): e1005510. <a href="https://doi.org/10.1371/journal.pcbi.1005510" class="external-link">https://doi.org/10.1371/journal.pcbi.1005510</a>.
+</div>
+<div id="ref-xie2018rmarkdown" class="csl-entry">
+Xie, Yihui, J. J. Allaire, and Garrett Grolemund. 2018. <em>R Markdown:
+The Definitive Guide</em>. Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown/" class="external-link">https://bookdown.org/yihui/rmarkdown/</a>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -147,7 +888,7 @@ out)</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

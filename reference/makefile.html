@@ -25,7 +25,7 @@ rules extracted from existing R files."></head><body>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start Guide</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
-    <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows</a></li>
+    <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -111,6 +111,16 @@ commands, while the output from
 from <code>files</code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+
+<ul><li><p><a href="https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make" class="external-link">Project Management with Make</a>
+Makefiles in data analysis workflows</p></li>
+<li><p><a href="https://www.gnu.org/software/make/manual/make.html#SEC_Contents" class="external-link">GNU make</a>
+Definitive guide</p></li>
+<li><p><a href="https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html" class="external-link">Command-Line Programs</a>
+Introduction to Rscript</p></li>
+</ul></div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">
 <ul><li><p><a href="https://bayesiandemography.github.io/command/articles/a3_makefile.html">Creating a Makefile</a>
@@ -118,14 +128,8 @@ More on <code>makefile()</code></p></li>
 <li><p><code><a href="cmd_make.html">cmd_make()</a></code> Turn a <code><a href="cmd_assign.html">cmd_assign()</a></code> call into a Makefile rule</p></li>
 <li><p><code><a href="shell_script.html">shell_script()</a></code> Shell script equivalent of <code>makefile()</code></p></li>
 <li><p><code><a href="cmd_assign.html">cmd_assign()</a></code> Process command line arguments</p></li>
-<li><p><a href="https://bayesiandemography.github.io/command/articles/workflow.html">Data Analysis Workflows</a>
-Safe, flexible workflows using <code><a href="cmd_assign.html">cmd_assign()</a></code></p></li>
-<li><p><a href="https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make" class="external-link">Project Management with Make</a>
-Makefiles in data analysis workflows</p></li>
-<li><p><a href="https://www.gnu.org/software/make/manual/make.html#SEC_Contents" class="external-link">GNU make</a>
-Definitive guide</p></li>
-<li><p><a href="https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html" class="external-link">Command-Line Programs</a>
-Introduction to Rscript</p></li>
+<li><p><a href="https://bayesiandemography.github.io/command/articles/workflow.html">Modular Workflows</a>
+Safe, flexible data analysis workflows</p></li>
 <li><p><a href="https://CRAN.R-project.org/package=littler" class="external-link">littler</a> Alternative to Rscript</p></li>
 </ul></div>
     </div>
@@ -149,7 +153,7 @@ Introduction to Rscript</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at directories</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/Rtmp9MjWry/file1d97572d4c9b</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpD4Mm2d/file1d6257cec779</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     └── <span style="color: #00BB00;">results.R</span></span>
@@ -161,7 +165,7 @@ Introduction to Rscript</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at directories</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/Rtmp9MjWry/file1d97572d4c9b</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpD4Mm2d/file1d6257cec779</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── Makefile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
@@ -220,7 +224,7 @@ Introduction to Rscript</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

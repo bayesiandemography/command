@@ -36,7 +36,7 @@
 <li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start Guide</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
-    <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows</a></li>
+    <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
   </ul>
 </li>
       </ul>
@@ -82,38 +82,46 @@ from the shell script, has already been written. The project directory
 contains the following files:</p>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── swiss.csv
+│   └── raw_data.csv
 ├── <span style="color: #0000BB; font-weight: bold;">out</span>
 ├── report.qmd
 └── <span style="color: #0000BB; font-weight: bold;">src</span>
+    ├── <span style="color: #00BB00;">cleaned_data.R</span>
+    ├── <span style="color: #00BB00;">fig_fitted.R</span>
     ├── <span style="color: #00BB00;">model.R</span>
-    ├── <span style="color: #00BB00;">scaled.R</span>
-    └── <span style="color: #00BB00;">tab_coef.R</span>
+    └── <span style="color: #00BB00;">vals_fitted.R</span>
 </code></pre>
-<p>The workflow has four steps:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>src/scaled.R</code> reads in the raw data, scales it, and
-creates <code>out/scaled.rds</code>
+<code>src/cleaned_data.R</code> reads in the raw data, cleans it,
+and creates <code>out/cleaned_data.rds</code>
 </li>
 <li>
-<code>src/model.R</code> fits a model to the scaled data, and
+<code>src/model.R</code> fits a model to the cleaned data, and
 creates <code>out/model.rds</code>
 </li>
 <li>
-<code>src/tab_coef.R</code> extracts estimates from the model, and
-creates <code>out/tab_coef.rds</code>
+<code>src/vals_fitted.R</code> extract fitted values from the model,
+and creates <code>vals_fitted.rds</code>
 </li>
 <li>
-<code>report.qmd</code> uses <code>out/tab_coef.rds</code> to create
-a report, and creates <code>report.html</code>
+<code>src/fig_fitted.R</code> uses <code>vals_fitted.rds</code> to
+create the plot in <code>out/fig_fitted.png</code>
+</li>
+<li>
+<code>report.qmd</code> uses <code>out/fig_fitted.png</code> to
+create the document <code>report.html</code>
 </li>
 </ol>
-<p><code>scaled.R</code>, <code>model.R</code>, and
-<code>tab_coef.R</code> all contain calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>.
-For instance, <code>src/model.R</code> contains the lines</p>
-<pre><code><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.scaled <span class="op">=</span> <span class="st">"out/scaled.rds"</span>,</span>
-<span>           method <span class="op">=</span> <span class="st">"M"</span>,</span>
+<p><code>cleaned_data.R</code>, <code>model.R</code>, and
+<code>vals_fitted.R</code>, and <code>fig_fitted.R</code> all contain
+calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. For instance,
+<code>src/model.R</code> contains the lines</p>
+<p><code>cleaned_data.R</code>, <code>model.R</code>, and
+<code>vals_fitted.R</code>, and <code>fig_fitted.R</code> all contain
+calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. For instance,
+<code>src/model.R</code> contains the lines</p>
+<pre><code><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.cleaned_data <span class="op">=</span> <span class="st">"out/cleaned_data.rds"</span>,</span>
 <span>           .out <span class="op">=</span> <span class="st">"out/model.rds"</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
@@ -126,8 +134,8 @@ rule. For instance, the call</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_make.html">cmd_make</a></span><span class="op">(</span><span class="st">"src/model.R"</span><span class="op">)</span></span></code></pre></div>
 <p>has return value</p>
 <pre><code>out/model.rds: src/model.R \
-  out/scaled.rds
-    Rscript $^ $@ --method=M</code></pre>
+  out/cleaned_data.rds
+    Rscript $^ $@</code></pre>
 <p>The easiest way to use <code><a href="../reference/cmd_make.html">cmd_make()</a></code> is to call it from the
 R console, and then cut-and-paste the results into Makefile.</p>
 </div>
@@ -148,15 +156,20 @@ Makefile rules. It then puts the rules into a Makefile.</p>
 all:
 
 
-out/model.rds: src/model.R \
-  out/scaled.rds
-    Rscript $^ $@ --method=M
-
-out/scaled.rds: src/scaled.R \
-  data/swiss.csv
+out/cleaned_data.rds: src/cleaned_data.R \
+  data/raw_data.csv
     Rscript $^ $@
 
-out/tab_coef.rds: src/tab_coef.R \
+out/fig_fitted.png: src/fig_fitted.R \
+  out/vals_fitted.rds
+    Rscript $^ $@
+
+out/model.rds: src/model.R \
+  out/cleaned_data.rds
+    Rscript $^ $@
+
+out/vals_fitted.rds: src/vals_fitted.R \
+  out/cleaned_data.rds \
   out/model.rds
     Rscript $^ $@
 
@@ -174,21 +187,26 @@ file:</p>
 all: report.html
 
 
-out/model.rds: src/model.R \
-  out/scaled.rds
-    Rscript $^ $@ --method=M
-
-out/scaled.rds: src/scaled.R \
-  data/swiss.csv
+out/cleaned_data.rds: src/cleaned_data.R \
+  data/raw_data.csv
     Rscript $^ $@
 
-out/tab_coef.rds: src/tab_coef.R \
+out/fig_fitted.png: src/fig_fitted.R \
+  out/vals_fitted.rds
+    Rscript $^ $@
+
+out/model.rds: src/model.R \
+  out/cleaned_data.rds
+    Rscript $^ $@
+
+out/vals_fitted.rds: src/vals_fitted.R \
+  out/cleaned_data.rds \
   out/model.rds
     Rscript $^ $@
 
 report.html: report.qmd \
   out/tab_coef.rds
-    Rscript -e "quarto::quarto_render('$&lt;')"
+    quarto render $&lt;
 
 
 .PHONY: clean
@@ -198,29 +216,33 @@ clean:
 <p>The ordering of the rules in the Makefile reflects the ordering of
 the files in the <code>src</code> directory, not the order in which the
 rules should be executed. This does not matter to <code>make</code>,
-which constructs its own dependency map. But to clarify the logic of the
-workflow for human readers, we rearrange the rules to match the
-execution order.</p>
-<pre><code>
-.PHONY: all
+which constructs its own dependency map. But for the benefit of human
+readers, we rearrange the rules to match the execution order.</p>
+<pre><code>.PHONY: all
 all: report.html
 
 
-out/scaled.rds: src/scaled.R \
-  data/swiss.csv
+out/cleaned_data.rds: src/cleaned_data.R \
+  data/raw_data.csv
     Rscript $^ $@
 
 out/model.rds: src/model.R \
-  out/scaled.rds
-    Rscript $^ $@ --method=M
+  out/cleaned_data.rds
+    Rscript $^ $@
 
-out/tab_coef.rds: src/tab_coef.R \
+out/vals_fitted.rds: src/vals_fitted.R \
+  out/cleaned_data.rds \
   out/model.rds
     Rscript $^ $@
 
+out/fig_fitted.png: src/fig_fitted.R \
+  out/vals_fitted.rds
+    Rscript $^ $@
+
+
 report.html: report.qmd \
   out/tab_coef.rds
-    Rscript -e "quarto::quarto_render('$&lt;')"
+    quarto render $&lt;
 
 
 .PHONY: clean
@@ -235,73 +257,29 @@ clean:
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
 ├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── swiss.csv
+│   └── raw_data.csv
 ├── <span style="color: #0000BB; font-weight: bold;">out</span>
 ├── report.qmd
 └── <span style="color: #0000BB; font-weight: bold;">src</span>
+    ├── <span style="color: #00BB00;">cleaned_data.R</span>
+    ├── <span style="color: #00BB00;">fig_fitted.R</span>
     ├── <span style="color: #00BB00;">model.R</span>
-    ├── <span style="color: #00BB00;">scaled.R</span>
-    └── <span style="color: #00BB00;">tab_coef.R</span>
+    └── <span style="color: #00BB00;">vals_fitted.R</span>
 </code></pre>
 <p>We run the Makefile.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
-<pre class="fansi fansi-output"><code>Rscript src/scaled.R data/swiss.csv out/scaled.rds
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.swiss`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"data/swiss.csv"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/scaled.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-Rscript src/model.R out/scaled.rds out/model.rds --method=M
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.scaled`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/scaled.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`method`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"M"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/model.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-Rscript src/tab_coef.R out/model.rds out/tab_coef.rds
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.model`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/model.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/tab_coef.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-Rscript -e "quarto::quarto_render('report.qmd')"
-<span style="color: #BB0000;">
-
-processing file: report.qmd
-1/3                  
-2/3 [unnamed-chunk-1]
-3/3                  
-output file: report.knit.md
-
-</span><span style="color: #BB0000; font-weight: bold;">pandoc </span><span style="color: #BB0000;">
-  to: html
-  output-file: report.html
-  standalone: true
-  section-divs: true
-  html-math-method: mathjax
-  wrap: none
-  default-image-extension: png
-  variables: {}
-  
-</span><span style="color: #BB0000; font-weight: bold;">metadata</span><span style="color: #BB0000;">
-  document-css: false
-  link-citations: true
-  date-format: long
-  lang: en
-  title: Swiss Fertility
-  
-Output created: report.html
-
-</span>
-</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#make</span></span></code></pre></div>
 <p>Our project directory now looks like this.</p>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
 ├── <span style="color: #0000BB; font-weight: bold;">data</span>
-│   └── swiss.csv
+│   └── raw_data.csv
 ├── <span style="color: #0000BB; font-weight: bold;">out</span>
-│   ├── model.rds
-│   ├── scaled.rds
-│   └── tab_coef.rds
-├── report.html
 ├── report.qmd
-├── <span style="color: #0000BB; font-weight: bold;">report_files</span>
-│   └── <span style="color: #0000BB; font-weight: bold;">libs</span>
 └── <span style="color: #0000BB; font-weight: bold;">src</span>
+    ├── <span style="color: #00BB00;">cleaned_data.R</span>
+    ├── <span style="color: #00BB00;">fig_fitted.R</span>
     ├── <span style="color: #00BB00;">model.R</span>
-    ├── <span style="color: #00BB00;">scaled.R</span>
-    └── <span style="color: #00BB00;">tab_coef.R</span>
+    └── <span style="color: #00BB00;">vals_fitted.R</span>
 </code></pre>
 <p>We have created <code>scaled.rds</code>, <code>model.rds</code>, and
 <code>tab_coef</code> in the <code>out</code> directory, and
@@ -340,7 +318,7 @@ Programs</a> Introduction to Rscript</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
