@@ -19,9 +19,9 @@ Process command line arguments as part of data analysis workflow.
 - [Quick Start
   Guide](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
   How to use `cmd_assign()`.
-- [Data Analysis
+- [Modular
   Workflows](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
-  Safe, flexible workflows using `cmd_assign()`
+  Safe, flexible data analysis projects
 
 ## Installation
 
