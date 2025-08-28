@@ -114,7 +114,7 @@ More on \code{makefile()}
 \item \code{\link[=cmd_make]{cmd_make()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a Makefile rule
 \item \code{\link[=shell_script]{shell_script()}} Shell script equivalent of \code{makefile()}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }

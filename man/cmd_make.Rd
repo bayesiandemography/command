@@ -141,7 +141,7 @@ from calls to \code{\link[=cmd_assign]{cmd_assign()}}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }

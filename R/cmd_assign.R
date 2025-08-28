@@ -112,7 +112,7 @@
 #' - [makefile()] Create a Makefile
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Modular Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
 #'   Safe, flexible data analysis workflows.
 #' - Base R function [commandArgs()] uses a more general,
 #'   lower-level approach to processing command line arguments.

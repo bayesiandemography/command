@@ -110,7 +110,7 @@ Introduction to Rscript
 \item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a shell command
 \item \code{\link[=makefile]{makefile()}} Makefile equivalent of \code{shell_script()}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }

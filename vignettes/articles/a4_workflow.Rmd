@@ -316,13 +316,31 @@ One quirk in the case of Makefiles is that, when building a dependency graph, th
 
 The computer science convention where related files are given the same base name and different extensions -- e.g. `report.tex`, `report.aux`, `report.toc`, `report.log`, and `report.pdf` --  can also be applied in data analysis workflows. For instance, a file named `model_baseline.R` creates a model object, which is stored in a file named `model_baseline.rds`. As well as signaling relationships, re-using base names reduces the need to think up new names.
 
+
+## Objects holding file paths start with a dot
+
+Often, when running a script, we read an object from a file, using a file path supplied at the command line. For instance, we read an object from a file called `model.rds`, which we identify using the path `out/model.rds`, which was supplied at the command line. In such cases, we need names for (i) the object we read in, and (ii) the path to the file where the object is stored.
+
+A useful convention is to give (ii) the same name as (i), but with a dot at the front. For instance, if we give object that we read in the name `model`, then  we give the object holding the path the name `.model`.
+
+Following this convention leads to code such as
+```{r, eval = FALSE, echo = TRUE}
+cmd_assign(.data = "out/model.rds",
+           .out = "out/vals_fitted.rds")
+
+model <- readRDS(.model)
+```
+
+The distinction between the object and the path to the object is analogous to the distinction between a value and a reference to a value. The dot-name convention makes the connection between the value and the reference clear, but also alerts the reader to the fact that objects holding file paths are a little unusual.
+
+
 ## Refrain from using advanced Makefile features
 
-Makefiles have an enormous range of features. The extra power tends, however, to come at the expense of readability. Moreover, most data analysis projects have a sufficiently simple structure that the extra power may not be needed. If 'VPATH directives' are added to a Makefile, for instance, then directory names can be omitted from file paths, so that `model.R` can be used instead of `src/model.R` [@gnu2024make, Section 4.5]. However, while this makes the Makefiles more concise, it also makes them harder to understand for readers who are not Makefile experts.
+Makefiles have an enormous range of features. The extra power tends, however, to come at the expense of readability. Moreover, most data analysis projects have a sufficiently simple structure that the extra power is not really needed. If 'VPATH directives' are added to a Makefile, for instance, then directory names can be omitted from file paths, so that `model.R` can be used instead of `src/model.R` [@gnu2024make, Section 4.5]. Omitting directory names makes Makefiles more concise, but it also makes them harder to understand for readers who are not Makefile experts.
 
 ## Orchestration and report files at the top
 
-The orchestration file, and any report files in LaTeX, R Markdown, Quarto, or similar, should sit at the top level of the project, rather than in a subfolder with the other code. See, for instance, the file structure in the Example section above. There are pragmatic reasons for placing orchestration and report files at the top level: Makefiles, LaTeX files, and markdown files all generally assume that they are at the top level, and require special handling they are not. But orchestration and report files also earn special treatment, because they have a special status within the project. Orchestration files control all the other files, and the report is typically the ultimate objective of the project. 
+The orchestration file, and any report files in LaTeX, R Markdown, Quarto, or similar, should sit at the top level of the project, rather than in a subfolder with the other code. This, for instance, is the way that the project in the Example section is structured. There are pragmatic reasons for placing orchestration and report files at the top level: Makefiles, LaTeX files, and markdown files all generally assume that they are at the top level, and require special handling if they are not. But orchestration and report files also earn their special treatment, because they have a special status within the project. Orchestration files control all the other files, and the report is typically the ultimate objective of the project. 
 
 
 # Appendix

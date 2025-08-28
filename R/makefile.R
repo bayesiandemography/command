@@ -46,7 +46,7 @@
 #' - [cmd_make()] Turn a [cmd_assign()] call into a Makefile rule
 #' - [shell_script()] Shell script equivalent of `makefile()`
 #' - [cmd_assign()] Process command line arguments
-#' - [Modular Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
 #'   Safe, flexible data analysis workflows
 #' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'

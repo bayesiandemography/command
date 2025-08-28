@@ -126,7 +126,7 @@ Introduction to Rscript
 \item \code{\link[=makefile]{makefile()}} Create a Makefile
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows}
+\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows.
 \item Base R function \code{\link[=commandArgs]{commandArgs()}} uses a more general,
 lower-level approach to processing command line arguments.

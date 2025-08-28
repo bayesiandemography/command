@@ -275,14 +275,6 @@ dir_tree(regexp = paste(nms_articles, "Makefile", sep = "|"),
 	 recurse = 0)
 ```
 
-The report itself looks like this:
-
-```{r, echo = FALSE, results = "asis"}
-html <- suppressWarnings(readLines("report.html"))
-html <- html[html != "<!DOCTYPE html>"]
-cat(html, sep = "\n")
-```
-
 
 # Putting calls to Rscript in a Makefile
 
@@ -303,7 +295,7 @@ make
 
 Whereas the bash script `workflow.sh` would have recreated `fig_smoothed_5.png`, `fig_smoothed_10.png` and `report.html`, Make recognises that `fig_smoothed_10.png` is still up-to-date, so it only recreates `fig_smoothed_5.png` and `report.html`.
 
-Makefiles take some time to master, but they have important advantages, discussed in [A Workflow for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
+Makefiles take some time to master, but they have important advantages, discussed in [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
 
 
 # Alternatives to `cmd_assign()` {#sec:alt}
