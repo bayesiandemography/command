@@ -1,6 +1,6 @@
 
 ## HAS_TESTS
-#' Turn a 'cmd_assign' Call into a Shell Command
+#' Turn a 'cmd_assign' Call Into a Shell Command
 #'
 #' Construct a shell command from a call to
 #' [cmd_assign()] inside an R file.

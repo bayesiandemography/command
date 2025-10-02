@@ -1,6 +1,6 @@
 
 ## HAS_TESTS
-#' Turn a 'cmd_assign' Call into a Makefile Rule
+#' Turn a 'cmd_assign' Call Into a Makefile Rule
 #'
 #' Construct a Makefile rule from a call to
 #' [cmd_assign()] inside an R file.
