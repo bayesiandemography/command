@@ -10,9 +10,9 @@
 #' where possible and by position where not.
 #'
 #' Assume that `args_dots` has been
-#' checked via [check_arg_dots()] and
+#' checked via `check_arg_dots()` and
 #' `args_cmd` has been checked via
-#' [check_args_cmd()].
+#' `check_args_cmd()`.
 #' 
 #' @param args_cmd A list, possibly with names.
 #' @param args_dots A named list, the same

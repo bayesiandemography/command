@@ -2,7 +2,7 @@
 % Please edit documentation in R/cmd_shell.R
 \name{cmd_shell}
 \alias{cmd_shell}
-\title{Turn a 'cmd_assign' Call into a Shell Command}
+\title{Turn a 'cmd_assign' Call Into a Shell Command}
 \usage{
 cmd_shell(file, dir_shell = NULL)
 }

@@ -26,7 +26,7 @@ Process command line arguments as part of data analysis workflow.
 ## Installation
 
 ``` r
-devtools::install_github("bayesiandemography/command")
+install.packages("command")
 ```
 
 ## Example

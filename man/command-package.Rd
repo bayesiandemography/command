@@ -26,6 +26,8 @@ Safe, flexible data analysis workflows
 Useful links:
 \itemize{
   \item \url{https://bayesiandemography.github.io/command/}
+  \item \url{https://github.com/bayesiandemography/command}
+  \item Report bugs at \url{https://github.com/bayesiandemography/command/issues}
 }
 
 }

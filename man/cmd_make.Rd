@@ -2,7 +2,7 @@
 % Please edit documentation in R/cmd_make.R
 \name{cmd_make}
 \alias{cmd_make}
-\title{Turn a 'cmd_assign' Call into a Makefile Rule}
+\title{Turn a 'cmd_assign' Call Into a Makefile Rule}
 \usage{
 cmd_make(file, dir_make = NULL)
 }
