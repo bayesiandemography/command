@@ -2,13 +2,13 @@ Package: command
 Type: Package
 Title: Process Command Line Arguments
 Version: 0.1.1
-Authors@R: 
-    c(person(given = "John",
-             family = "Bryant",
-             role = c("aut", "cre"),
-             email = "john@bayesiandemography.com"),
-      person(given = "Bayesian Demography Limited",
-             role = "cph"))
+Authors@R: c(
+    person(given = "John",
+           family = "Bryant",
+	   email = "john@bayesiandemography.com",
+	   role = c("aut", "cre")),
+    person("Bayesian Demography Limited",
+            role = "cph"))
 Description: Process command line arguments,
     as part of a data analysis pipeline.
 License: MIT + file LICENSE
