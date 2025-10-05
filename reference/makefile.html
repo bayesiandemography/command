@@ -53,7 +53,7 @@ rules extracted from existing R files.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makefile</span><span class="op">(</span></span>
-<span>  files <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  path_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dir_make <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name_make <span class="op">=</span> <span class="st">"Makefile"</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -64,9 +64,10 @@ rules extracted from existing R files.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-files">files<a class="anchor" aria-label="anchor" href="#arg-files"></a></dt>
+<dl><dt id="arg-path-files">path_files<a class="anchor" aria-label="anchor" href="#arg-path-files"></a></dt>
 <dd><p>A path from <code>dir_make</code> to a
-directory with R files that have calls to <code><a href="cmd_assign.html">cmd_assign()</a></code>.
+directory with R scripts containing
+calls to <code><a href="cmd_assign.html">cmd_assign()</a></code>.
 Optional.</p></dd>
 
 
@@ -84,7 +85,7 @@ The default is <code>"Makefile"</code>.</p></dd>
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
 <dd><p>Whether to overwrite
-an existing file. Default is <code>FALSE</code>.</p></dd>
+an existing Makefile. Default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -92,7 +93,7 @@ an existing file. Default is <code>FALSE</code>.</p></dd>
     <p><code>makefile()</code> is called for its
 side effect, which is to create a
 file. However, <code>makefile()</code> also
-returns a string with the text for a
+returns a string with the contents of the
 Makefile.</p>
     </div>
     <div class="section level2">
@@ -127,7 +128,7 @@ Introduction to Rscript</p></li>
     <div class="dont-index">
 <ul><li><p><a href="https://bayesiandemography.github.io/command/articles/a3_makefile.html">Creating a Makefile</a>
 More on <code>makefile()</code></p></li>
-<li><p><code><a href="cmd_make.html">cmd_make()</a></code> Turn a <code><a href="cmd_assign.html">cmd_assign()</a></code> call into a Makefile rule</p></li>
+<li><p><code><a href="extract_make.html">extract_make()</a></code> Turn a <code><a href="cmd_assign.html">cmd_assign()</a></code> call into a Makefile rule</p></li>
 <li><p><code><a href="shell_script.html">shell_script()</a></code> Shell script equivalent of <code>makefile()</code></p></li>
 <li><p><code><a href="cmd_assign.html">cmd_assign()</a></code> Process command line arguments</p></li>
 <li><p><a href="https://bayesiandemography.github.io/command/articles/workflow.html">Modular Workflows for Data Analysis</a>
@@ -155,19 +156,19 @@ Safe, flexible data analysis workflows</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at directories</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpZ1Ks40/file1ea819229cd9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpPmhqwm/file1e9d6f0ea706</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     └── <span style="color: #00BB00;">results.R</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Call 'makefile()'</span></span></span>
-<span class="r-in"><span><span class="fu">makefile</span><span class="op">(</span>files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
+<span class="r-in"><span><span class="fu">makefile</span><span class="op">(</span>path_files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
 <span class="r-in"><span>         dir_make <span class="op">=</span> <span class="va">path_project</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Extracted call to `cmd_assign()` in <span style="color: #0000BB;">src/results.R</span>.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Look at directories</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpZ1Ks40/file1ea819229cd9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/RtmpPmhqwm/file1e9d6f0ea706</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── Makefile</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
@@ -193,7 +194,7 @@ Safe, flexible data analysis workflows</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Get the text of the Makefile</span></span></span>
 <span class="r-in"><span><span class="co">## without creating a file on disk</span></span></span>
-<span class="r-in"><span><span class="va">text</span> <span class="op">&lt;-</span> <span class="fu">makefile</span><span class="op">(</span>files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
+<span class="r-in"><span><span class="va">text</span> <span class="op">&lt;-</span> <span class="fu">makefile</span><span class="op">(</span>path_files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
 <span class="r-in"><span>                 dir_make <span class="op">=</span> <span class="va">path_project</span>,</span></span>
 <span class="r-in"><span>                 name_make <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Extracted call to `cmd_assign()` in <span style="color: #0000BB;">src/results.R</span>.</span>

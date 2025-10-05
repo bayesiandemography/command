@@ -71,10 +71,10 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Functions <code><a href="../reference/cmd_make.html">cmd_make()</a></code> and <code><a href="../reference/makefile.html">makefile()</a></code> help
-with writing a Makefile to control a data analysis workflow.
-<code><a href="../reference/cmd_make.html">cmd_make()</a></code> and <code><a href="../reference/makefile.html">makefile()</a></code> do much of the work,
-but some extra hand coding is also necessary.</p>
+<p>Functions <code><a href="../reference/extract_make.html">extract_make()</a></code> and <code><a href="../reference/makefile.html">makefile()</a></code>
+help with writing a Makefile to control a data analysis workflow.
+<code><a href="../reference/extract_make.html">extract_make()</a></code> and <code><a href="../reference/makefile.html">makefile()</a></code> do much of the
+work, but some extra hand coding is also necessary.</p>
 </div>
 <div class="section level2">
 <h2 id="an-example-workflow">An example workflow<a class="anchor" aria-label="anchor" href="#an-example-workflow"></a>
@@ -127,19 +127,19 @@ calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. F
 <span>           .out <span class="op">=</span> <span class="st">"out/model.rds"</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
-<h2 id="cmd_make">cmd_make()<a class="anchor" aria-label="anchor" href="#cmd_make"></a>
+<h2 id="extract_make">extract_make()<a class="anchor" aria-label="anchor" href="#extract_make"></a>
 </h2>
-<p><code><a href="../reference/cmd_make.html">cmd_make()</a></code> extracts the call to
+<p><code><a href="../reference/extract_make.html">extract_make()</a></code> extracts the call to
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> from an R file, and turns it into a Makefile
 rule. For instance, the call</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_make.html">cmd_make</a></span><span class="op">(</span><span class="st">"src/model.R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/extract_make.html">extract_make</a></span><span class="op">(</span><span class="st">"src/model.R"</span><span class="op">)</span></span></code></pre></div>
 <p>has return value</p>
-<pre><code>out/model.rds: src/model.R \
+<pre><code>out/model.rds: /home/runner/work/command/command/vignettes/articles/src/model.R \
   out/cleaned_data.rds
     Rscript $^ $@</code></pre>
-<p>The easiest way to use <code><a href="../reference/cmd_make.html">cmd_make()</a></code> is to call it from the
-R console, and then cut-and-paste the results into Makefile.</p>
+<p>The easiest way to use <code><a href="../reference/extract_make.html">extract_make()</a></code> is to call it from
+the R console, and then cut-and-paste the results into Makefile.</p>
 </div>
 <div class="section level2">
 <h2 id="makefile">makefile()<a class="anchor" aria-label="anchor" href="#makefile"></a>

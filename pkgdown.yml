@@ -6,7 +6,7 @@ articles:
   articles/a2_shell_script: a2_shell_script.html
   articles/a3_makefile: a3_makefile.html
   articles/a4_workflow: a4_workflow.html
-last_built: 2025-10-05T01:17Z
+last_built: 2025-10-05T07:50Z
 urls:
   reference: https://bayesiandemography.github.io/command/reference
   article: https://bayesiandemography.github.io/command/articles
