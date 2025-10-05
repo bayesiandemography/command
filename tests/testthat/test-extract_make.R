@@ -2,7 +2,7 @@
 ## 'extract_make' -----------------------------------------------------------------
 
 test_that("'extract_make' works with no dir_make", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -20,7 +20,7 @@ test_that("'extract_make' works with no dir_make", {
 })
 
 test_that("'extract_make' works with dir_make", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)

@@ -1,7 +1,7 @@
 
 test_that("'cmd_assign' works with valid arguments - on command line", {
     dir_curr <- getwd()
-    dir_tmp <- tempfile()
+    dir_tmp <- tempfile(tmpdir = getwd())
     if (file.exists(dir_tmp))
         unlink(dir_tmp, recursive = TRUE)
     dir.create(dir_tmp)
@@ -46,7 +46,7 @@ test_that("'cmd_assign' works with valid arguments - interactively", {
 
 test_that("'cmd_assign' works with on command line with options passed before file argument", {
     dir_curr <- getwd()
-    dir_tmp <- tempfile()
+    dir_tmp <- tempfile(tmpdir = getwd())
     if (file.exists(dir_tmp))
         unlink(dir_tmp, recursive = TRUE)
     dir.create(dir_tmp)
@@ -79,7 +79,7 @@ test_that("'cmd_assign' works with on command line with options passed before fi
 test_that("'cmd_assign' works with valid arguments - on command line, with littler (if available)", {
   skip_if_no_littler_available()
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)

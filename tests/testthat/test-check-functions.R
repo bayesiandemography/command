@@ -80,7 +80,7 @@ test_that("'check_args_dots' throws error when values have wrong length", {
 ## 'check_dir' ----------------------------------------------------------------
 
 test_that("'check_dir' works with valid inputs", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (!file.exists(dir_tmp))
     dir.create(dir_tmp)
   expect_true(check_dir(dir_tmp, nm = "x"))
@@ -104,7 +104,7 @@ test_that("'check_dir' throws error when dir does not exist", {
 ## 'check_path_file_valid' ----------------------------------------------------
 
 test_that("'check_path_file_valid' returns true with valid inputs, with dir specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -118,7 +118,7 @@ test_that("'check_path_file_valid' returns true with valid inputs, with dir spec
 })
 
 test_that("'check_path_file_valid' returns true with valid inputs, with dir not specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -132,7 +132,7 @@ test_that("'check_path_file_valid' returns true with valid inputs, with dir not 
 })
 
 test_that("'check_path_files_valid' throws correct error, with absolute path", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -145,7 +145,7 @@ test_that("'check_path_files_valid' throws correct error, with absolute path", {
 })
 
 test_that("'check_path_file_valid' throws correct error, with dir specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -158,7 +158,7 @@ test_that("'check_path_file_valid' throws correct error, with dir specified", {
 })
 
 test_that("'check_path_file_valid' throws correct error, with dir not specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -174,7 +174,7 @@ test_that("'check_path_file_valid' throws correct error, with dir not specified"
 ## 'check_path_files_valid' ---------------------------------------------------
 
 test_that("'check_path_files_valid' returns true with valid inputs, with dir specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -187,7 +187,7 @@ test_that("'check_path_files_valid' returns true with valid inputs, with dir spe
 })
 
 test_that("'check_path_files_valid' returns true with valid inputs, with dir not specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -200,7 +200,7 @@ test_that("'check_path_files_valid' returns true with valid inputs, with dir not
 })
 
 test_that("'check_path_files_valid' throws correct error, with absolute path", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -213,7 +213,7 @@ test_that("'check_path_files_valid' throws correct error, with absolute path", {
 })
 
 test_that("'check_path_files_valid' throws correct error, with dir specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -226,7 +226,7 @@ test_that("'check_path_files_valid' throws correct error, with dir specified", {
 })
 
 test_that("'check_path_files_valid' throws correct error, with dir not specified", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -274,7 +274,7 @@ test_that("'check_flag' throws expected error NA", {
 
 test_that("'check_is_r_code' works with valid inputs", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -289,7 +289,7 @@ test_that("'check_is_r_code' works with valid inputs", {
 
 test_that("'check_is_r_code' throws error when file does not exist", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -302,7 +302,7 @@ test_that("'check_is_r_code' throws error when file does not exist", {
 
 test_that("'check_is_r_code' gives warning with no R extension", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -317,7 +317,7 @@ test_that("'check_is_r_code' gives warning with no R extension", {
 
 test_that("'check_is_r_code' gives error when file invalid", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)

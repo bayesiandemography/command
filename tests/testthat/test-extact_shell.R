@@ -3,7 +3,7 @@
 
 test_that("'extract_shell' works with valid inputs - dir supplied", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -22,7 +22,7 @@ test_that("'extract_shell' works with valid inputs - dir supplied", {
 
 test_that("'extract_shell' works with valid inputs - dir not supplied", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)

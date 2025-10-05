@@ -67,7 +67,7 @@ test_that("'assign_args' works with empty args", {
 
 test_that("'extract_shell_if_possible' works with R file with cmd_assign", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -85,7 +85,7 @@ test_that("'extract_shell_if_possible' works with R file with cmd_assign", {
 
 test_that("'extract_shell_if_possible' returns NULL with R file with no cmd_assign", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -100,7 +100,7 @@ test_that("'extract_shell_if_possible' returns NULL with R file with no cmd_assi
 
 test_that("'extract_shell_if_possible' returns NULL with non-R file", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -114,7 +114,7 @@ test_that("'extract_shell_if_possible' returns NULL with non-R file", {
 
 test_that("'extract_shell_if_possible' throws error when cannot evaluate", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -131,7 +131,7 @@ test_that("'extract_shell_if_possible' throws error when cannot evaluate", {
 
 test_that("'extract_make_if_possible' works with R file with cmd_assign", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -148,7 +148,7 @@ test_that("'extract_make_if_possible' works with R file with cmd_assign", {
 
 test_that("'extract_make_if_possible' returns NULL with R file with no cmd_assign", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -163,7 +163,7 @@ test_that("'extract_make_if_possible' returns NULL with R file with no cmd_assig
 
 test_that("'extract_make_if_possible' returns NULL with non-R file", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -177,7 +177,7 @@ test_that("'extract_make_if_possible' returns NULL with non-R file", {
 
 test_that("'extract_make_if_possible' throws error when cannot evaluate", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -305,7 +305,7 @@ test_that("'coerce_to_dots_class' throws correct error when cannot coerce", {
 
 test_that("'extract_args' works with valid inputs", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -323,7 +323,7 @@ test_that("'extract_args' works with valid inputs", {
 
 test_that("'extract_args' gives warning when no call to cmd_assign() found", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -437,7 +437,7 @@ test_that("'format_args_shell works no args", {
 
 test_that("'get_args_cmd' works with valid inputs", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -456,7 +456,7 @@ test_that("'get_args_cmd' works with valid inputs", {
 
 test_that("'get_args_cmd' works when no arguments passed", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -475,7 +475,7 @@ test_that("'get_args_cmd' works when no arguments passed", {
 test_that("'get_args_cmd' works with littler", {
   skip_if_no_littler_available()
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -505,7 +505,7 @@ test_that("'is_actual_or_potential_file_path' returns FALSE if is non-character 
 
 test_that("'is_actual_or_potential_file_path' returns TRUE if file exists", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -519,7 +519,7 @@ test_that("'is_actual_or_potential_file_path' returns TRUE if file exists", {
 })
 
 test_that("'is_actual_or_potential_file_path' returns TRUE if file is directory", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -573,7 +573,7 @@ test_that("'is_varname_valid' returns FALSE with invalid names", {
 
 test_that("'make_rules' works with valid input - path_files in same directory", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -593,7 +593,7 @@ test_that("'make_rules' works with valid input - path_files in same directory", 
 
 test_that("'make_rules' works with valid input - path_files in lower directory", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)

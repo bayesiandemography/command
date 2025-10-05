@@ -2,7 +2,7 @@
 ## 'shell_script' -------------------------------------------------------------
 
 test_that("'shell_script' works with has dir_shell, no name_shell", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -23,7 +23,7 @@ test_that("'shell_script' works with has dir_shell, no name_shell", {
 
 test_that("'shell_script' works with no dir_shell, has name_shell", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -50,7 +50,7 @@ test_that("'shell_script' throws error with no path_files", {
 
 test_that("'shell_script' throws appropriate error when file already exists", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)

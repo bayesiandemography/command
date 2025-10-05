@@ -2,7 +2,7 @@
 ## 'makefile' -----------------------------------------------------------------
 
 test_that("'makefile' works with has dir_make, no name_make", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -30,7 +30,7 @@ test_that("'makefile' works with has dir_make, no name_make", {
 
 test_that("'makefile' works with no dir_make, has name_make", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -59,7 +59,7 @@ test_that("'makefile' works with no dir_make, has name_make", {
 
 test_that("'makefile' works with no dir_make, no path_files", {
   dir_curr <- getwd()
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
@@ -80,7 +80,7 @@ test_that("'makefile' works with no dir_make, no path_files", {
 })
 
 test_that("'makefile' throws appropriate error when file already exists", {
-  dir_tmp <- tempfile()
+  dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
