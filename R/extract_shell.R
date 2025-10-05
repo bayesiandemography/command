@@ -2,16 +2,13 @@
 ## HAS_TESTS
 #' Turn a 'cmd_assign' Call Into a Shell Command
 #'
-#' Construct a shell command from a call to
-#' [cmd_assign()] inside an R file.
-#'
-#' The shell script for a data analysis workflow
-#' normally goes in the project directory.
+#' Extract a call to [cmd_assign()] from an
+#' R script, and turn it into a shell command.
 #'
 #' # The components of a shell command
 #'
-#' A shell command produced by `cmd_make()`
-#' normally looks something like
+#' The shell command produced by `extract_shell()`
+#' normally looks something like this:
 #' ```
 #' Rscript src/model.R \
 #'   data/cleaned.rds \
@@ -27,23 +24,36 @@
 #' - `--use_log=TRUE` is a named argument that
 #'   Rscript passes to `src/model.R`
 #'
-#' # Using `cmd_shell()` to build a data analysis workflow
+#' # Using `extract_shell()` to build a data analysis workflow
 #'
-#' - Step 1. Write the R file that carries out
-#'   the step in analysis (eg tidying data, fitting
-#'   a model, making a graph.) This file
+#' - Step 1. Write an R script that carries out
+#'   a step in analysis (eg tidying data, fitting
+#'   a model, making a graph.) This script
 #'   will contain a call to [cmd_assign()],
 #'   and  will be the first argument passed to
 #'   Rscript in the shell command.
-#'   When writing and testing the file,
+#'   When writing and testing the script,
 #'   use [cmd_assign()] interactively.
-#' - Step 2. Once the R file is working correctly,
-#'   call `cmd_shell()`, and add the command
+#' - Step 2. Once the R script is working correctly,
+#'   call `extract_shell()`, and add the command
 #'   to your shell script.
+#'
+#' # Location of the shell script
+#'
+#' The shell script normally sits at the
+#' top level of the project, so that the
+#' project folder looks something like this:
+#' ```
+#' workflow.sh
+#' - data/
+#' - src/
+#' - out/
+#' report.qmd
+#' ```
 #'
 #' # Identifying file arguments
 #'
-#' To construct the rule, `cmd_shell()` needs to
+#' To construct the rule, `extract_shell()` needs to
 #' be able to identify arguments that refer to a
 #' file name. To do so, it uses the following heuristic:
 #' - if the call includes arguments whose names start with
@@ -54,20 +64,20 @@
 #'   (as determined by [file.exists()]) or that look
 #'   like they could be.
 #' 
-#' @param file Path to the R code file containing
+#' @param path_file Path to the R script containing
 #' the call to [cmd_assign()]. The path
 #' starts at `dir_shell`.
 #' @param dir_shell The directory that contains
 #' the shell script. The default is
 #' the current working directory.
 #'
-#' @returns `cmd_shell()` is typically called
+#' @returns `extract_shell()` is typically called
 #' for its side effect, which is to print a
-#' shell command. However, `cmd_shell()`
+#' shell command. However, `extract_shell()`
 #' invisibly returns a text string with the command.
 #'
 #' @seealso
-#' - [cmd_make()] Makefile equivalent of `cmd_shell()`
+#' - [extract_make()] Makefile equivalent of `extract_shell()`
 #' - [shell_script()] Create a shell script
 #'   from calls to [cmd_assign()]
 #' - [cmd_assign()] Process command line arguments
@@ -93,7 +103,7 @@
 #' dir_create(path(path_project, "src"))
 #' dir_create(path(path_project, "out"))
 #' 
-#' ## Put R file in 'src' directory
+#' ## Put R script in 'src' directory
 #' writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
 #'              "results <- x + 1",
 #'              "saveRDS(results, file = .out)"),
@@ -102,32 +112,32 @@
 #' ## Look at directories
 #' dir_tree(path_project)
 #'
-#' ## Look at contents of R file
+#' ## Look at contents of R script
 #' lines <- readLines(path(path_project, "src/results.R"))
 #' cat(paste(lines, collapse = "\n"))
 #'
-#' ## call 'cmd_shell()'
-#' cmd_shell(file = "src/results.R",
+#' ## call 'extract_shell()'
+#' extract_shell(path_file = "src/results.R",
 #'           dir_shell = path_project)
 #'
 #' ## clean up
 #' dir_delete(path_project)
 #' @export
-cmd_shell <- function(file, dir_shell = NULL) {
+extract_shell <- function(path_file, dir_shell = NULL) {
   has_dir_arg <- !is.null(dir_shell)
   if (has_dir_arg)
     check_dir(dir = dir_shell,
               nm = "dir_shell")
   else
     dir_shell <- getwd()
-  check_file_exists(file = file,
-                    dir = dir_shell,
-                    nm_dir = "dir_shell",
-                    has_dir_arg = has_dir_arg)
-  path_file <- fs::path(dir_shell, file)
-  check_is_r_code(path_file)
-  args <- extract_args(path_file)
-  ans <- format_args_shell(file = file,
+  check_path_file_valid(path_file = path_file,
+                        dir = dir_shell,
+                        nm_dir_arg = "dir_shell",
+                        has_dir_arg = has_dir_arg)
+  path_file_comb <- fs::path(dir_shell, path_file)
+  check_is_r_code(path_file_comb)
+  args <- extract_args(path_file_comb)
+  ans <- format_args_shell(file = path_file_comb,
                            args = args)
   cat(ans)
   invisible(ans)

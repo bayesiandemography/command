@@ -63,9 +63,9 @@ test_that("'assign_args' works with empty args", {
 })
     
 
-## 'cmd_shell_if_possible' ----------------------------------------------------
+## 'extract_shell_if_possible' ------------------------------------------------
 
-test_that("'cmd_shell_if_possible' works with R file with cmd_assign", {
+test_that("'extract_shell_if_possible' works with R file with cmd_assign", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -74,7 +74,7 @@ test_that("'cmd_shell_if_possible' works with R file with cmd_assign", {
   file <- "script.R"
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = file.path(dir_tmp, file))
-  ans_obtained <- suppressMessages(cmd_shell_if_possible(file = file, dir_shell = dir_tmp))
+  ans_obtained <- suppressMessages(extract_shell_if_possible(file = file, dir_shell = dir_tmp))
   ans_expected <- paste0("Rscript script.R \\\n",
                          "  data/mydata.csv \\\n",
                          "  out/cleaned.rds \\\n",
@@ -83,7 +83,7 @@ test_that("'cmd_shell_if_possible' works with R file with cmd_assign", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'cmd_shell_if_possible' returns NULL with R file with no cmd_assign", {
+test_that("'extract_shell_if_possible' returns NULL with R file with no cmd_assign", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -92,13 +92,13 @@ test_that("'cmd_shell_if_possible' returns NULL with R file with no cmd_assign",
   file <- "script.R"
   writeLines("x <- 1",
              con = file.path(dir_tmp, "script.R"))
-  ans_obtained <- cmd_shell_if_possible(file = file, dir_shell = dir_tmp)
+  ans_obtained <- extract_shell_if_possible(file = file, dir_shell = dir_tmp)
   ans_expected <- NULL
   expect_identical(ans_obtained, ans_expected)
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'cmd_shell_if_possible' returns NULL with non-R file", {
+test_that("'extract_shell_if_possible' returns NULL with non-R file", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -106,13 +106,13 @@ test_that("'cmd_shell_if_possible' returns NULL with non-R file", {
   dir.create(dir_tmp)
   file <- "data.csv"
   write.csv(data.frame(a = 1, b = 2), file = file.path(dir_tmp, "data.csv"))
-  ans_obtained <- cmd_shell_if_possible(file = file, dir_shell = dir_tmp)
+  ans_obtained <- extract_shell_if_possible(file = file, dir_shell = dir_tmp)
   ans_expected <- NULL
   expect_identical(ans_obtained, ans_expected)
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'cmd_shell_if_possible' throws error when cannot evaluate", {
+test_that("'extract_shell_if_possible' throws error when cannot evaluate", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -121,15 +121,15 @@ test_that("'cmd_shell_if_possible' throws error when cannot evaluate", {
   file <- "script.r"
   writeLines("cmd_assign(.data = 'data/mydata.csv', FALSE, .out = 'out/cleaned.rds')",
              con = file.path(dir_tmp, file))
-  expect_error(cmd_shell_if_possible(file = file, dir_shell = dir_tmp),
+  expect_error(extract_shell_if_possible(file = file, dir_shell = dir_tmp),
                "Problem extracting call to")
   unlink(dir_tmp, recursive = TRUE)
 })
 
 
-## 'cmd_make_if_possible' -----------------------------------------------------
+## 'extract_make_if_possible' -------------------------------------------------
 
-test_that("'cmd_make_if_possible' works with R file with cmd_assign", {
+test_that("'extract_make_if_possible' works with R file with cmd_assign", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -138,7 +138,7 @@ test_that("'cmd_make_if_possible' works with R file with cmd_assign", {
   file <- "script.R"
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = file.path(dir_tmp, file))
-  ans_obtained <- suppressMessages(cmd_make_if_possible(file = file, dir_make = dir_tmp))
+  ans_obtained <- suppressMessages(extract_make_if_possible(file = file, dir_make = dir_tmp))
   ans_expected <- paste0("out/cleaned.rds: ", file, " \\\n",
                          "  data/mydata.csv\n",
                          "\t", "Rscript $^ $@ --use_log=FALSE\n")
@@ -146,7 +146,7 @@ test_that("'cmd_make_if_possible' works with R file with cmd_assign", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'cmd_make_if_possible' returns NULL with R file with no cmd_assign", {
+test_that("'extract_make_if_possible' returns NULL with R file with no cmd_assign", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -155,13 +155,13 @@ test_that("'cmd_make_if_possible' returns NULL with R file with no cmd_assign", 
   file <- "script.R"
   writeLines("x <- 1",
              con = file.path(dir_tmp, "script.R"))
-  ans_obtained <- cmd_make_if_possible(file = file, dir_make = dir_tmp)
+  ans_obtained <- extract_make_if_possible(file = file, dir_make = dir_tmp)
   ans_expected <- NULL
   expect_identical(ans_obtained, ans_expected)
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'cmd_make_if_possible' returns NULL with non-R file", {
+test_that("'extract_make_if_possible' returns NULL with non-R file", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -169,13 +169,13 @@ test_that("'cmd_make_if_possible' returns NULL with non-R file", {
   dir.create(dir_tmp)
   file <- "data.csv"
   write.csv(data.frame(a = 1, b = 2), file = file.path(dir_tmp, "data.csv"))
-  ans_obtained <- cmd_make_if_possible(file = file, dir_make = dir_tmp)
+  ans_obtained <- extract_make_if_possible(file = file, dir_make = dir_tmp)
   ans_expected <- NULL
   expect_identical(ans_obtained, ans_expected)
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'cmd_make_if_possible' throws error when cannot evaluate", {
+test_that("'extract_make_if_possible' throws error when cannot evaluate", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -184,7 +184,7 @@ test_that("'cmd_make_if_possible' throws error when cannot evaluate", {
   file <- "script.r"
   writeLines("cmd_assign(.data = 'data/mydata.csv', FALSE, .out = 'out/cleaned.rds')",
              con = file.path(dir_tmp, file))
-  expect_error(cmd_make_if_possible(file = file, dir_make = dir_tmp),
+  expect_error(extract_make_if_possible(file = file, dir_make = dir_tmp),
                "Problem extracting call to")
   unlink(dir_tmp, recursive = TRUE)
 })
@@ -473,10 +473,7 @@ test_that("'get_args_cmd' works when no arguments passed", {
 })
 
 test_that("'get_args_cmd' works with littler", {
-  is_linux <- identical(Sys.info()[["sysname"]], "Linux")
-  has_littler <- nzchar(Sys.which("r"))
-  if (!is_linux || !has_littler)
-    testthat::skip("littler not found")
+  skip_if_no_littler_available()
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -574,7 +571,7 @@ test_that("'is_varname_valid' returns FALSE with invalid names", {
 
 ## 'make_rules' ---------------------------------------------------------------
 
-test_that("'make_rules' works with valid input - files in same directory", {
+test_that("'make_rules' works with valid input - path_files in same directory", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -586,7 +583,7 @@ test_that("'make_rules' works with valid input - files in same directory", {
   f2 <- file.path(dir_tmp, "data.R")
   writeLines("1",
              con = f2)
-  ans_obtained <- suppressMessages(make_rules(files = ".", dir_make = dir_tmp))
+  ans_obtained <- suppressMessages(make_rules(path_files = ".", dir_make = dir_tmp))
   ans_expected <- paste0("out/cleaned.rds: ", "script.R", " \\\n",
                          "  data/mydata.csv\n",
                          "\t", "Rscript $^ $@ --use_log=FALSE\n")
@@ -594,7 +591,7 @@ test_that("'make_rules' works with valid input - files in same directory", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'make_rules' works with valid input - files in lower directory", {
+test_that("'make_rules' works with valid input - path_files in lower directory", {
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -607,7 +604,7 @@ test_that("'make_rules' works with valid input - files in lower directory", {
   f2 <- file.path(dir_tmp, "src/data.R")
   writeLines("1",
              con = f2)
-  ans_obtained <- suppressMessages(make_rules(files = "src", dir_make = dir_tmp))
+  ans_obtained <- suppressMessages(make_rules(path_files = "src", dir_make = dir_tmp))
   ans_expected <- paste0("out/cleaned.rds: ", "src/script.R", " \\\n",
                          "  data/mydata.csv\n",
                          "\t", "Rscript $^ $@ --use_log=FALSE\n")

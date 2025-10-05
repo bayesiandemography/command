@@ -120,8 +120,8 @@ Introduction to Rscript
 }
 \seealso{
 \itemize{
-\item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{cmd_assign()} call into a shell command
-\item \code{\link[=cmd_make]{cmd_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
+\item \code{\link[=extract_shell]{extract_shell()}} Turn a \code{cmd_assign()} call into a shell command
+\item \code{\link[=extract_make]{extract_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
 \item \code{\link[=shell_script]{shell_script()}} Create a shell script
 \item \code{\link[=makefile]{makefile()}} Create a Makefile
 \item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}

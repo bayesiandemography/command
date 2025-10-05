@@ -141,8 +141,8 @@ check_dir <- function(dir, nm) {
 #' to file with R code
 #' @param dir Directory where Makefile or shell script exists
 #' (typically the project directory)
-#' @param nm_dir Name of argument uses
-#' for directory
+#' @param nm_dir_arg Name of argument used
+#' for directory. "dir_make" or "dir_shell"
 #' @param has_dir_arg Whether the user supplied
 #' an explicit argument for the Makefile or shell script
 #' directory. (If not, default to current working directory.)
@@ -150,17 +150,21 @@ check_dir <- function(dir, nm) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_file_exists <- function(file, dir, nm_dir, has_dir_arg) {
-  path_file <- fs::path(dir, file)
-  if (!fs::file_exists(path_file)) {
-    msg1 <- "Can't find file specified by {.arg file} argument."
+check_path_file_valid <- function(path_file, dir, nm_dir_arg, has_dir_arg) {
+  if (fs::is_absolute_path(path_file))
+    cli::cli_abort(c("{.arg path_file} is an absolute path.",
+                     i = "{.arg path_file}: {.path {path_file}}.",
+                     i = "{.arg path_file} must be a relative path."))
+  path_file_comb <- fs::path(dir, path_file)
+  if (!fs::file_exists(path_file_comb)) {
+    msg1 <- "Can't find R script."
     if (has_dir_arg)
-      msg2 <- paste("Path to file constructed from",
-                    "{.arg file} and {.arg {nm_dir}} arguments.")
+      msg2 <- paste("Path to R script constructed from",
+                    "{.arg path_file} and {.arg {nm_dir_arg}}.")
     else
-      msg2 <- paste("No value for {.arg {nm_dir}} supplied, so path to",
-                    "R code file assumed to start from current working directory.")
-    msg3 <- "Path to R code file: {.file {path_file}}"
+      msg2 <- paste("No value for {.arg {nm_dir_arg}} supplied, so path to",
+                    "R script assumed to start from current working directory.")
+    msg3 <- "Path: {.path {path_file_comb}}"
     msg <- c(msg1, i = msg2, i = msg3)
     cli::cli_abort(msg)
   }
@@ -169,19 +173,20 @@ check_file_exists <- function(file, dir, nm_dir, has_dir_arg) {
 
 
 ## HAS_TESTS
-#' Check Files Directory Exists, with Helpful Error Messages
+#' Check Directory Specified by 'path_files' and 'dir' Exists,
+#' with Helpful Error Messages
 #'
-#' Check that 'files' directory exists,
-#' with path starting at 'dir'.
+#' Check that directory implied by 'dir' and
+#' 'path_files' exists.
 #' Give helpful messages, since relative vs absolute
 #' paths etc are potentially confusing.
 #'
-#' @param Files Path from Makefile or shell script
+#' @param path_files Path from Makefile or shell script
 #' to directory with files with R code
 #' @param dir Directory where Makefile or shell script exists
 #' (typically the project directory)
-#' @param nm_dir Name of argument uses
-#' for directory
+#' @param nm_dirt_arg Name of argument used
+#' for directory ("dir_make" or "dir_shell")
 #' @param has_dir_arg Whether the user supplied
 #' an explicit argument for the Makefile or shell script
 #' directory. (If not, default to current working directory.)
@@ -189,18 +194,22 @@ check_file_exists <- function(file, dir, nm_dir, has_dir_arg) {
 #' @returns TRUE, invisibly
 #'
 #' @noRd
-check_files_exists <- function(files, dir, nm_dir, has_dir_arg) {
-  path_files <- fs::path(dir, files)
-  if (!fs::dir_exists(path_files)) {
-    msg1 <- "Can't find directory specified by {.arg files} argument."
+check_path_files_valid <- function(path_files, dir, nm_dir_arg, has_dir_arg) {
+  if (fs::is_absolute_path(path_files))
+    cli::cli_abort(c("{.arg path_files} is an absolute path.",
+                     i = "{.arg path_files}: {.path {path_files}}.",
+                     i = "{.arg path_files} must be a relative path."))
+  path_files_comb <- fs::path(dir, path_files)
+  if (!fs::dir_exists(path_files_comb)) {
+    msg1 <- "Can't find directory containing R scripts."
     if (has_dir_arg)
-      msg2 <- paste("Path constructed from",
-                    "{.arg files} and {.arg {nm_dir}} arguments.")
+      msg2 <- paste("Path to directory constructed from",
+                    "{.arg path_files} and {.arg {nm_dir_arg}}.")
     else
-      msg2 <- paste("No value for {.arg {nm_dir}} supplied, so path to",
-                    "{.arg files} directory assumed to start",
+      msg2 <- paste("No value for {.arg {nm_dir_arg}} supplied, so path to",
+                    "{.arg path_files} directory assumed to start",
                     "from current working directory.")
-    msg3 <- "Path to {.arg files} directory: {.file {path_files}}"
+    msg3 <- "Path: {.path {path_files_comb}}"
     msg <- c(msg1, i = msg2, i = msg3)
     cli::cli_abort(msg)
   }

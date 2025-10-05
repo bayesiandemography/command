@@ -5,15 +5,16 @@
 \title{Create a Makefile}
 \usage{
 makefile(
-  files = NULL,
+  path_files = NULL,
   dir_make = NULL,
   name_make = "Makefile",
   overwrite = FALSE
 )
 }
 \arguments{
-\item{files}{A path from \code{dir_make} to a
-directory with R files that have calls to \code{\link[=cmd_assign]{cmd_assign()}}.
+\item{path_files}{A path from \code{dir_make} to a
+directory with R scripts containing
+calls to \code{\link[=cmd_assign]{cmd_assign()}}.
 Optional.}
 
 \item{dir_make}{The directory where
@@ -25,13 +26,13 @@ creates the Makefile the current working directory.}
 The default is \code{"Makefile"}.}
 
 \item{overwrite}{Whether to overwrite
-an existing file. Default is \code{FALSE}.}
+an existing Makefile. Default is \code{FALSE}.}
 }
 \value{
 \code{makefile()} is called for its
 side effect, which is to create a
 file. However, \code{makefile()} also
-returns a string with the text for a
+returns a string with the contents of the
 Makefile.
 }
 \description{
@@ -77,7 +78,7 @@ writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
 dir_tree(path_project)
 
 ## Call 'makefile()'
-makefile(files = "src",
+makefile(path_files = "src",
          dir_make = path_project)
 
 ## Look at directories
@@ -89,7 +90,7 @@ cat(paste(lines, collapse = "\n"))
 
 ## Get the text of the Makefile
 ## without creating a file on disk
-text <- makefile(files = "src",
+text <- makefile(path_files = "src",
                  dir_make = path_project,
                  name_make = NULL)
 cat(text)
@@ -111,7 +112,7 @@ Introduction to Rscript
 \itemize{
 \item \href{https://bayesiandemography.github.io/command/articles/a3_makefile.html}{Creating a Makefile}
 More on \code{makefile()}
-\item \code{\link[=cmd_make]{cmd_make()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a Makefile rule
+\item \code{\link[=extract_make]{extract_make()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a Makefile rule
 \item \code{\link[=shell_script]{shell_script()}} Shell script equivalent of \code{makefile()}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
 \item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}

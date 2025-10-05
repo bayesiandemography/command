@@ -22,26 +22,27 @@
 #' also includes some general-purpose Makefile
 #' commands.
 #'
-#' @param files A path from `dir_shell` to a
-#' directory with R files that have calls to [cmd_assign()].
+#' @param path_files A path from `dir_shell` to a
+#' directory with R scripts containing
+#' calls to [cmd_assign()].
 #' @param dir_shell The directory where
 #' `shell_script()` will create the shell script.
-#' If no value is supplied, then `shell_script();
-#' creates the shell script the current working directory.
+#' If no value is supplied, then `shell_script()`
+#' creates the shell script in the current working directory.
 #' @param name_shell The name of the shell script.
 #' The default is `"workflow.sh"`.
 #' @param overwrite Whether to overwrite
-#' an existing file. Default is `FALSE`.
+#' an existing shell script. Default is `FALSE`.
 #' 
 #' @returns `shell_script()` is called for its
 #' side effect, which is to create a
 #' file. However, `shell_script()` also
-#' returns a string with the text for a
+#' returns a string with the contents of the
 #' shell script.
 #'
 #' @seealso
 #' - [Creating a Shell Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html) More on `shell_script()`
-#' - [cmd_shell()] Turn a [cmd_assign()] call into a shell command
+#' - [extract_shell()] Turn a [cmd_assign()] call into a shell command
 #' - [makefile()] Makefile equivalent of `shell_script()`
 #' - [cmd_assign()] Process command line arguments
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
@@ -74,7 +75,7 @@
 #' dir_tree(path_project)
 #'
 #' ## Call 'shell_script()'
-#' shell_script(files = "src",
+#' shell_script(path_files = "src",
 #'              dir_shell = path_project)
 #'
 #' ## Look at directories
@@ -86,7 +87,7 @@
 #'
 #' ## Get the text of the shell script
 #' ## without creating a file on disk
-#' text <- shell_script(files = "src",
+#' text <- shell_script(path_files = "src",
 #'                      dir_shell = path_project,
 #'                      name_shell = NULL)
 #' cat(text)
@@ -94,7 +95,7 @@
 #' ## Clean up
 #' dir_delete(path_project)
 #' @export
-shell_script <- function(files,
+shell_script <- function(path_files,
                          dir_shell = NULL,
                          name_shell = "workflow.sh",
                          overwrite = FALSE) {
@@ -103,9 +104,9 @@ shell_script <- function(files,
     check_dir(dir_shell, nm = "dir_shell")
   else
     dir_shell <- getwd()
-  check_files_exists(files = files,
+  check_path_files_valid(path_files = path_files,
                      dir = dir_shell,
-                     nm_dir = "dir_shell",
+                     nm_dir_arg = "dir_shell",
                      has_dir_arg = has_dir_shell)
   has_name_shell <- !is.null(name_shell)
   if (has_name_shell)
@@ -114,7 +115,7 @@ shell_script <- function(files,
   check_flag(x = overwrite,
              nm = "overwrite")
   lines <- ""
-  commands <- make_commands(files = files,
+  commands <- make_commands(path_files = path_files,
                             dir_shell = dir_shell)
   if (length(commands) > 0L)
     lines <- c(lines,

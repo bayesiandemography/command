@@ -84,7 +84,7 @@ assign_args <- function(args, envir) {
 
 
 ## HAS_TESTS
-#' Internal Version of 'extact_cmd_shell' that Returns
+#' Internal Version of 'extact_extract_shell' that Returns
 #' Text Where Possible and NULL Otherwise
 #'
 #' @param file Path to R file from 'dir_shell'
@@ -94,7 +94,7 @@ assign_args <- function(args, envir) {
 #' @returns A text string or NULL
 #'
 #' @noRd
-cmd_shell_if_possible <- function(file, dir_shell) {
+extract_shell_if_possible <- function(file, dir_shell) {
   path_file <- fs::path(dir_shell, file)
   ext <- fs::path_ext(path_file)
   if (!ext %in% c("r", "R"))
@@ -125,7 +125,7 @@ cmd_shell_if_possible <- function(file, dir_shell) {
 
 
 ## HAS_TESTS
-#' Internal Version of 'extact_cmd_make' that Returns
+#' Internal Version of 'extact_extract_make' that Returns
 #' Text Where Possible and NULL Otherwise
 #'
 #' @param file Path to R file from 'dir_make'
@@ -135,7 +135,7 @@ cmd_shell_if_possible <- function(file, dir_shell) {
 #' @returns A text string or NULL
 #'
 #' @noRd
-cmd_make_if_possible <- function(file, dir_make) {
+extract_make_if_possible <- function(file, dir_make) {
   path_file <- fs::path(dir_make, file)
   ext <- fs::path_ext(path_file)
   if (!ext %in% c("r", "R"))
@@ -468,25 +468,26 @@ is_varname_valid <- function(nm) {
 ## HAS_TESTS
 #' Make Shell Commands for a Shell Script
 #'
-#' Loop through files in 'files', making
+#' Loop through files, making
 #' commands for ones that contain calls to
 #' `cmd_assign()`.
 #'
-#' Assume that 'files' exists and is valid
+#' Assume that path constructed from 'dir_shell'
+#' and 'path_files' exists and is valid
 #'
-#' @param files Path from 'dir_make' to
+#' @param path_files Path from 'dir_shell' to
 #' directory where R code files exists
 #' @param dir_make Location of Makefile
 #'
 #' @returns A list of strings
 #'
 #' @noRd
-make_commands <- function(files, dir_shell) {
-  files <- fs::path(dir_shell, files)
-  files <- fs::dir_ls(files)
-  files <- fs::path_rel(files, start = dir_shell)
-  ans <- .mapply(cmd_shell_if_possible,
-                 dots = list(file = files),
+make_commands <- function(path_files, dir_shell) {
+  path_files_comb <- fs::path(dir_shell, path_files)
+  file <- fs::dir_ls(path_files_comb)
+  file <- fs::path_rel(file, start = dir_shell)
+  ans <- .mapply(extract_shell_if_possible,
+                 dots = list(file = file),
                  MoreArgs = list(dir_shell = dir_shell))
   ans <- Filter(Negate(is.null), ans)
   ans <- unlist(ans)
@@ -494,29 +495,29 @@ make_commands <- function(files, dir_shell) {
 }
 
 
-
 ## HAS_TESTS
 #' Make Rules for a Makefile
 #'
-#' Loop through files in 'files', making
+#' Loop through files, making
 #' rules for ones that contain calls to
 #' `cmd_assign()`.
 #'
-#' Assume that 'files' exists and is valid
+#' Assume that path constructed from 'dir_make'
+#' and 'path_files' exists and is valid
 #'
-#' @param files Path from 'dir_make' to
+#' @param path_files Path from 'dir_make' to
 #' directory where R code files exists
 #' @param dir_make Location of Makefile
 #'
 #' @returns A list of strings
 #'
 #' @noRd
-make_rules <- function(files, dir_make) {
-  files <- fs::path(dir_make, files)
-  files <- fs::dir_ls(files)
-  files <- fs::path_rel(files, start = dir_make)
-  ans <- .mapply(cmd_make_if_possible,
-                 dots = list(file = files),
+make_rules <- function(path_files, dir_make) {
+  path_files_comb <- fs::path(dir_make, path_files)
+  file <- fs::dir_ls(path_files_comb)
+  file <- fs::path_rel(file, start = dir_make)
+  ans <- .mapply(extract_make_if_possible,
+                 dots = list(file = file),
                  MoreArgs = list(dir_make = dir_make))
   ans <- Filter(Negate(is.null), ans)
   ans <- unlist(ans)

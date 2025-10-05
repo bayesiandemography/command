@@ -34,7 +34,7 @@ nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workfl
 
 # Introduction
 
-Functions `cmd_shell()` and `shell_script()` help with writing a shell script to control a data analysis workflow. `cmd_shell()` and `shell_script()` do most of the work, but some additional editing is usually necessary.
+Functions `extract_shell()` and `shell_script()` help with writing a shell script to control a data analysis workflow. `extract_shell()` and `shell_script()` do most of the work, but some additional editing is usually necessary.
 
 # An example workflow
 
@@ -60,19 +60,19 @@ lines <- readLines("src/model.R")
 cat(paste(c(lines[7:8], ""), collapse = "\n"))
 ```
 
-# cmd_shell()
+# extract_shell()
 
-`cmd_shell()` extracts the call to `cmd_assign()` from an R file, and turns it into a shell command. For instance, the call
+`extract_shell()` extracts the call to `cmd_assign()` from an R file, and turns it into a shell command. For instance, the call
 
 ```{r, eval = FALSE}
-cmd_shell("src/model.R")
+extract_shell("src/model.R")
 ```
 has return value
 ```{r, eval = TRUE, echo = FALSE}
-cmd_shell("src/model.R")
+extract_shell("src/model.R")
 ```
 
-The easiest way to use `cmd_shell()` is to call it from the R console, and then cut-and-paste the results into the shell script.
+The easiest way to use `extract_shell()` is to call it from the R console, and then cut-and-paste the results into the shell script.
 
 
 # shell_script()

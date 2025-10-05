@@ -22,8 +22,9 @@
 #' [shell_script()] is generated entirely
 #' from `files`.
 #'
-#' @param files A path from `dir_make` to a
-#' directory with R files that have calls to [cmd_assign()].
+#' @param path_files A path from `dir_make` to a
+#' directory with R scripts containing
+#' calls to [cmd_assign()].
 #' Optional.
 #' @param dir_make The directory where
 #' `makefile()` will create the Makefile.
@@ -32,18 +33,18 @@
 #' @param name_make The name of the Makefile.
 #' The default is `"Makefile"`.
 #' @param overwrite Whether to overwrite
-#' an existing file. Default is `FALSE`.
+#' an existing Makefile. Default is `FALSE`.
 #' 
 #' @returns `makefile()` is called for its
 #' side effect, which is to create a
 #' file. However, `makefile()` also
-#' returns a string with the text for a
+#' returns a string with the contents of the
 #' Makefile.
 #'
 #' @seealso
 #' - [Creating a Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.html)
 #'   More on `makefile()`
-#' - [cmd_make()] Turn a [cmd_assign()] call into a Makefile rule
+#' - [extract_make()] Turn a [cmd_assign()] call into a Makefile rule
 #' - [shell_script()] Shell script equivalent of `makefile()`
 #' - [cmd_assign()] Process command line arguments
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
@@ -78,7 +79,7 @@
 #' dir_tree(path_project)
 #'
 #' ## Call 'makefile()'
-#' makefile(files = "src",
+#' makefile(path_files = "src",
 #'          dir_make = path_project)
 #'
 #' ## Look at directories
@@ -90,7 +91,7 @@
 #'
 #' ## Get the text of the Makefile
 #' ## without creating a file on disk
-#' text <- makefile(files = "src",
+#' text <- makefile(path_files = "src",
 #'                  dir_make = path_project,
 #'                  name_make = NULL)
 #' cat(text)
@@ -98,7 +99,7 @@
 #' ## Clean up
 #' dir_delete(path_project)
 #' @export
-makefile <- function(files = NULL,
+makefile <- function(path_files = NULL,
                      dir_make = NULL,
                      name_make = "Makefile",
                      overwrite = FALSE) {
@@ -107,11 +108,11 @@ makefile <- function(files = NULL,
     check_dir(dir_make, nm = "dir_make")
   else
     dir_make <- getwd()
-  has_files <- !is.null(files)
-  if (has_files)
-    check_files_exists(files = files,
+  has_path_files <- !is.null(path_files)
+  if (has_path_files)
+    check_path_files_valid(path_files = path_files,
                        dir = dir_make,
-                       nm_dir = "dir_make",
+                       nm_dir_arg = "dir_make",
                        has_dir_arg = has_dir_make)
   has_name_make <- !is.null(name_make)
   if (has_name_make)
@@ -122,8 +123,8 @@ makefile <- function(files = NULL,
   lines <- c("",
              ".PHONY: all",
              "all:\n\n")
-  if (has_files) {
-    rules <- make_rules(files = files,
+  if (has_path_files) {
+    rules <- make_rules(path_files = path_files,
                         dir_make = dir_make) 
     if (length(rules) > 0L)
       lines <- c(lines,

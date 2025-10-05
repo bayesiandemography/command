@@ -101,114 +101,140 @@ test_that("'check_dir' throws error when dir does not exist", {
 })
 
 
-## 'check_file_exists' --------------------------------------------------------
+## 'check_path_file_valid' ----------------------------------------------------
 
-test_that("'check_file_exists' returns true with valid inputs, with dir specified", {
+test_that("'check_path_file_valid' returns true with valid inputs, with dir specified", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   writeLines("x <- 1",
              con = fs::path(dir_tmp, "script.R"))
-  expect_true(check_file_exists(file = "script.R",
-                                dir = dir_tmp,
-                                nm_dir = "d",
-                                has_dir_arg = TRUE))
+  expect_true(check_path_file_valid(path_file = "script.R",
+                                    dir = dir_tmp,
+                                    nm_dir_arg = "d",
+                                    has_dir_arg = TRUE))
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'check_file_exists' returns true with valid inputs, with dir not specified", {
+test_that("'check_path_file_valid' returns true with valid inputs, with dir not specified", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   writeLines("x <- 1",
              con = fs::path(dir_tmp, "script.R"))
-  expect_true(check_file_exists(file = fs::path(fs::path_rel(dir_tmp, getwd()), "script.R"),
-                                dir = getwd(),
-                                nm_dir = "d",
-                                has_dir_arg = FALSE))
+  expect_true(check_path_file_valid(path_file = fs::path(fs::path_rel(dir_tmp, getwd()), "script.R"),
+                                    dir = getwd(),
+                                    nm_dir_arg = "d",
+                                    has_dir_arg = FALSE))
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'check_file_exists' throws correct error, with dir specified", {
+test_that("'check_path_files_valid' throws correct error, with absolute path", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  expect_error(check_file_exists(file = "wrong",
-                                dir = dir_tmp,
-                                nm_dir = "d",
-                                has_dir_arg = TRUE),
-               "Can't find file specified by `file` argument.")
+  expect_error(check_path_file_valid(path_file = "C:/",
+                                     dir = dir_tmp,
+                                     nm_dir_arg = "dir_make",
+                                     has_dir_arg = TRUE),
+               "`path_file` is an absolute path.")
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'check_file_exists' throws correct error, with dir not specified", {
+test_that("'check_path_file_valid' throws correct error, with dir specified", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  expect_error(check_file_exists(file = "wrong",
-                                 dir = getwd(),
-                                 nm_dir = "d",
-                                 has_dir_arg = FALSE),
-               "Can't find file specified by `file` argument.")
+  expect_error(check_path_file_valid(path_file = "wrong",
+                                     dir = dir_tmp,
+                                     nm_dir = "d",
+                                     has_dir_arg = TRUE),
+               "Can't find R script.")
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'check_path_file_valid' throws correct error, with dir not specified", {
+  dir_tmp <- tempfile()
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  expect_error(check_path_file_valid(path_file = "wrong",
+                                     dir = getwd(),
+                                     nm_dir = "d",
+                                     has_dir_arg = FALSE),
+               "Can't find R script.")
   unlink(dir_tmp, recursive = TRUE)
 })
 
 
-## 'check_files_exists' --------------------------------------------------------
+## 'check_path_files_valid' ---------------------------------------------------
 
-test_that("'check_files_exists' returns true with valid inputs, with dir specified", {
+test_that("'check_path_files_valid' returns true with valid inputs, with dir specified", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   dir.create(fs::path(dir_tmp, "src"))
-  expect_true(check_files_exists(files = "src",
+  expect_true(check_path_files_valid(path_files = "src",
                                  dir = dir_tmp,
-                                 nm_dir = "d",
+                                 nm_dir_arg = "dir_make",
                                  has_dir_arg = TRUE))
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'check_files_exists' returns true with valid inputs, with dir not specified", {
+test_that("'check_path_files_valid' returns true with valid inputs, with dir not specified", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   dir.create(fs::path(dir_tmp, "src"))
-  expect_true(check_files_exists(files = fs::path(fs::path_rel(dir_tmp, getwd()), "src"),
+  expect_true(check_path_files_valid(path_files = fs::path(fs::path_rel(dir_tmp, getwd()), "src"),
                                  dir = getwd(),
-                                 nm_dir = "d",
+                                 nm_dir_arg = "dir_make",
                                  has_dir_arg = FALSE))
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'check_files_exists' throws correct error, with dir specified", {
+test_that("'check_path_files_valid' throws correct error, with absolute path", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  expect_error(check_files_exists(files = "wrong",
-                                  dir = dir_tmp,
-                                  nm_dir = "d",
-                                  has_dir_arg = TRUE),
-               "Can't find directory specified by `files` argument.")
+  expect_error(check_path_files_valid(path_files = "C:/",
+                                      dir = dir_tmp,
+                                      nm_dir_arg = "dir_make",
+                                      has_dir_arg = TRUE),
+               "`path_files` is an absolute path.")
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'check_files_exists' throws correct error, with dir not specified", {
+test_that("'check_path_files_valid' throws correct error, with dir specified", {
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  expect_error(check_files_exists(files = "wrong",
+  expect_error(check_path_files_valid(path_files = "wrong",
+                                  dir = dir_tmp,
+                                  nm_dir_arg = "dir_make",
+                                  has_dir_arg = TRUE),
+               "Can't find directory containing R scripts.")
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'check_path_files_valid' throws correct error, with dir not specified", {
+  dir_tmp <- tempfile()
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  expect_error(check_path_files_valid(path_files = "wrong",
                                  dir = getwd(),
-                                 nm_dir = "d",
+                                 nm_dir_arg = "dir_make",
                                  has_dir_arg = FALSE),
-               "Can't find directory specified by `files` argument.")
+               "Can't find directory.")
   unlink(dir_tmp, recursive = TRUE)
 })
 

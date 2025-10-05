@@ -1,5 +1,5 @@
 
-## 'shell_script' -----------------------------------------------------------------
+## 'shell_script' -------------------------------------------------------------
 
 test_that("'shell_script' works with has dir_shell, no name_shell", {
   dir_tmp <- tempfile()
@@ -10,7 +10,7 @@ test_that("'shell_script' works with has dir_shell, no name_shell", {
   file_path <- fs::path(path = file.path(dir_tmp, "src/script.R"))
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = file_path)
-  suppressMessages(ans_obtained <- shell_script(files = "src", dir_shell = dir_tmp))
+  suppressMessages(ans_obtained <- shell_script(path_files = "src", dir_shell = dir_tmp))
   ans_expected <- paste0("\n",
                          "Rscript src/script.R \\\n",
                          "  data/mydata.csv \\\n",
@@ -31,7 +31,7 @@ test_that("'shell_script' works with no dir_shell, has name_shell", {
   dir.create("src")
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = "src/script.R")
-  suppressMessages(ans_obtained <- shell_script(files = "src", name_shell = "shell"))
+  suppressMessages(ans_obtained <- shell_script(path_files = "src", name_shell = "shell"))
   ans_expected <- paste0("\n",
                          "Rscript src/script.R \\\n",
                          "  data/mydata.csv \\\n",
@@ -43,9 +43,9 @@ test_that("'shell_script' works with no dir_shell, has name_shell", {
   setwd(dir_curr)
 })
 
-test_that("'shell_script' throws error with no files", {
+test_that("'shell_script' throws error with no path_files", {
   expect_error(shell_script(),
-               "argument \"files\" is missing, with no default")
+               "argument \"path_files\" is missing, with no default")
 })
 
 test_that("'shell_script' throws appropriate error when file already exists", {
@@ -60,9 +60,9 @@ test_that("'shell_script' throws appropriate error when file already exists", {
              con = "src/script.R")
   writeLines("bla",
              con = "shell.sh")
-  expect_error(suppressMessages(shell_script(files = "src", name_shell = "shell.sh")),
+  expect_error(suppressMessages(shell_script(path_files = "src", name_shell = "shell.sh")),
                "already contains a")
-  suppressMessages(shell_script(files = "src", name_shell = "shell.sh", overwrite = TRUE))
+  suppressMessages(shell_script(path_files = "src", name_shell = "shell.sh", overwrite = TRUE))
   ans <- readLines("shell.sh")
   expect_identical(ans[[2]], "Rscript src/script.R \\")
   unlink(dir_tmp, recursive = TRUE)

@@ -106,8 +106,8 @@
 #' also invisibly returns a named list of objects.
 #'
 #' @seealso
-#' - [cmd_shell()] Turn a `cmd_assign()` call into a shell command
-#' - [cmd_make()] Turn a `cmd_assign()` call into a Makefile rule
+#' - [extract_shell()] Turn a `cmd_assign()` call into a shell command
+#' - [extract_make()] Turn a `cmd_assign()` call into a Makefile rule
 #' - [shell_script()] Create a shell script
 #' - [makefile()] Create a Makefile
 #' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)

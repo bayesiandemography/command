@@ -35,7 +35,7 @@ nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workfl
 
 # Introduction
 
-Functions `cmd_make()` and `makefile()` help with writing a Makefile to control a data analysis workflow. `cmd_make()` and `makefile()` do much of the work, but some extra hand coding is also necessary.
+Functions `extract_make()` and `makefile()` help with writing a Makefile to control a data analysis workflow. `extract_make()` and `makefile()` do much of the work, but some extra hand coding is also necessary.
 
 # An example workflow
 
@@ -61,19 +61,19 @@ lines <- readLines("src/model.R")
 cat(paste(c(lines[7:8], ""), collapse = "\n"))
 ```
 
-# cmd_make()
+# extract_make()
 
-`cmd_make()` extracts the call to `cmd_assign()` from an R file, and turns it into a Makefile rule. For instance, the call
+`extract_make()` extracts the call to `cmd_assign()` from an R file, and turns it into a Makefile rule. For instance, the call
 
 ```{r, eval = FALSE}
-cmd_make("src/model.R")
+extract_make("src/model.R")
 ```
 has return value
 ```{r, eval = TRUE, echo = FALSE}
-cmd_make("src/model.R")
+extract_make("src/model.R")
 ```
 
-The easiest way to use `cmd_make()` is to call it from the R console, and then cut-and-paste the results into Makefile.
+The easiest way to use `extract_make()` is to call it from the R console, and then cut-and-paste the results into Makefile.
 
 
 # makefile()

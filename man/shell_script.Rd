@@ -5,32 +5,33 @@
 \title{Create a Shell Script}
 \usage{
 shell_script(
-  files,
+  path_files,
   dir_shell = NULL,
   name_shell = "workflow.sh",
   overwrite = FALSE
 )
 }
 \arguments{
-\item{files}{A path from \code{dir_shell} to a
-directory with R files that have calls to \code{\link[=cmd_assign]{cmd_assign()}}.}
+\item{path_files}{A path from \code{dir_shell} to a
+directory with R scripts containing
+calls to \code{\link[=cmd_assign]{cmd_assign()}}.}
 
 \item{dir_shell}{The directory where
 \code{shell_script()} will create the shell script.
-If no value is supplied, then `shell_script();
-creates the shell script the current working directory.}
+If no value is supplied, then \code{shell_script()}
+creates the shell script in the current working directory.}
 
 \item{name_shell}{The name of the shell script.
 The default is \code{"workflow.sh"}.}
 
 \item{overwrite}{Whether to overwrite
-an existing file. Default is \code{FALSE}.}
+an existing shell script. Default is \code{FALSE}.}
 }
 \value{
 \code{shell_script()} is called for its
 side effect, which is to create a
 file. However, \code{shell_script()} also
-returns a string with the text for a
+returns a string with the contents of the
 shell script.
 }
 \description{
@@ -76,7 +77,7 @@ writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
 dir_tree(path_project)
 
 ## Call 'shell_script()'
-shell_script(files = "src",
+shell_script(path_files = "src",
              dir_shell = path_project)
 
 ## Look at directories
@@ -88,7 +89,7 @@ cat(paste(lines, collapse = "\n"))
 
 ## Get the text of the shell script
 ## without creating a file on disk
-text <- shell_script(files = "src",
+text <- shell_script(path_files = "src",
                      dir_shell = path_project,
                      name_shell = NULL)
 cat(text)
@@ -107,7 +108,7 @@ Introduction to Rscript
 \seealso{
 \itemize{
 \item \href{https://bayesiandemography.github.io/command/articles/a2_shell_script.html}{Creating a Shell Script} More on \code{shell_script()}
-\item \code{\link[=cmd_shell]{cmd_shell()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a shell command
+\item \code{\link[=extract_shell]{extract_shell()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a shell command
 \item \code{\link[=makefile]{makefile()}} Makefile equivalent of \code{shell_script()}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
 \item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}

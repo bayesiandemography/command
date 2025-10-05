@@ -77,10 +77,7 @@ test_that("'cmd_assign' works with on command line with options passed before fi
 })
 
 test_that("'cmd_assign' works with valid arguments - on command line, with littler (if available)", {
-  is_linux <- identical(Sys.info()[["sysname"]], "Linux")
-  has_littler <- nzchar(Sys.which("r"))
-  if (!is_linux || !has_littler)
-    testthat::skip("littler not found")
+  skip_if_no_littler_available()
   dir_curr <- getwd()
   dir_tmp <- tempfile()
   if (file.exists(dir_tmp))
@@ -94,7 +91,7 @@ test_that("'cmd_assign' works with valid arguments - on command line, with littl
                "saveRDS(named, file = 'named.rds')",
                "saveRDS(ls(), file = 'ls.rds')"),
              con = "script.R")
-  cmd <- "r script.R thatfile.xlsx obj.rds -n=1 --named=hello"
+  cmd <- "lr script.R thatfile.xlsx obj.rds -n=1 --named=hello"
   system(cmd, ignore.stderr = TRUE)
   p_file1 <- readRDS("p_file1.rds")
   expect_identical(p_file1, "thatfile.xlsx")
@@ -109,7 +106,5 @@ test_that("'cmd_assign' works with valid arguments - on command line, with littl
   setwd(dir_curr)
   unlink(dir_tmp, recursive = TRUE)
 })
-
-
 
 
