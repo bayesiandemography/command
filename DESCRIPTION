@@ -1,7 +1,7 @@
 Package: command
 Type: Package
 Title: Process Command Line Arguments
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person(given = "John",
            family = "Bryant",
@@ -10,7 +10,10 @@ Authors@R: c(
     person("Bayesian Demography Limited",
             role = "cph"))
 Description: Process command line arguments,
-    as part of a data analysis pipeline.
+    as part of a data analysis pipeline controlled by
+    a Makefile or shell script. Includes functions for
+    building Makefiles and shell scripts. The aim is a
+    modular, file-oriented workflow. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
