@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -207,7 +207,7 @@ out/vals_fitted.rds: src/vals_fitted.R \
     Rscript $^ $@
 
 report.html: report.qmd \
-  out/tab_coef.rds
+  out/fig_fitted.png
     quarto render $&lt;
 
 
@@ -243,7 +243,7 @@ out/fig_fitted.png: src/fig_fitted.R \
 
 
 report.html: report.qmd \
-  out/tab_coef.rds
+  out/fig_fitted.png
     quarto render $&lt;
 
 
@@ -269,14 +269,64 @@ clean:
     └── <span style="color: #00BB00;">vals_fitted.R</span>
 </code></pre>
 <p>We run the Makefile.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#make</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">make</span></span></code></pre></div>
+<pre class="fansi fansi-output"><code>Rscript src/cleaned_data.R data/raw_data.csv out/cleaned_data.rds
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.raw_data`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"data/raw_data.csv"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/cleaned_data.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+Rscript src/model.R out/cleaned_data.rds out/model.rds
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.cleaned_data`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/cleaned_data.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/model.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+Rscript src/vals_fitted.R out/cleaned_data.rds out/model.rds out/vals_fitted.rds
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.cleaned_data`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/cleaned_data.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.model`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/model.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/vals_fitted.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+Rscript src/fig_fitted.R out/vals_fitted.rds out/fig_fitted.png
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.vals_fitted`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/vals_fitted.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/fig_fitted.png"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+null device 
+          1 
+quarto render report.qmd
+<span style="color: #BB0000;">
+
+processing file: report.qmd
+</span>1/3                  
+2/3 [unnamed-chunk-1]
+3/3                  
+<span style="color: #BB0000;">output file: report.knit.md
+
+</span><span style="font-weight: bold;">pandoc </span>
+  to: html
+  output-file: report.html
+  standalone: true
+  section-divs: true
+  html-math-method: mathjax
+  wrap: none
+  default-image-extension: png
+  variables: {}
+  
+<span style="font-weight: bold;">metadata</span>
+  document-css: false
+  link-citations: true
+  date-format: long
+  lang: en
+  title: Swiss Fertility
+  
+Output created: report.html
+</code></pre>
 <p>Our project directory now looks like this.</p>
 <pre class="fansi fansi-output"><code><span style="color: #0000BB; font-weight: bold;">.</span>
 ├── Makefile
 ├── <span style="color: #0000BB; font-weight: bold;">data</span>
 │   └── raw_data.csv
 ├── <span style="color: #0000BB; font-weight: bold;">out</span>
+│   ├── cleaned_data.rds
+│   ├── <span style="color: #BB00BB; font-weight: bold;">fig_fitted.png</span>
+│   ├── model.rds
+│   └── vals_fitted.rds
+├── report.html
 ├── report.qmd
+├── <span style="color: #0000BB; font-weight: bold;">report_files</span>
+│   └── <span style="color: #0000BB; font-weight: bold;">libs</span>
 └── <span style="color: #0000BB; font-weight: bold;">src</span>
     ├── <span style="color: #00BB00;">cleaned_data.R</span>
     ├── <span style="color: #00BB00;">fig_fitted.R</span>

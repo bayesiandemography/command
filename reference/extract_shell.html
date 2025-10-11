@@ -9,7 +9,7 @@ R script, and turn it into a shell command."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,43 +154,27 @@ Safe, flexible data analysis workflows</p></li>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://withr.r-lib.org" class="external-link">withr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Create project directory containing</span></span></span>
-<span class="r-in"><span><span class="co">## 'src' and 'out' directories</span></span></span>
-<span class="r-in"><span><span class="va">path_project</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://fs.r-lib.org/reference/file_temp.html" class="external-link">file_temp</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"src"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"out"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://withr.r-lib.org/reference/with_tempfile.html" class="external-link">with_tempdir</a></span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Put R script in 'src' directory</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cmd_assign(x = 1, .out = 'out/results.rds')"</span>,</span></span>
-<span class="r-in"><span>             <span class="st">"results &lt;- x + 1"</span>,</span></span>
-<span class="r-in"><span>             <span class="st">"saveRDS(results, file = .out)"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>           con <span class="op">=</span> <span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"src/results.R"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co">## create 'src' directory</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="st">"src"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Look at directories</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/Rtmp7oHgMa/file1e8232d36123</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     └── <span style="color: #00BB00;">results.R</span></span>
+<span class="r-in"><span>  <span class="co">## add an R script containing a call to 'cmd_assign'</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cmd_assign(x = 1, .out = 'out/results.rds')"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"results &lt;- x + 1"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"saveRDS(results, file = .out)"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>             con <span class="op">=</span> <span class="st">"src/results.R"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Look at contents of R script</span></span></span>
-<span class="r-in"><span><span class="va">lines</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"src/results.R"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">lines</span>, collapse <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> cmd_assign(x = 1, .out = 'out/results.rds')</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> results &lt;- x + 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> saveRDS(results, file = .out)</span>
+<span class="r-in"><span>  <span class="co">## call 'extract_shell()'</span></span></span>
+<span class="r-in"><span>  <span class="fu">extract_shell</span><span class="op">(</span>path_file <span class="op">=</span> <span class="st">"src/results.R"</span>,</span></span>
+<span class="r-in"><span>                dir_shell <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## call 'extract_shell()'</span></span></span>
-<span class="r-in"><span><span class="fu">extract_shell</span><span class="op">(</span>path_file <span class="op">=</span> <span class="st">"src/results.R"</span>,</span></span>
-<span class="r-in"><span>          dir_shell <span class="op">=</span> <span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rscript /tmp/Rtmp7oHgMa/file1e8232d36123/src/results.R \</span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rscript ./src/results.R \</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   out/results.rds \</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   --x=1</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## clean up</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/delete.html" class="external-link">dir_delete</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -11,7 +11,7 @@ rules extracted from existing R files."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,8 @@ rules extracted from existing R files.</p>
 <span>  path_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dir_make <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name_make <span class="op">=</span> <span class="st">"Makefile"</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,6 +87,11 @@ The default is <code>"Makefile"</code>.</p></dd>
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
 <dd><p>Whether to overwrite
 an existing Makefile. Default is <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>Whether to suppress
+progress messages. Default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -140,47 +146,49 @@ Safe, flexible data analysis workflows</p></li>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://withr.r-lib.org" class="external-link">withr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Create project directory containing</span></span></span>
-<span class="r-in"><span><span class="co">## 'src' and 'out' directories</span></span></span>
-<span class="r-in"><span><span class="va">path_project</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://fs.r-lib.org/reference/file_temp.html" class="external-link">file_temp</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"src"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"out"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://withr.r-lib.org/reference/with_tempfile.html" class="external-link">with_tempdir</a></span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Put R code file in 'src' directory</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cmd_assign(x = 1, .out = 'out/results.rds')"</span>,</span></span>
-<span class="r-in"><span>             <span class="st">"results &lt;- x + 1"</span>,</span></span>
-<span class="r-in"><span>             <span class="st">"saveRDS(results, file = .out)"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>           con <span class="op">=</span> <span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"src/results.R"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co">## create 'src'  directory</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="st">"src"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Look at directories</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/Rtmp7oHgMa/file1e8215efaa4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     └── <span style="color: #00BB00;">results.R</span></span>
+<span class="r-in"><span>  <span class="co">## put R scripts containing calls to</span></span></span>
+<span class="r-in"><span>  <span class="co">## 'cmd_assign' in the 'src' directory</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cmd_assign(x = 1, .out = 'out/results.rds')"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"results &lt;- x + 1"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"saveRDS(results, file = .out)"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>             con <span class="op">=</span> <span class="st">"src/results.R"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cmd_assign(x = 1, .out = 'out/more_results.rds')"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"more_results &lt;- x + 2"</span>,</span></span>
+<span class="r-in"><span>               <span class="st">"saveRDS(more_results, file = .out)"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>             con <span class="op">=</span> <span class="st">"src/more_results.R"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Call 'makefile()'</span></span></span>
-<span class="r-in"><span><span class="fu">makefile</span><span class="op">(</span>path_files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
-<span class="r-in"><span>         dir_make <span class="op">=</span> <span class="va">path_project</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co">## call 'makefile()'</span></span></span>
+<span class="r-in"><span>  <span class="fu">makefile</span><span class="op">(</span>path_files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
+<span class="r-in"><span>           dir_make <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co">## Makefile has been created</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co">## print contents of Makefile</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="st">"Makefile"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Extracted call to `cmd_assign()` in <span style="color: #0000BB;">src/more_results.R</span>.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Extracted call to `cmd_assign()` in <span style="color: #0000BB;">src/results.R</span>.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Look at directories</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">/tmp/Rtmp7oHgMa/file1e8215efaa4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold;">.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ├── Makefile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ├── <span style="color: #0000BB; font-weight: bold;">out</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> └── <span style="color: #0000BB; font-weight: bold;">src</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ├── <span style="color: #00BB00;">more_results.R</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     └── <span style="color: #00BB00;">results.R</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Look at contents of makefile</span></span></span>
-<span class="r-in"><span><span class="va">lines</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">path_project</span>, <span class="st">"Makefile"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">lines</span>, collapse <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> .PHONY: all</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> all:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> out/more_results.rds: src/more_results.R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Rscript $^ $@ --x=1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> out/results.rds: src/results.R</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Rscript $^ $@ --x=1</span>
@@ -191,31 +199,7 @@ Safe, flexible data analysis workflows</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	rm -rf out</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	mkdir out</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Get the text of the Makefile</span></span></span>
-<span class="r-in"><span><span class="co">## without creating a file on disk</span></span></span>
-<span class="r-in"><span><span class="va">text</span> <span class="op">&lt;-</span> <span class="fu">makefile</span><span class="op">(</span>path_files <span class="op">=</span> <span class="st">"src"</span>,</span></span>
-<span class="r-in"><span>                 dir_make <span class="op">=</span> <span class="va">path_project</span>,</span></span>
-<span class="r-in"><span>                 name_make <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Extracted call to `cmd_assign()` in <span style="color: #0000BB;">src/results.R</span>.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">text</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> .PHONY: all</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> all:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> out/results.rds: src/results.R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Rscript $^ $@ --x=1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> .PHONY: clean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> clean:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	rm -rf out</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	mkdir out</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Clean up</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://fs.r-lib.org/reference/delete.html" class="external-link">dir_delete</a></span><span class="op">(</span><span class="va">path_project</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

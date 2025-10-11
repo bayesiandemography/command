@@ -4,12 +4,16 @@ The values are typically supplied through the command line,
 but can be supplied interactively.
 Specifying the inputs and outputs of scripts through the
 command line can contribute to safter, more modular
-workflows."><meta property="og:description" content="Assign values to names in the working environment.
+workflows.
+cmd_assign_quiet() is identical to cmd_assign(),
+but does not print progress messages to the console."><meta property="og:description" content="Assign values to names in the working environment.
 The values are typically supplied through the command line,
 but can be supplied interactively.
 Specifying the inputs and outputs of scripts through the
 command line can contribute to safter, more modular
-workflows."></head><body>
+workflows.
+cmd_assign_quiet() is identical to cmd_assign(),
+but does not print progress messages to the console."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +21,7 @@ workflows."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,11 +61,15 @@ but can be supplied interactively.</p>
 <p>Specifying the inputs and outputs of scripts through the
 command line can contribute to safter, more modular
 workflows.</p>
+<p><code>cmd_assign_quiet()</code> is identical to <code>cmd_assign()</code>,
+but does not print progress messages to the console.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cmd_assign</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cmd_assign</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cmd_assign_quiet</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
