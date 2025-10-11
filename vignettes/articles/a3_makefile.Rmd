@@ -100,7 +100,7 @@ The output from `makefile()` needs some editing before it is ready for use. We n
 lines[[3L]] <- "all: report.html"
 lines <- c(lines[1:22],
            "report.html: report.qmd \\",
-	   "  out/tab_coef.rds",
+	   "  out/fig_fitted.png",
 	   "\tquarto render $<",
 	   "",
 	   lines[-(1:22)])
@@ -130,7 +130,7 @@ dir_tree(regexp = nms_articles,
 We run the Makefile.
 
 ```{bash}
-#make
+make
 ```
 
 Our project directory now looks like this.

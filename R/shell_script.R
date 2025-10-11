@@ -33,6 +33,8 @@
 #' The default is `"workflow.sh"`.
 #' @param overwrite Whether to overwrite
 #' an existing shell script. Default is `FALSE`.
+#' @param quiet Whether to suppress
+#' progress messages. Default is `FALSE`.
 #' 
 #' @returns `shell_script()` is called for its
 #' side effect, which is to create a
@@ -57,57 +59,50 @@
 #'
 #' @examples
 #' library(fs)
+#' library(withr)
 #'
-#' ## Create project directory containing
-#' ## 'src' and 'out' directories
-#' path_project <- file_temp()
-#' dir_create(path_project)
-#' dir_create(path(path_project, "src"))
-#' dir_create(path(path_project, "out"))
+#' with_tempdir({
+#'
+#'   ## create 'src'  directory
+#'   dir_create("src")
+#'
+#'   ## put R scripts containing calls to
+#'   ## 'cmd_assign' in the 'src' directory
+#'   writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
+#'                "results <- x + 1",
+#'                "saveRDS(results, file = .out)"),
+#'              con = "src/results.R")
+#'   writeLines(c("cmd_assign(x = 1, .out = 'out/more_results.rds')",
+#'                "more_results <- x + 2",
+#'                "saveRDS(more_results, file = .out)"),
+#'              con = "src/more_results.R")
+#'
+#'   ## call 'shell_script()'
+#'   shell_script(path_files = "src",
+#'                dir_shell = ".")
+#'
+#'   ## shell script has been created
+#'   dir_tree()
+#'
+#'   ## print contents of shell script
+#'   cat(readLines("workflow.sh"), sep = "\n")
 #' 
-#' ## Put R code file in 'src' directory
-#' writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
-#'              "results <- x + 1",
-#'              "saveRDS(results, file = .out)"),
-#'            con = path(path_project, "src/results.R"))
-#'
-#' ## Look at directories
-#' dir_tree(path_project)
-#'
-#' ## Call 'shell_script()'
-#' shell_script(path_files = "src",
-#'              dir_shell = path_project)
-#'
-#' ## Look at directories
-#' dir_tree(path_project)
-#'
-#' ## Look at contents of shell script
-#' lines <- readLines(path(path_project, "workflow.sh"))
-#' cat(paste(lines, collapse = "\n"))
-#'
-#' ## Get the text of the shell script
-#' ## without creating a file on disk
-#' text <- shell_script(path_files = "src",
-#'                      dir_shell = path_project,
-#'                      name_shell = NULL)
-#' cat(text)
-#'
-#' ## Clean up
-#' dir_delete(path_project)
+#' })
 #' @export
 shell_script <- function(path_files,
                          dir_shell = NULL,
                          name_shell = "workflow.sh",
-                         overwrite = FALSE) {
+                         overwrite = FALSE,
+                         quiet = FALSE) {
   has_dir_shell <- !is.null(dir_shell)
   if (has_dir_shell)
     check_dir(dir_shell, nm = "dir_shell")
   else
     dir_shell <- getwd()
   check_path_files_valid(path_files = path_files,
-                     dir = dir_shell,
-                     nm_dir_arg = "dir_shell",
-                     has_dir_arg = has_dir_shell)
+                         dir = dir_shell,
+                         nm_dir_arg = "dir_shell",
+                         has_dir_arg = has_dir_shell)
   has_name_shell <- !is.null(name_shell)
   if (has_name_shell)
     check_valid_filename(x = name_shell,
@@ -116,7 +111,8 @@ shell_script <- function(path_files,
              nm = "overwrite")
   lines <- ""
   commands <- make_commands(path_files = path_files,
-                            dir_shell = dir_shell)
+                            dir_shell = dir_shell,
+                            quiet = quiet)
   if (length(commands) > 0L)
     lines <- c(lines,
                commands)

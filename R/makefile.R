@@ -34,6 +34,8 @@
 #' The default is `"Makefile"`.
 #' @param overwrite Whether to overwrite
 #' an existing Makefile. Default is `FALSE`.
+#' @param quiet Whether to suppress
+#' progress messages. Default is `FALSE`.
 #' 
 #' @returns `makefile()` is called for its
 #' side effect, which is to create a
@@ -61,48 +63,41 @@
 #'
 #' @examples
 #' library(fs)
+#' library(withr)
 #'
-#' ## Create project directory containing
-#' ## 'src' and 'out' directories
-#' path_project <- file_temp()
-#' dir_create(path_project)
-#' dir_create(path(path_project, "src"))
-#' dir_create(path(path_project, "out"))
+#' with_tempdir({
+#'
+#'   ## create 'src'  directory
+#'   dir_create("src")
+#'
+#'   ## put R scripts containing calls to
+#'   ## 'cmd_assign' in the 'src' directory
+#'   writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
+#'                "results <- x + 1",
+#'                "saveRDS(results, file = .out)"),
+#'              con = "src/results.R")
+#'   writeLines(c("cmd_assign(x = 1, .out = 'out/more_results.rds')",
+#'                "more_results <- x + 2",
+#'                "saveRDS(more_results, file = .out)"),
+#'              con = "src/more_results.R")
+#'
+#'   ## call 'makefile()'
+#'   makefile(path_files = "src",
+#'            dir_make = ".")
+#'
+#'   ## Makefile has been created
+#'   dir_tree()
+#'
+#'   ## print contents of Makefile
+#'   cat(readLines("Makefile"), sep = "\n")
 #' 
-#' ## Put R code file in 'src' directory
-#' writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
-#'              "results <- x + 1",
-#'              "saveRDS(results, file = .out)"),
-#'            con = path(path_project, "src/results.R"))
-#'
-#' ## Look at directories
-#' dir_tree(path_project)
-#'
-#' ## Call 'makefile()'
-#' makefile(path_files = "src",
-#'          dir_make = path_project)
-#'
-#' ## Look at directories
-#' dir_tree(path_project)
-#'
-#' ## Look at contents of makefile
-#' lines <- readLines(path(path_project, "Makefile"))
-#' cat(paste(lines, collapse = "\n"))
-#'
-#' ## Get the text of the Makefile
-#' ## without creating a file on disk
-#' text <- makefile(path_files = "src",
-#'                  dir_make = path_project,
-#'                  name_make = NULL)
-#' cat(text)
-#'
-#' ## Clean up
-#' dir_delete(path_project)
+#' })
 #' @export
 makefile <- function(path_files = NULL,
                      dir_make = NULL,
                      name_make = "Makefile",
-                     overwrite = FALSE) {
+                     overwrite = FALSE,
+                     quiet = FALSE) {
   has_dir_make <- !is.null(dir_make)
   if (has_dir_make)
     check_dir(dir_make, nm = "dir_make")
@@ -111,21 +106,24 @@ makefile <- function(path_files = NULL,
   has_path_files <- !is.null(path_files)
   if (has_path_files)
     check_path_files_valid(path_files = path_files,
-                       dir = dir_make,
-                       nm_dir_arg = "dir_make",
-                       has_dir_arg = has_dir_make)
+                           dir = dir_make,
+                           nm_dir_arg = "dir_make",
+                           has_dir_arg = has_dir_make)
   has_name_make <- !is.null(name_make)
   if (has_name_make)
     check_valid_filename(x = name_make,
                          nm = "name_make")
   check_flag(x = overwrite,
              nm = "overwrite")
+  check_flag(x = quiet,
+             nm = "quiet")
   lines <- c("",
              ".PHONY: all",
              "all:\n\n")
   if (has_path_files) {
     rules <- make_rules(path_files = path_files,
-                        dir_make = dir_make) 
+                        dir_make = dir_make,
+                        quiet = quiet) 
     if (length(rules) > 0L)
       lines <- c(lines,
                  rules,

@@ -8,7 +8,8 @@ makefile(
   path_files = NULL,
   dir_make = NULL,
   name_make = "Makefile",
-  overwrite = FALSE
+  overwrite = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ The default is \code{"Makefile"}.}
 
 \item{overwrite}{Whether to overwrite
 an existing Makefile. Default is \code{FALSE}.}
+
+\item{quiet}{Whether to suppress
+progress messages. Default is \code{FALSE}.}
 }
 \value{
 \code{makefile()} is called for its
@@ -60,43 +64,35 @@ from \code{files}.
 }
 \examples{
 library(fs)
+library(withr)
 
-## Create project directory containing
-## 'src' and 'out' directories
-path_project <- file_temp()
-dir_create(path_project)
-dir_create(path(path_project, "src"))
-dir_create(path(path_project, "out"))
+with_tempdir({
 
-## Put R code file in 'src' directory
-writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
-             "results <- x + 1",
-             "saveRDS(results, file = .out)"),
-           con = path(path_project, "src/results.R"))
+  ## create 'src'  directory
+  dir_create("src")
 
-## Look at directories
-dir_tree(path_project)
+  ## put R scripts containing calls to
+  ## 'cmd_assign' in the 'src' directory
+  writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
+               "results <- x + 1",
+               "saveRDS(results, file = .out)"),
+             con = "src/results.R")
+  writeLines(c("cmd_assign(x = 1, .out = 'out/more_results.rds')",
+               "more_results <- x + 2",
+               "saveRDS(more_results, file = .out)"),
+             con = "src/more_results.R")
 
-## Call 'makefile()'
-makefile(path_files = "src",
-         dir_make = path_project)
+  ## call 'makefile()'
+  makefile(path_files = "src",
+           dir_make = ".")
 
-## Look at directories
-dir_tree(path_project)
+  ## Makefile has been created
+  dir_tree()
 
-## Look at contents of makefile
-lines <- readLines(path(path_project, "Makefile"))
-cat(paste(lines, collapse = "\n"))
+  ## print contents of Makefile
+  cat(readLines("Makefile"), sep = "\n")
 
-## Get the text of the Makefile
-## without creating a file on disk
-text <- makefile(path_files = "src",
-                 dir_make = path_project,
-                 name_make = NULL)
-cat(text)
-
-## Clean up
-dir_delete(path_project)
+})
 }
 \references{
 \itemize{

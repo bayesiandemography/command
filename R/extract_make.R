@@ -110,33 +110,24 @@
 #'
 #' @examples
 #' library(fs)
+#' library(withr)
+#' with_tempdir({
 #'
-#' ## Create project directory containing
-#' ## 'src' and 'out' directories
-#' path_project <- file_temp()
-#' dir_create(path_project)
-#' dir_create(path(path_project, "src"))
-#' dir_create(path(path_project, "out"))
-#' 
-#' ## Put R script in 'src' directory
-#' writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
-#'              "results <- x + 1",
-#'              "saveRDS(results, file = .out)"),
-#'            con = path(path_project, "src/results.R"))
+#'   ## create 'src'  directory
+#'   dir_create("src")
 #'
-#' ## Look at directories
-#' dir_tree(path_project)
+#'   ## put an R script containing a call to
+#'   ## 'cmd_assign' in the 'src' directory
+#'   writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
+#'                "results <- x + 1",
+#'                "saveRDS(results, file = .out)"),
+#'              con = "src/results.R")
 #'
-#' ## Look at contents of R script
-#' lines <- readLines(path(path_project, "src/results.R"))
-#' cat(paste(lines, collapse = "\n"))
+#'   ## call 'extract_make()'
+#'   extract_make(path_file = "src/results.R",
+#'                dir_make = ".")
 #'
-#' ## call 'extract_make()'
-#' extract_make(path_file = "src/results.R",
-#'          dir_make = path_project)
-#'
-#' ## clean up
-#' dir_delete(path_project)
+#' })
 #' @export
 extract_make <- function(path_file, dir_make = NULL) {
   has_dir_arg <- !is.null(dir_make)

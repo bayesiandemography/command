@@ -10,6 +10,9 @@
 #' command line can contribute to safter, more modular
 #' workflows.
 #'
+#' `cmd_assign_quiet()` is identical to `cmd_assign()`,
+#' but does not print progress messages to the console.
+#'
 #' @details
 #' # Types of session
 #'
@@ -131,21 +134,46 @@
 #' }
 #' @export
 cmd_assign <- function(...) {
-    envir <- parent.frame()
-    args_dots <- list(...)
-    check_args_dots(args_dots)
-    if (interactive())
-        args <- args_dots # nocov
-    else {
-        args_cmd <- get_args_cmd()
-        check_args_cmd(args_cmd = args_cmd,
-                       args_dots = args_dots)
-        args_cmd <- align_cmd_to_dots(args_cmd = args_cmd,
-                                      args_dots = args_dots)
-        args_cmd <- coerce_to_dots_class(args_cmd = args_cmd,
-                                         args_dots = args_dots)
-        args <- args_cmd
-    }
-    assign_args(args = args,
-                envir = envir)
+  envir <- parent.frame()
+  args_dots <- list(...)
+  check_args_dots(args_dots)
+  if (interactive())
+    args <- args_dots # nocov
+  else {
+    args_cmd <- get_args_cmd()
+    check_args_cmd(args_cmd = args_cmd,
+                   args_dots = args_dots)
+    args_cmd <- align_cmd_to_dots(args_cmd = args_cmd,
+                                  args_dots = args_dots)
+    args_cmd <- coerce_to_dots_class(args_cmd = args_cmd,
+                                     args_dots = args_dots)
+    args <- args_cmd
+  }
+  assign_args(args = args,
+              envir = envir,
+              quiet = FALSE)
 }
+
+#' @export
+#' @rdname cmd_assign
+cmd_assign_quiet <- function(...) {
+  envir <- parent.frame()
+  args_dots <- list(...)
+  check_args_dots(args_dots)
+  if (interactive())
+    args <- args_dots # nocov
+  else {
+    args_cmd <- get_args_cmd()
+    check_args_cmd(args_cmd = args_cmd,
+                   args_dots = args_dots)
+    args_cmd <- align_cmd_to_dots(args_cmd = args_cmd,
+                                  args_dots = args_dots)
+    args_cmd <- coerce_to_dots_class(args_cmd = args_cmd,
+                                     args_dots = args_dots)
+    args <- args_cmd
+  }
+  assign_args(args = args,
+              envir = envir,
+              quiet = TRUE)
+}
+

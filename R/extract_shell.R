@@ -95,33 +95,24 @@
 #'
 #' @examples
 #' library(fs)
-#'
-#' ## Create project directory containing
-#' ## 'src' and 'out' directories
-#' path_project <- file_temp()
-#' dir_create(path_project)
-#' dir_create(path(path_project, "src"))
-#' dir_create(path(path_project, "out"))
+#' library(withr)
 #' 
-#' ## Put R script in 'src' directory
-#' writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
-#'              "results <- x + 1",
-#'              "saveRDS(results, file = .out)"),
-#'            con = path(path_project, "src/results.R"))
+#' with_tempdir({
 #'
-#' ## Look at directories
-#' dir_tree(path_project)
+#'   ## create 'src' directory
+#'   dir_create("src")
 #'
-#' ## Look at contents of R script
-#' lines <- readLines(path(path_project, "src/results.R"))
-#' cat(paste(lines, collapse = "\n"))
+#'   ## add an R script containing a call to 'cmd_assign'
+#'   writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
+#'                "results <- x + 1",
+#'                "saveRDS(results, file = .out)"),
+#'              con = "src/results.R")
 #'
-#' ## call 'extract_shell()'
-#' extract_shell(path_file = "src/results.R",
-#'           dir_shell = path_project)
+#'   ## call 'extract_shell()'
+#'   extract_shell(path_file = "src/results.R",
+#'                 dir_shell = ".")
 #'
-#' ## clean up
-#' dir_delete(path_project)
+#' })
 #' @export
 extract_shell <- function(path_file, dir_shell = NULL) {
   has_dir_arg <- !is.null(dir_shell)

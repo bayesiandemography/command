@@ -59,12 +59,14 @@ align_cmd_to_dots <- function(args_cmd, args_dots) {
 #' @param args A named list.
 #' @param envir The environment where the
 #' objects are to be created.
+#' @param quiet Flag. If `TRUE`, suppress
+#' success message.
 #'
 #' @return Returns 'args' invisibly,
 #' and creates objects as a side effect.
 #'
 #' @noRd
-assign_args <- function(args, envir) {
+assign_args <- function(args, envir, quiet) {
   nms <- names(args)
   for (i in seq_along(args)) {
     arg <- args[[i]]
@@ -77,24 +79,28 @@ assign_args <- function(args, envir) {
     nm <- cli::col_blue(nm)
     value <- cli::col_grey("with value")
     class <- cli::col_grey("and class")
-    cli::cli_alert_success("{assigned} {nm} {value} {.val {arg}} {class} {.val {class(arg)}}.")
+    if (!quiet) {
+      cli::cli_alert_success("{assigned} {nm} {value} {.val {arg}} {class} {.val {class(arg)}}.")
+    }
   }
   invisible(args)
 }    
 
 
 ## HAS_TESTS
-#' Internal Version of 'extact_extract_shell' that Returns
+#' Internal Version of 'extract_shell' that Returns
 #' Text Where Possible and NULL Otherwise
 #'
 #' @param file Path to R file from 'dir_shell'
 #' @param dir_shell Directory where the
 #' shell script is
+#' @param quiet Flag. Success message
+#' only printed if 'quiet' is FALSE
 #'
 #' @returns A text string or NULL
 #'
 #' @noRd
-extract_shell_if_possible <- function(file, dir_shell) {
+extract_shell_if_possible <- function(file, dir_shell, quiet) {
   path_file <- fs::path(dir_shell, file)
   ext <- fs::path_ext(path_file)
   if (!ext %in% c("r", "R"))
@@ -116,7 +122,8 @@ extract_shell_if_possible <- function(file, dir_shell) {
                            i = e$message))
       )
       ans <- format_args_shell(file = file, args = args)
-      cli::cli_alert_success("Extracted call to {.fun cmd_assign} in {.file {file}}.")
+      if (!quiet)
+        cli::cli_alert_success("Extracted call to {.fun cmd_assign} in {.file {file}}.")
       return(ans)
     }
   }
@@ -125,17 +132,19 @@ extract_shell_if_possible <- function(file, dir_shell) {
 
 
 ## HAS_TESTS
-#' Internal Version of 'extact_extract_make' that Returns
+#' Internal Version of 'extract_make' that Returns
 #' Text Where Possible and NULL Otherwise
 #'
 #' @param file Path to R file from 'dir_make'
 #' @param dir_make Directory where the
 #' Makefile is
+#' @param quiet Flag. Success message
+#' only printed if 'quiet' is FALSE
 #'
 #' @returns A text string or NULL
 #'
 #' @noRd
-extract_make_if_possible <- function(file, dir_make) {
+extract_make_if_possible <- function(file, dir_make, quiet) {
   path_file <- fs::path(dir_make, file)
   ext <- fs::path_ext(path_file)
   if (!ext %in% c("r", "R"))
@@ -157,7 +166,8 @@ extract_make_if_possible <- function(file, dir_make) {
                            i = e$message))
       )
       ans <- format_args_make(file = file, args = args)
-      cli::cli_alert_success("Extracted call to {.fun cmd_assign} in {.file {file}}.")
+      if (!quiet)
+        cli::cli_alert_success("Extracted call to {.fun cmd_assign} in {.file {file}}.")
       return(ans)
     }
   }
@@ -478,17 +488,22 @@ is_varname_valid <- function(nm) {
 #' @param path_files Path from 'dir_shell' to
 #' directory where R code files exists
 #' @param dir_make Location of Makefile
+#' @param quiet Whether to suppress
+#' progress messages. 
 #'
 #' @returns A list of strings
 #'
 #' @noRd
-make_commands <- function(path_files, dir_shell) {
+make_commands <- function(path_files,
+                          dir_shell,
+                          quiet) {
   path_files_comb <- fs::path(dir_shell, path_files)
   file <- fs::dir_ls(path_files_comb)
   file <- fs::path_rel(file, start = dir_shell)
   ans <- .mapply(extract_shell_if_possible,
                  dots = list(file = file),
-                 MoreArgs = list(dir_shell = dir_shell))
+                 MoreArgs = list(dir_shell = dir_shell,
+                                 quiet = quiet))
   ans <- Filter(Negate(is.null), ans)
   ans <- unlist(ans)
   ans
@@ -510,15 +525,20 @@ make_commands <- function(path_files, dir_shell) {
 #' @param dir_make Location of Makefile
 #'
 #' @returns A list of strings
+#' @param quiet Whether to suppress
+#' progress messages. 
 #'
 #' @noRd
-make_rules <- function(path_files, dir_make) {
+make_rules <- function(path_files,
+                       dir_make,
+                       quiet) {
   path_files_comb <- fs::path(dir_make, path_files)
   file <- fs::dir_ls(path_files_comb)
   file <- fs::path_rel(file, start = dir_make)
   ans <- .mapply(extract_make_if_possible,
                  dots = list(file = file),
-                 MoreArgs = list(dir_make = dir_make))
+                 MoreArgs = list(dir_make = dir_make,
+                                 quiet = quiet))
   ans <- Filter(Negate(is.null), ans)
   ans <- unlist(ans)
   ans

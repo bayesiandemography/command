@@ -104,33 +104,24 @@ like they could be.
 
 \examples{
 library(fs)
+library(withr)
+with_tempdir({
 
-## Create project directory containing
-## 'src' and 'out' directories
-path_project <- file_temp()
-dir_create(path_project)
-dir_create(path(path_project, "src"))
-dir_create(path(path_project, "out"))
+  ## create 'src'  directory
+  dir_create("src")
 
-## Put R script in 'src' directory
-writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
-             "results <- x + 1",
-             "saveRDS(results, file = .out)"),
-           con = path(path_project, "src/results.R"))
+  ## put an R script containing a call to
+  ## 'cmd_assign' in the 'src' directory
+  writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
+               "results <- x + 1",
+               "saveRDS(results, file = .out)"),
+             con = "src/results.R")
 
-## Look at directories
-dir_tree(path_project)
+  ## call 'extract_make()'
+  extract_make(path_file = "src/results.R",
+               dir_make = ".")
 
-## Look at contents of R script
-lines <- readLines(path(path_project, "src/results.R"))
-cat(paste(lines, collapse = "\n"))
-
-## call 'extract_make()'
-extract_make(path_file = "src/results.R",
-         dir_make = path_project)
-
-## clean up
-dir_delete(path_project)
+})
 }
 \references{
 \itemize{

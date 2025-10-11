@@ -2,9 +2,12 @@
 % Please edit documentation in R/cmd_assign.R
 \name{cmd_assign}
 \alias{cmd_assign}
+\alias{cmd_assign_quiet}
 \title{Assign Values Passed at the Command Line or Interactively}
 \usage{
 cmd_assign(...)
+
+cmd_assign_quiet(...)
 }
 \arguments{
 \item{...}{Name-value pairs.}
@@ -23,6 +26,9 @@ but can be supplied interactively.
 Specifying the inputs and outputs of scripts through the
 command line can contribute to safter, more modular
 workflows.
+
+\code{cmd_assign_quiet()} is identical to \code{cmd_assign()},
+but does not print progress messages to the console.
 }
 \section{Types of session}{
 \code{cmd_assign()} behaves differently depending
