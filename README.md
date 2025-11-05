@@ -1,6 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<a href="https://github.com/bayesiandemography/command">
+<img src="man/figures/sticker.png"
+       style="float:right; height:138px;" /> </a>
+
 # command
 
 <!-- badges: start -->
