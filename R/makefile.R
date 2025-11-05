@@ -102,7 +102,7 @@ makefile <- function(path_files = NULL,
   if (has_dir_make)
     check_dir(dir_make, nm = "dir_make")
   else
-    dir_make <- getwd()
+    dir_make <- "."
   has_path_files <- !is.null(path_files)
   if (has_path_files)
     check_path_files_valid(path_files = path_files,

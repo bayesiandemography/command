@@ -98,7 +98,7 @@ shell_script <- function(path_files,
   if (has_dir_shell)
     check_dir(dir_shell, nm = "dir_shell")
   else
-    dir_shell <- getwd()
+    dir_shell <- "."
   check_path_files_valid(path_files = path_files,
                          dir = dir_shell,
                          nm_dir_arg = "dir_shell",

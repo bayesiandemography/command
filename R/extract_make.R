@@ -135,7 +135,7 @@ extract_make <- function(path_file, dir_make = NULL) {
     check_dir(dir = dir_make,
               nm = "dir_make")
   else
-    dir_make <- getwd()
+    dir_make <- "."
   check_path_file_valid(path_file = path_file,
                         dir = dir_make,
                         nm_dir_arg = "dir_make",

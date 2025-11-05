@@ -30,7 +30,7 @@ test_that("'extract_shell' works with valid inputs - dir not supplied", {
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = fs::path(dir_tmp, "script.R"))
   capture.output(ans_obtained <- extract_shell(path_file))
-  path_file_comb <- fs::path(getwd(), path_file)
+  path_file_comb <- fs::path(".", path_file)
   ans_expected <- paste0("Rscript ", path_file_comb, " \\\n",
                          "  data/mydata.csv \\\n",
                          "  out/cleaned.rds \\\n",

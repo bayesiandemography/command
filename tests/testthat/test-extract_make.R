@@ -11,7 +11,7 @@ test_that("'extract_make' works with no dir_make", {
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = path_file)
   capture.output(ans_obtained <- extract_make(path_file = path_file))
-  path_file_comb <- fs::path(getwd(), path_file)
+  path_file_comb <- fs::path(".", path_file)
   ans_expected <- paste0("out/cleaned.rds: ", path_file_comb, " \\\n",
                          "  data/mydata.csv\n",
                          "\t", "Rscript $^ $@ --use_log=FALSE\n")

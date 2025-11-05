@@ -1,7 +1,7 @@
 Package: command
 Type: Package
 Title: Process Command Line Arguments
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
     person(given = "John",
            family = "Bryant",

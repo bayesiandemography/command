@@ -120,7 +120,7 @@ extract_shell <- function(path_file, dir_shell = NULL) {
     check_dir(dir = dir_shell,
               nm = "dir_shell")
   else
-    dir_shell <- getwd()
+    dir_shell <- "."
   check_path_file_valid(path_file = path_file,
                         dir = dir_shell,
                         nm_dir_arg = "dir_shell",

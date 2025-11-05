@@ -22,9 +22,9 @@ nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workfl
 
 # Introduction
 
-This article shows how to get started with package **command**.
+This article shows how to get started with package `command`.
 
-The main function in **command**  is `cmd_assign()`, which assigns objects to the global environment. `cmd_assign()` can be called in two ways:
+The main function in `command` is `cmd_assign()`, which assigns objects to the global environment. `cmd_assign()` can be called in two ways:
 
 1. Interatively
 2. Inside a script that is run from the command line
