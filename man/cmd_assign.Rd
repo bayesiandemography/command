@@ -130,7 +130,7 @@ Introduction to Rscript
 \item \code{\link[=extract_make]{extract_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
 \item \code{\link[=shell_script]{shell_script()}} Create a shell script
 \item \code{\link[=makefile]{makefile()}} Create a Makefile
-\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start Guide}
+\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start}
 How to use \code{cmd_assign()}
 \item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows.

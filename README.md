@@ -14,18 +14,21 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/bayesiandemography/command/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bayesiandemography/command/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/bayesiandemography/command/branch/main/graph/badge.svg)](https://app.codecov.io/gh/bayesiandemography/command?branch=main)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/command)](https://CRAN.R-project.org/package=command)
 <!-- badges: end -->
 
 Process command line arguments as part of data analysis workflow.
 
-- [cmd_assign()](https://bayesiandemography.github.io/command/reference/cmd_assign.html)
-  The main function
-- [Quick Start
-  Guide](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
-  How to use `cmd_assign()`.
-- [Modular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
-  Safe, flexible data analysis projects
+The main function is
+[cmd_assign()](https://bayesiandemography.github.io/command/reference/cmd_assign.html).
+
+For an overview of the package, see [Quick
+Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
+
+For ideas on building safe, modular workflows, see [Modular Workflows
+for Data
+Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html).
 
 ## Installation
 

@@ -10,10 +10,10 @@ Authors@R: c(
     person("Bayesian Demography Limited",
             role = "cph"))
 Description: Process command line arguments, as part of a data analysis
-    pipeline. The pipeline is controlled by a Makefile or shell
-    script. Functions to construct Makefiles and shell scripts are
-    included in a the package. The aim is a pipeline that
-    is modular, transparent, and reliable. 
+    workflow. 'command' makes it easier to construct a workflow consisting
+    of lots of small, self-contained scripts, all run from a Makefile or
+    shell script. The aim is a workflow that is modular, transparent,
+    and reliable. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 3.5.0)

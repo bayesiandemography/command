@@ -9,7 +9,7 @@
 #' - [extract_make()] Turn a `cmd_assign()` call into a Makefile rule
 #' - [shell_script()] Create a shell script
 #' - [makefile()] Create a Makefile
-#' - [Quick Start Guide](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#' - [Quick Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
 #'   Safe, flexible data analysis workflows

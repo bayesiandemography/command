@@ -116,7 +116,6 @@ cat(paste(lines, collapse = "\n"))
 writeLines(lines, con = "Makefile")
 ```
 
-
 # Running the Makefile
 
 Our project directory looks like this.
@@ -143,11 +142,27 @@ dir_tree(regexp = nms_articles,
 
 We have created `scaled.rds`, `model.rds`, and `tab_coef` in the `out` directory, and `report.html` in the main directory.
 
+## Named vs unnamed arguments
+
+In the examples above, all the command line arguments were filenames. Command line arguments can also, however, be values. The following command, for instance, includes a named argument called `n_iter` with value `100`. 
+```{bash, eval = FALSE}
+Rscript myfile.R --n_iter=100 myoutput.rds
+```
+
+The corresponding call to `cmd_assign()` will look something like this:
+```{R, eval = FALSE}
+cmd_assign(.myfile = "myfile.R",
+           n_iter = 100,
+	   .out = "myoutput.R")
+```
+
+When 
+
 
 # Other resources
 
 - [shell_script()](https://bayesiandemography.github.io/command/reference/makefile.html) The shell script equivalent of `makefile()`
-- [Data Analysis Workflows](https://bayesiandemography.github.io/command/articles/workflow.html)
+- [Modeular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
   Safe, flexible workflows for data analysis
 - [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)
   Makefiles in data analysis workflows

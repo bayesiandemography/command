@@ -1,5 +1,5 @@
 ---
-title: "Quick Start Guide"
+title: "Quick Start"
 ---
 
 ```{r, include = FALSE}
@@ -22,14 +22,14 @@ nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workfl
 
 # Introduction
 
-This article shows how to get started with package `command`.
+This article shows how to get started with the `command` packages. It focuses on the main function in the package, `cmd_assign()`.
 
-The main function in `command` is `cmd_assign()`, which assigns objects to the global environment. `cmd_assign()` can be called in two ways:
+`cmd_assign()` is used to specify the inputs and outputs for a step in a data analysis workflow. It can be called in two ways:
 
-1. Interatively
-2. Inside a script that is run from the command line
+1. interatively, or
+2. inside a script that is run from the command line.
 
-Case 2 is the important one. Case 1 is simpler, however, so we look at that first.
+Case 2 is the important one. However, Case 1 is simpler, so we look at that first.
 
 # Calling `cmd_assign()` interactively
 
@@ -47,9 +47,9 @@ obj1 <- "orange"
 obj2 <- 1
 ```
 
-Both snippets add two objects to the global environment with names `"obj1"` and `"obj2"` and values `"orange"` and `1`.
+Both snippets add two objects to the global environment with names `"obj1"` and `"obj2"` and with values `"orange"` and `1`.
 
-Objects assigned by `cmd_assign()` can have the following classes:
+Objects added to the global environment by `cmd_assign()` can have the following classes:
 
 - character, eg `"Hello world"`
 - integer, eg `3L`
@@ -63,19 +63,19 @@ The objects must have length 1, except for `NULL`, which has length 0.
 
 The typical reason for using `cmd_assign()` interactively is to develop code that will eventually sit in a script that is run from the command line. 
 
-The most common way to run R scripts from the command line is with Rscript, so we take a detour to look at that.
+The most common way to run R scripts from the command line is with `Rscript`, so we take a detour to look at that.
 
 # Rscript
 
-Rscript is an application for running R scripts from the command line. For an introduction to the command line, see episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html). For an introduction to Rscript, see [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html). 
+`Rscript` is an application for running R scripts from the command line. For more detail on the command line, see, for instance, episodes 1--3 of [The Unix Shell](https://swcarpentry.github.io/shell-novice/index.html). For an introduction to `Rscript`, see, for instance, [Command-Line Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html). 
 
-The simplest usage is a command like
+The simplest usage of `Rscript` is a command such as
 ```{bash, eval = FALSE}
 Rscript myfile.R
 ```
-This launches a new R session, runs whatever code is in `myfile.R`, and ends the session. When the session ends, all objects in it disappear, unless they were saved to disk.
+This launches a new R session, runs whatever code is in `myfile.R`, and ends the session. When the session ends, all objects created during the session disappear, unless they were saved to disk.
 
-Rscript accepts additional arguments, which are placed after the path to the file being run, as in
+`Rscript` accepts additional arguments, which are placed after name of the script being run, as in
 ```{bash, eval = FALSE}
 Rscript myfile.R --n_iteration=10 output.rds
 ```
@@ -83,7 +83,7 @@ In this example, `--n_iteration=10` is a named argument, and `output.rds` is an 
 ```
 --<name>=<value>
 ```
-Note that there must not be a space between the name, the `=` sign, and the value, so this would be invalid:
+Note that there must not be a space between the name, the `=` sign, and the value. The following command would therefore be invalid:
 ```{bash, eval = FALSE}
 Rscript myfile.R --n_iteration = 10 output.rds   # invalid!
 ```
@@ -93,9 +93,9 @@ Named arguments can also have a single dash and single letter, as in
 Rscript myfile.R -n=10
 ```
 
-When Rscript is called with additional arguments, Rscript supplies the names and values for these arguments to the R session. The names and values can be accessed from within the session using base R function [commandArgs()](https://search.r-project.org/R/refmans/base/html/commandArgs.html). Working with `commandArgs()` is, however, tricky. `cmd_assign()` is an alternative to `commandArgs()`, designed specifically for workflows for data analysis.
+When `Rscript` is called with additional arguments, `Rscript` supplies the names and values for these arguments to the R session. The names and values can be accessed from within the session using base R function [commandArgs()](https://search.r-project.org/R/refmans/base/html/commandArgs.html). Working with `commandArgs()` is, however, tricky. `cmd_assign()` is an alternative to `commandArgs()`, designed specifically for data analysis workflows.
 
-One alternative for running R scripts on from the command line is the package [littler](https://CRAN.R-project.org/package=littler). **littler** does not run on Windows, and requires some fiddling with symbolic links before it runs on macOS. `cmd_assign()` works as normal with **littler**. 
+One alternative to `Rscript` is the package [littler](https://CRAN.R-project.org/package=littler). `littler` does not, however, run on Windows, and requires some command line magic before it will run on macOS. `cmd_assign()` works as normal with `littler`. 
 
 
 # Calling `cmd_assign()` inside a script
@@ -106,7 +106,7 @@ Our current working directory contains two files:
 
 ```{r, echo = FALSE}
 dir_tree(regexp = paste(nms_articles, 
-                        "Makefile|workflow.sh|report.Rmd", 
+                        "Makefile|workflow.sh|report.qmd", 
                          sep = "|"),	
          invert = TRUE)
 ```
@@ -129,20 +129,20 @@ This code
 - plots the smoothed and unsmoothed values, and
 - writes the plot out to a file whose name is specified by `.out`.
 
-We use Rscript to run the code from the command line.
+We use `Rscript` to run the code from the command line.
 
 ```{bash}
-Rscript fig_smoothed.R airmiles.csv 8 fig_smoothed_8.png
+Rscript fig_smoothed.R airmiles.csv --n_knot=8 fig_smoothed_8.png
 ```
 
-Rscript started a new R session, ran the code using the command line arguments we passed in, and ended the session.
+`Rscript` started a new R session, ran the code using the command line arguments we passed in, and ended the session. The messages about assigning objects were generated by `cmd_assign()`.
 
 The call to `cmd_assign()` in `fig_smoothed.R` created objects `.airmiles`, `n_knot`, and `.out` inside the R session. The values for these objects were taken from the command line, and *not* from the original call to `cmd_assign()`. Hence, `n_knot` equaled `8` rather than `10`, and `.out` equaled `"fig_smoothed_8.png"` rather than `"fig_smoothed.png"`.
 
 Our working directory now looks like this:
 
 ```{r, echo = FALSE}
-dir_tree(regexp = paste(nms_articles, "Makefile|workflow.sh|report.Rmd", sep = "|"),
+dir_tree(regexp = paste(nms_articles, "Makefile|workflow.sh|report.qmd", sep = "|"),
          invert = TRUE,
 	 recurse = 0)
 ```
@@ -157,7 +157,7 @@ When `cmd_assign()` is called in a script that is being run from the command lin
 2. **Coerce** each value supplied at the command line to have the same class as the corresponding value in the call to `cmd_assign()`.
 3. **Assign** the resulting values to the global environment.
 
-Say, for instance, that we have a script called `model.R` containing the following call to `cmd_assign()`.
+Suppose we have a script called `model.R` containing the following call to `cmd_assign()`:
 
 ```{r, eval = FALSE}
 cmd_assign(.data = "data/dataset.csv",
@@ -169,10 +169,15 @@ cmd_assign(.data = "data/dataset.csv",
 We run `model.R` from the command line using
 
 ```{bash, eval = FALSE}
-Rscript model.R data/dataset2.csv out/model2.rds --use_log=TRUE --n_iter=10
+Rscript model.R \
+  data/dataset2.csv \
+  out/model2.rds \
+  --use_log=TRUE \
+  --n_iter=10
 ```
+(The backslashes `\` here mean "treat the next line of text as a continuation of the current line".)
 
-When it is first called, `cmd_assign()` holds the following values:
+When `cmd_assign()` is first called, it holds the following values:
 
 | Argument | Value from call | Value from command line |
 |:---------|-----------|-------------|
@@ -181,7 +186,7 @@ When it is first called, `cmd_assign()` holds the following values:
 | `use_log`   | `TRUE` | \<none\> |
 | `.out`   | `"out/model.rds"` | \<none\> |
 
-In the **match** step, `cmd_assign() finds the values that were passed in from the command line. First it matches named arguments from the command line with named arguments from the call, yielding
+In the **match** step, `cmd_assign()` finds the values that were passed in from the command line. First it matches named arguments from the command line with named arguments from the call, yielding
 
 
 | Argument | Value from call | Value from command line |
@@ -191,7 +196,7 @@ In the **match** step, `cmd_assign() finds the values that were passed in from t
 | `use_log`   | `TRUE` | `"TRUE"` |
 | `.out`   | `"out/model.rds"` | \<none\> |
 
-Then it matches unnamed arguments from the command line with unused arguments from the call. The matching of unnamed arguments is based on the order in which the unnamed arguments were supplied to the command line. In our example, the value `"data/dataset2.csv"` was passed before `"out/model2.rds"`, so `"data/dataset2.csv"` comes before `"out/model2.rds"` in the matched results.
+Then it matches unnamed arguments from the command line with unused arguments from the call. The matching of unnamed arguments is based on the order in which the unnamed arguments were supplied to the command line. In our example, the value `"data/dataset2.csv"` was supplied before `"out/model2.rds"`, so `"data/dataset2.csv"` comes before `"out/model2.rds"` in the matched results.
 
 | Argument | Value from call | Value from command line |
 |:---------|-----------|------------|
@@ -209,48 +214,52 @@ The values supplied at the command line all start out as text strings. In the **
 | `use_long`   | `TRUE` | `TRUE` |
 | `.out`   | `"out/model.rds"` | `"out/model2.rds"` |
 
-Finally, in the **assign** step, `cmd_assign()` puts the values into the global environment.
+Finally, in the **assign** step, `cmd_assign()` puts the values in the global environment.
 
 The number of arguments passed through the command line must exactly match the number of arguments specified in the call to `cmd_assign()`. Values specified in the call to `cmd_assign()` do *not* act as defaults. For instance, in our example, `cmd_assign()` would not let us omit `use_log`, and the following would be invalid:
 
 ```{bash, eval = FALSE}
-Rscript model.R data/dataset2.csv out/model2.rds --n_iter=10  # invalid!
+Rscript model.R \
+  data/dataset2.csv \
+  out/model2.rds \
+  --n_iter=10  # invalid!
 ```
 
-# Naming conventions
+The rationale for not having defaults is that specifying all the arguments makes a workflow clearer and safer.
 
-## Argument names starting with a dot
 
-In all the examples so far, the objects holding paths or filenames have conformed to a particular naming convention convention: these objects have all had names that start with a dot. For instance:
+# Argument names starting with a dot
+
+In all the examples so far, objects holding paths or filenames have conformed to a particular naming convention: they have all had names that start with a dot. For instance:
 
 ```{r, eval = FALSE}
-cmd_assign(.data = "data/dataset.csv", # '.data' starts with a dot
+cmd_assign(.data = "data/dataset.csv", # '.data'
            n_iter = 5,
            use_log = TRUE,
-           .out = "out/model.rds")     # '.out' starts with a dot
+           .out = "out/model.rds")     # '.out'
 ```
 
-This idea behind the convention is to distinguish between values and references. `n_iter` and `use_log` in the example above hold values that are directly used in the analysis. `.data` and `.out`, in contrast, describe were values are stored. The distinction is analogous to the one between ordinary variables and [pointers](https://w.wiki/DvZK) in C.
+The aim is to distinguish between *values* and *references to values*. `n_iter` and `use_log` in the example above hold values that are directly used in the analysis. `.data` and `.out`, in contrast, specify the place where the values used in the analysis are stored.
 
 To access the values referred to by the "dot" variables, we use a function such as `readRDS()` or `read_csv()`, as in
 ```{r, eval = FALSE}
 data <- read_csv(.data)
 ```
 
-The dot-name convention is not compulsory, and `cmd_assign()` does not check for it. But the convention is nevertheless worth following, as it can be easy in practice to get confused between a value and a reference to the value.
+Function `cmd_assign()` itself makes no distinction between names that start with dots and names that do not. However, functions `extract_shell()`, `shell()`, discussed in [Creating a Shell Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html), and `extract_make()` and `makefile()`, discussed in [Creating a Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.html), do make a distinction. Moreover, the convention is useful anyway, to separate values from references.
 
-## Giving code files and outputs the same base name
+# Giving code files and outputs the same base name
 
-Another feature of the examples so far is that files with R code have had the same base name as the files they generated as output. File `fig_smoothed.R`, for instance, generated `fig_smooth.png`, `fig_smooth_5.png`, `fig_smooth_8.png`, and `fig_smooth_10.png`, and file `model.R` generated `model.rds` and `model2.rds`. We rely on file extensions (eg `.R` vs `.png`) to distinguish code from outputs, and we use suffixes (eg `_5`, `_8` and `_10`) to distinguish different versions of the same output.
+Another feature of the examples so far is that R files have the same base name as the files that they generate. File `fig_smoothed.R`, for instance, generates `fig_smooth.png`, `fig_smooth_5.png`, `fig_smooth_8.png`, and `fig_smooth_10.png`, and file `model.R` generates `model.rds` and `model2.rds`. We rely on file extensions (eg `.R` vs `.png`, or `.R` vs `.rds`) to distinguish code from outputs, and we use suffixes (eg `_5`, `_8` and `_10`) to distinguish different versions of the same output.
 
-Naming conventions like this are common in system programming, and are a good way to signal the relationship between code and outputs.
+The same-base-names convention is common in programming, and is a good way to signal the relationship between code and outputs.
 
 
 # Putting calls to Rscript in a shell script
 
-We can create a data analysis workflow by writing a shell script with calls to Rscript.
+We can control a data analysis workflow by writing a shell script with calls to `Rscript`.
 
-We illustrate with a simple example. We need two new files. The first file, called `report.qmd`, creates a report with two figures. It contains the following code.
+We illustrate with a simple example. We need two more files. The first file, called `report.qmd`, creates a report with two figures:
 ```{r, echo = FALSE}
 cat(paste(readLines("report.qmd"), collapse = "\n"))
 ```
@@ -259,7 +268,7 @@ The second file, called `workflow.sh`, is a shell script that runs the whole wor
 cat(paste(readLines("workflow.sh"), collapse = "\n"))
 ```
 
-The third command in `workflow.sh` calls the `quarto` application directly, rather than through the R function [quarto_render](https://quarto-dev.github.io/quarto-r/reference/quarto_render.html).
+(The third command in the code above calls the `quarto` application directly, rather than through the R function [quarto_render](https://quarto-dev.github.io/quarto-r/reference/quarto_render.html).)
 
 We run `workflow.sh`.
 
@@ -278,35 +287,32 @@ dir_tree(regexp = paste(nms_articles, "Makefile", sep = "|"),
 
 # Putting calls to Rscript in a Makefile
 
-An even better way to organize a data analysis workflow is to put the Rscript commands in a Makefile. For an introduction to Makefiles, see [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make). 
+An even better way to organize a data analysis workflow is to put the `Rscript` commands in a Makefile. For an introduction to Makefiles, see [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make). 
 
-Here the Makefile equivalent of the `workflow.sh` file: 
+Here is the Makefile equivalent of the shell script above: 
 
 ```{r, echo = FALSE}
 cat(readLines("Makefile"), sep = "\n")
 ```
 
-We delete `fig_smoothed_5.png` and run the Makefile.
+The line `all: report.html` says that our ultimate aim is to create a file called `report.html`. The remaining lines describe the steps to get there, including the output (eg `fig_smoothed_5.png`), the inputs (eg `fig_smoothed.R` and `airmiles.csv`), and the action needed to produce the output from the inputs (eg `Rscript $^ $@ --n_knot=5`). [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html) contains more information on Makefiles, including an explanation of the mysterious `$^` and `$@` symbols.
 
+Makefiles are run using the `make` application. `make` is present on all Linux and MacOS systems, but may need installing on Windows.
+
+Makefiles and `make` take time to master. A Makefile is, however, an excellent way to document dependencies within a workflow. `make` can also be used to update a workflow safely and efficiently, because, when it updates, `make` keeps track of dependencies.
+
+Observe what happens, for instance, if we delete `fig_smoothed_5.png` and then run `make`.
 ```{bash}
 rm fig_smoothed_5.png
 make
 ```
-
-Whereas the bash script `workflow.sh` would have recreated `fig_smoothed_5.png`, `fig_smoothed_10.png` and `report.html`, Make recognises that `fig_smoothed_10.png` is still up-to-date, so it only recreates `fig_smoothed_5.png` and `report.html`.
-
-Makefiles take some time to master, but they have important advantages, discussed in [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html).
-
+`make` runs the code for creating `fig_smoothed_5.png`, and then, because it knows that `report.html` depends on `fig_smoothed_5.png`, it runs the code for that too. It does, not, however, run the code for `fig_smoothed_10.png`, because it knows that `fig_smoothed_10.png` does not depend on `fig_smoothed_5.png`.
 
 # Alternatives to `cmd_assign()` {#sec:alt}
 
-`cmd_assign()` is not the only option for processing command line arguments.
+Function `commandArgs()` in package [R.utils](https://cran.r-project.org/package=R.utils) is a user-friendly version of the base R function. Packages providing tools for parsing command line include [argparse](https://cran.r-project.org/package=argparse), [docopt](https://cran.r-project.org/package=docopt), [getopt](https://cran.r-project.org/package=getopt), and [optparse](https://CRAN.R-project.org/package=optparse). `command` is, however, the only package which focuses specifically on processing inputs and outputs within a data analysis workflows.
 
-One alternative is  [cmdArgs()](https://search.r-project.org/CRAN/refmans/R.utils/html/cmdArgs.html) in package [R.utils](https://cran.r-project.org/web/packages/R.utils/index.html), which is a more user-friendly version of the base R function `commandArgs()`.
-
-Another is package [docopt](https://cran.r-project.org/web/packages/docopt/index.html), which can be used to construct an interface for script, including the processing of command line arguments.
-
-`cmd_assign()` is more specialised than `cmdArgs()` or **docopt**. It focuses specifically on the task of processing command line arguments as part of a data analysis workflow.
+The `command` package is designed for workflows where the basic building block is the file. An alternative to this 'file-oriented' approach is a 'function-oriented' approach. Tools for implementing a function-oriented approach are implemented by package [targets](https://CRAN.R-project.org/package=targets).
 
 
 ```{r, include = FALSE}
