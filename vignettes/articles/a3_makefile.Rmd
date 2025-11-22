@@ -58,7 +58,7 @@ dir_tree(regexp = nms_articles,
 
 ```{r, echo = FALSE}
 lines <- readLines("src/model.R")
-cat(paste(c(lines[7:8], ""), collapse = "\n"))
+cat(paste(c(lines[7:9], ""), collapse = "\n"))
 ```
 
 # extract_make()
@@ -72,6 +72,8 @@ has return value
 ```{r, eval = TRUE, echo = FALSE}
 extract_make("src/model.R")
 ```
+
+In the call to `cmd_assign()` above, the names `.cleaned_data` and `.out` start with a dot, and the name `rlm_method` does not. `extract_make()` treats dotted name-value pairs differently fron non-dotted ones. A dotted name-value pair is assumed to refer to an unnamed file path passed at the command line, such as `out/cleaned_data.rds` or `out/model.rds`. A non-dotted pair is assumed to refer to a named argument, such as `--rlm_method=M`.
 
 The easiest way to use `extract_make()` is to call it from the R console, and then cut-and-paste the results into Makefile.
 

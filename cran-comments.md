@@ -1,4 +1,13 @@
 
+# Submission of version 0.1.3, 22 November 2025
+
+Changes since version 0.1.1:
+
+* Bug fixed in functions that were using absolute rather than relative
+  paths
+* Improvements to articles
+
+
 # Resubmission of version 0.1.1, 11 October 2025
 
 Thank you for the feedback on the original submission. Here's my

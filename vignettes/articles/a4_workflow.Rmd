@@ -35,7 +35,7 @@ Ideas about modularity underlie much standard R advice about writing code for da
 
 This article presents a strategy for making data analysis workflows more strictly modular. The basic unit in this strategy is a script. Each script is responsible for one small task, with inputs and outputs tightly controlled. Each script runs in its own environment, and data and intermediate outputs are passed around by reading from and writing to disk. Information about the project as a whole is held in a single orchestration file, which serves as an executable description of the analysis. 
 
-The article describes the main elements of the strategy, presents an example, and lists some costs and benefits. The final section gives some suggestions.
+The article describes the main elements of the strategy, presents an example, and lists some costs and benefits. The final section gives some suggestions about implementation details.
 
 # A strategy for constructing a modular workflow
 
@@ -45,7 +45,7 @@ A data analysis workflow should be composed of many small scripts. Each of these
 
 Some typical inputs and outputs in data analyses are:
 
-| Inputs     |   Output       |
+| Input     |   Output       |
 |:-----------|:---------------|
 | Raw data set | Cleaned data set |
 | Two cleaned data sets | Single merged data set |
@@ -61,12 +61,12 @@ Some typical inputs and outputs in data analyses are:
 
 The one-task-one-script rule can lead to scripts that are very short. For instance, if the task is to merge two cleaned datasets, then the script might contain only a few lines of code.
 
-Occasionally, a script does need to be long, because breaking the task into subtasks increases, rather than decreases, complexity. A long script should, however, be subjected to extra checking, and should include a comment explaining to future maintainers why the length was necessary.
+Occasionally, a script does need to be long, because breaking the task into subtasks increases, rather than decreases, complexity. A long script should, however, be subjected to extra checking, and should include a comment explaining to future maintainers why the extra length was necessary.
 
 
 ## Use Rscript or littler to run each script in a new session
 
-Each script should run in a new, clean R session that ends when script has finished running. Any packages (aside from base R packages) that are required by a script should be loaded explicitly. Running each script in its own session implies that, when the script completes, all objects created during by the script, which were not saved to disk, disappear.
+Each script should run in a new, clean R session that ends when script has finished running. Any packages (aside from base R packages) that are required by a script should be loaded explicitly. Running each script in its own session implies that, when the script completes, all objects created during by the script that were not saved to disk disappear.
 
 The best way to give each script its own session is to run the script from the command line, using an application such as [Rscript](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html) or [littler](https://CRAN.R-project.org/package=littler). For instance, the call
 ```{bash, eval = FALSE}
@@ -94,7 +94,7 @@ n_digits <- as.integer(strsplit(args[[3]], split = "=")[[1]][[2]])
 ```
 As this example illustrates, using base R function `commandArgs()` to parse command line arguments can be fiddly. Packages `argparse`, `docopt`, `getopt`, `optparse`, and `R.utils` all implement high-level alternatives to base R `commandArgs()` [@dejonge2018docopt; @david2023optparse; @pav2023argparse; @david2020getopt; @bengtsson2023rutils].
 
-The `command` package is one further alternative, designed specifically for data analysis workflows. Function `cmd_assign()` in `command` automatically checks and reformats arguments, and assigns values within the working environment. For an introduction to `command`, see [Quick Start Guide](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
+The `command` package is one further alternative, designed specifically for data analysis workflows. Function `cmd_assign()` in `command` automatically checks and reformats arguments, and assigns values within the working environment. For an introduction to `command`, see [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
 
 The ability to pass arguments to scripts essentially turns the scripts into functions. If, for instance, we want to run the code in `my-script.R` on `my-other-data.csv`, rather than `my-data.csv`, then we use something like
 ```{bash, eval = FALSE}
@@ -275,41 +275,41 @@ The strategy described in this paper requires some writing some extra code. Ever
 
 Modularity makes code easier to write. Breaking the analysis into smaller pieces makes it feel more manageable. A small script that has one job is much places fewer demands on a programmer's memory and concentration than a large script with many jobs. The more self-contained a script is, and the fewer assumptions it makes about the rest of the project, the less likely it is to need revision as the project evolves.
 
-Modularity also helps with one of the most difficult tasks in programming: naming things [@mcconnell2004code, Chapter 11]. The challenge of finding appropriate names, and avoiding name clashes, is particularly acute in a long file carrying out multiple tasks, where it becomes necessary to distinguish, for instance, between `model_baseline`, `model_revised`, `model_revised_subset`, and so on. Having short scripts, each run in its own session, allows analysts to re-use clashes, and the need to search for distinct names.
+Modularity also helps with one of the most difficult tasks in programming: naming things [@mcconnell2004code, Chapter 11]. The challenge of finding appropriate names, and avoiding name clashes, is particularly acute in a long file carrying out multiple tasks, where it becomes necessary to distinguish, for instance, between `model_baseline`, `model_revised`, `model_revised_subset`, and so on. Having short scripts, each run in its own session, allows analysts to re-use names without name clashes.
 
 
 ## Reading code
 
-Code that takes the form of small, self-contained units is also much easier to read. A small script with a single objective makes can be understood much more quickly than a large script with several objectives. Code constructed out of semi-independent units can be picked up part way through, sparing the reader the need to read all of the code just to understand one part of it. Having a separate orchestration file allows the reader to see the overall structure of the analysis, including the main steps, and the flow of information.
+Code that takes the form of small, self-contained units is also much easier to read. A small script with a single objective can be understood much more quickly than a large script with several objectives. Code constructed out of semi-independent units can be picked up part way through, sparing the reader the need to read all the code just to understand one part of it.
 
 ## Documentation
 
-Computer code should ideally by 'self-documenting': it should make the programmer's intent sufficiently clear that the need for additional aids, such as inline comments or README files, is minimized [@mcconnell2004code, Chapter 32]. Many of the techniques described in this paper lead to code that is self-documenting. The orchestration file, for instance, serves as a summary of the overall workflow, and the command line arguments serve as a description of the inputs and outputs. In addition, when a script is short and has a single objective, the reader needs much less assistance than when a script is long and has multiple objectives.
+Computer code should ideally by 'self-documenting': it should make the programmer's intent sufficiently clear that the need for additional aids, such as inline comments or README files, is minimized [@mcconnell2004code, Chapter 32]. Many of the techniques described in this paper lead to code that is self-documenting. The orchestration file, for instance, serves as a summary of the overall workflow, and the command line arguments serve as a description of the inputs and outputs.
 
 
 ## Debugging
 
-Keeping scripts short, running each script in its own session, and explicitly defining the inputs to that session mean that, if something goes wrong, there should only be a few objects in the working environment, and the origins of these objects should be clear. Debugging is a lot less painful than it might otherwise be.
+Keeping scripts short, running each script in its own session, and explicitly defining the inputs to each session mean that, if something goes wrong, there should only be a few objects in the working environment, and the origins of these objects should be clear. Debugging is a lot less painful than it might otherwise be.
 
 
 ## Flexibility
 
-Small scripts, with clearly-defined inputs, outputs, and tasks are composable: they can be combined with other scripts in many different ways. Consider, for instance, the problem of extracting performance measures from a model object and then plotting them. If we have one script to derive the performance measures, and a second script to plot these measures, then it is easy to add a third script to display the measures in a table. This sort of flexibility is particularly helpful in data analyses where there is uncertainty about the nature of the data the the most appropriate models, plots, and so forth.
+Small scripts, with clearly-defined inputs, outputs, and tasks are composable: they can be combined with other scripts in many different ways. If, for instance, we have one script to derive performance measures, and a second script to plot these measures, then it is easy to add a third script to display the performance measures in a table. This sort of flexibility is particularly helpful in data analyses where there is uncertainty about the nature of the data the the most appropriate models, plots, and so forth.
 
 ## Scalability
 
-Saving intermediate outputs to disk reduces the amount of memory needed, and reduces the need to re-run calculations from the beginning. These savings can be important in projects with large datasets or long computation times. Makefiles are particularly helpful in such settings, since they make sure that computations are carried out when they are needed, but only then.
+Saving intermediate outputs to disk reduces the amount of memory needed, and reduces the need to re-run calculations from the beginning. These savings can be important in projects with large datasets or long computation times. Makefiles are particularly helpful in such settings, since they make sure that computations are carried out when they are needed, but only when they are needed.
 
 
-# Some stylistic suggestions
+# Some suggestions about implementation
 
 ## Let the orchestration file impose order
 
-A common recommendation in advice on writing analysis code is to number files, such as `01-ingest-data.R`, `02-clean-data.R`, `03-fit-model.R`, and so on. The problem with this recommendation is that data analysis is unpredictable, and new files often need to be added, or existing files deleted. If, for instance, we insert an impute-missing-values step between the clean-data step and the fit-model step, then we need to redo our numbering. This quickly becomes annoying.
+A common recommendation in advice on writing analysis code is to number files, such as `01-ingest-data.R`, `02-clean-data.R`, `03-fit-model.R`, and so on. The problem with numbering is that analysting data is unpredictable, and new files often need to be added, or existing files deleted. For instance, we might discover that we need an impute-missing-values step between our clean-data step and our fit-model step. If we have numbered our files, any such change requires a large-sale renumbering. This can be annoying.
 
-An alternative is to rely entirely on the orchestration file to record the order in which files are run. The analyst needs to update the orchestration file anyway, each time a script is added or removed. When there is an orchestration file, numbering becomes redundant.
+An alternative is to rely entirely on the orchestration file to record the order in which files are run. When there is an orchestration file, numbering becomes redundant.
 
-One quirk in the case of Makefiles is that, when building a dependency graph, the `make` application relies entirely on targets and prerequisites, and ignores the physical position of rules within the file. As a courtesy to human readers, however, a Makefile should list the rules in the order in which they are executed.
+When building a dependency graph, the `make` application relies entirely on targets and prerequisites, and ignores the physical position of rules within the file. As a courtesy to human readers, however, a Makefile should list the rules in the order in which they are executed.
 
 
 ## Re-use base names
@@ -336,7 +336,7 @@ The distinction between the object and the path to the object is analogous to th
 
 ## Refrain from using advanced Makefile features
 
-Makefiles have an enormous range of features. The extra power tends, however, to come at the expense of readability. Moreover, most data analysis projects have a sufficiently simple structure that the extra power is not really needed. If 'VPATH directives' are added to a Makefile, for instance, then directory names can be omitted from file paths, so that `model.R` can be used instead of `src/model.R` [@gnu2024make, Section 4.5]. Omitting directory names makes Makefiles more concise, but it also makes them harder to understand for readers who are not Makefile experts.
+Makefiles have an enormous range of features. The extra power tends, however, to come at the expense of readability. Moreover, most data analysis projects have a sufficiently simple structure that the extra power is not really needed. If 'VPATH directives' are added to a Makefile, for instance, then directory names can be omitted from file paths, so that `model.R` can be used instead of `src/model.R` [@gnu2024make, Section 4.5]. But omitting directory names makes Makefiles much harder to understand for readers who are not Makefile experts.
 
 ## Orchestration and report files at the top
 

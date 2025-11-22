@@ -57,7 +57,7 @@ The workflow has five steps:
 
 ```{r, echo = FALSE}
 lines <- readLines("src/model.R")
-cat(paste(c(lines[7:8], ""), collapse = "\n"))
+cat(paste(c(lines[7:9], ""), collapse = "\n"))
 ```
 
 # extract_shell()
@@ -71,6 +71,8 @@ has return value
 ```{r, eval = TRUE, echo = FALSE}
 extract_shell("src/model.R")
 ```
+
+In the call to `cmd_assign()` above, the names `.cleaned_data` and `.out` start with a dot, and the name `rlm_method` does not. `extract_shell()` treats dotted name-value pairs differently fron non-dotted ones. A dotted name-value pair is assumed to refer to an unnamed file path passed at the command line, such as `out/cleaned_data.rds` or `out/model.rds`. A non-dotted pair is assumed to refer to a named argument, such as `--rlm_method=M`.
 
 The easiest way to use `extract_shell()` is to call it from the R console, and then cut-and-paste the results into the shell script.
 
@@ -96,7 +98,7 @@ cat(paste(lines, collapse = "\n"))
 Here, as in most cases, the output from `shell_script()` needs some editing before it is ready for use. The ordering of the commands in `workflow.sh` reflects the ordering of the files in the `src` directory. We need to rearrange the commands to instead reflect the order in which they need to be executed. We also add instructions on rendering the file `report.qmd`.
 
 ```{r, echo = FALSE}
-lines <- lines[c(2:5, 10:17, 1, 6:9)]
+lines <- lines[c(2:5, 10:18, 1, 6:9)]
 lines <- c(lines,
 	   "quarto render report.qmd",
 	   "")
