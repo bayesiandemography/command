@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start Guide</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -124,6 +124,7 @@ calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. F
 calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. For instance,
 <code>src/model.R</code> contains the lines</p>
 <pre><code><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.cleaned_data <span class="op">=</span> <span class="st">"out/cleaned_data.rds"</span>,</span>
+<span>           rlm_method <span class="op">=</span> <span class="st">"M"</span>,</span>
 <span>           .out <span class="op">=</span> <span class="st">"out/model.rds"</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level2">
@@ -137,7 +138,15 @@ rule. For instance, the call</p>
 <p>has return value</p>
 <pre><code>out/model.rds: ./src/model.R \
   out/cleaned_data.rds
-    Rscript $^ $@</code></pre>
+    Rscript $^ $@ --rlm_method=M</code></pre>
+<p>In the call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> above, the names
+<code>.cleaned_data</code> and <code>.out</code> start with a dot, and
+the name <code>rlm_method</code> does not. <code><a href="../reference/extract_make.html">extract_make()</a></code>
+treats dotted name-value pairs differently fron non-dotted ones. A
+dotted name-value pair is assumed to refer to an unnamed file path
+passed at the command line, such as <code>out/cleaned_data.rds</code> or
+<code>out/model.rds</code>. A non-dotted pair is assumed to refer to a
+named argument, such as <code>--rlm_method=M</code>.</p>
 <p>The easiest way to use <code><a href="../reference/extract_make.html">extract_make()</a></code> is to call it from
 the R console, and then cut-and-paste the results into Makefile.</p>
 </div>
@@ -168,7 +177,7 @@ out/fig_fitted.png: src/fig_fitted.R \
 
 out/model.rds: src/model.R \
   out/cleaned_data.rds
-    Rscript $^ $@
+    Rscript $^ $@ --rlm_method=M
 
 out/vals_fitted.rds: src/vals_fitted.R \
   out/cleaned_data.rds \
@@ -199,7 +208,7 @@ out/fig_fitted.png: src/fig_fitted.R \
 
 out/model.rds: src/model.R \
   out/cleaned_data.rds
-    Rscript $^ $@
+    Rscript $^ $@ --rlm_method=M
 
 out/vals_fitted.rds: src/vals_fitted.R \
   out/cleaned_data.rds \
@@ -230,7 +239,7 @@ out/cleaned_data.rds: src/cleaned_data.R \
 
 out/model.rds: src/model.R \
   out/cleaned_data.rds
-    Rscript $^ $@
+    Rscript $^ $@ --rlm_method=M
 
 out/vals_fitted.rds: src/vals_fitted.R \
   out/cleaned_data.rds \
@@ -273,8 +282,9 @@ clean:
 <pre class="fansi fansi-output"><code>Rscript src/cleaned_data.R data/raw_data.csv out/cleaned_data.rds
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.raw_data`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"data/raw_data.csv"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/cleaned_data.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
-Rscript src/model.R out/cleaned_data.rds out/model.rds
+Rscript src/model.R out/cleaned_data.rds out/model.rds --rlm_method=M
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.cleaned_data`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/cleaned_data.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
+<span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`rlm_method`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"M"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.out`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/model.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
 Rscript src/vals_fitted.R out/cleaned_data.rds out/model.rds out/vals_fitted.rds
 <span style="color: #00BB00;">✔</span> <span style="color: #555555;">Assigned object</span> <span style="color: #0000BB;">`.cleaned_data`</span> <span style="color: #555555;">with value</span> <span style="color: #0000BB;">"out/cleaned_data.rds"</span> <span style="color: #555555;">and class</span> <span style="color: #0000BB;">"character"</span>.
@@ -336,6 +346,22 @@ Output created: report.html
 <p>We have created <code>scaled.rds</code>, <code>model.rds</code>, and
 <code>tab_coef</code> in the <code>out</code> directory, and
 <code>report.html</code> in the main directory.</p>
+<div class="section level3">
+<h3 id="named-vs-unnamed-arguments">Named vs unnamed arguments<a class="anchor" aria-label="anchor" href="#named-vs-unnamed-arguments"></a>
+</h3>
+<p>In the examples above, all the command line arguments were filenames.
+Command line arguments can also, however, be values. The following
+command, for instance, includes a named argument called
+<code>n_iter</code> with value <code>100</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">Rscript</span> myfile.R <span class="at">--n_iter</span><span class="op">=</span>100 myoutput.rds</span></code></pre></div>
+<p>The corresponding call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> will look
+something like this:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.myfile <span class="op">=</span> <span class="st">"myfile.R"</span>,</span>
+<span>           n_iter <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>       .out <span class="op">=</span> <span class="st">"myoutput.R"</span><span class="op">)</span></span></code></pre></div>
+<p>When</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="other-resources">Other resources<a class="anchor" aria-label="anchor" href="#other-resources"></a>
@@ -346,8 +372,9 @@ Output created: report.html
 The shell script equivalent of <code><a href="../reference/makefile.html">makefile()</a></code>
 </li>
 <li>
-<a href="https://bayesiandemography.github.io/command/articles/workflow.html">Data
-Analysis Workflows</a> Safe, flexible workflows for data analysis</li>
+<a href="https://bayesiandemography.github.io/command/articles/workflow.html">Modeular
+Workflows for Data Analysis</a> Safe, flexible workflows for data
+analysis</li>
 <li>
 <a href="https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make" class="external-link">Project
 Management with Make</a> Makefiles in data analysis workflows</li>
@@ -370,7 +397,7 @@ Programs</a> Introduction to Rscript</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

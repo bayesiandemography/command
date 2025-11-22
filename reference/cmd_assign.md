@@ -1,0 +1,150 @@
+# Assign Values Passed at the Command Line or Interactively
+
+Assign values to names in the working environment. The values are
+typically supplied through the command line, but can be supplied
+interactively.
+
+Specifying the inputs and outputs of scripts through the command line
+can contribute to safter, more modular workflows.
+
+`cmd_assign_quiet()` is identical to `cmd_assign()`, but does not print
+progress messages to the console.
+
+## Usage
+
+``` r
+cmd_assign(...)
+
+cmd_assign_quiet(...)
+```
+
+## Arguments
+
+- ...:
+
+  Name-value pairs.
+
+## Value
+
+`cmd_assign()` is called for its side effect, which is to create objects
+in the global environment. However, `cmd_assign()` also invisibly
+returns a named list of objects.
+
+## Types of session
+
+`cmd_assign()` behaves differently depending on how it whether it is
+called
+
+1.  interactively, or
+
+2.  inside an R script that is run from the command line.
+
+For instance, if the code
+
+`cmd_assign(use_log = TRUE)`
+
+is run interactively, it creates an object called `use_log` with value
+`TRUE`.
+
+But if the same code is run inside a script via the command
+
+`Rscript tidy_data.R --use_log=FALSE`
+
+it creates an object called `use_log` with value `FALSE`.
+
+`cmd_assign()` is typically called interactively when a workflow is
+being developed, and through the command line when the workflow has
+matured.
+
+## Matching names and values
+
+When used in a script called from the command line, `cmd_assign()` first
+matches named command line arguments, and then matches unnamed command
+line arguments, in the order in which they are supplied.
+
+If, for instance, the script `person.R` contains the lines
+
+    cmd_assign(.data = "raw_data.csv",
+               max_age = 85,
+               .out = "person.rds")
+
+and if `person.R` is run from the command line using
+
+    Rscript person.R raw_data.csv person.rds --max_age=100
+
+then `cmd_assign()` first matches named command line argument
+`--max_age=100` to
+`cmd_assign() argument `max_age`, and then matches unnamed command line arguments `raw_data.csv`and`person.rds`to`cmd_assign()`arugments`.data`and`.out\`.
+
+## Coercing values passed at the command line
+
+Values passed at the command line start out as text strings.
+`cmd_assign()` coerces these text strings to have the same class as the
+corresponding values in the call to `cmd_assign()`. For instance, if a
+script called `fit.R` contains the lines
+
+    cmd_assign(.data = "cleaned.rds",
+               impute = TRUE,
+               date = as.Date("2026-01-01"),
+               .out = "fit.rds")
+
+and if `fitted.R` is run from the command line using
+
+    Rscript fitted.R cleaned.rds fit.rds --impute=TRUE --date=2025-01-01
+
+then `cmd_assign()` will create
+
+- a character vector called `.data` with value "cleaned.rds",
+
+- a logical vector called `impute` with value `TRUE`,
+
+- a date vector called `date` with value `"2025-01-01"`, and
+
+- a character vector called `.out` with value \`"fit.rds".
+
+## References
+
+- [Command-Line
+  Programs](https://swcarpentry.github.io/r-novice-inflammation/05-cmdline.html)
+  Introduction to Rscript
+
+## See also
+
+- [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
+  Turn a `cmd_assign()` call into a shell command
+
+- [`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
+  Turn a `cmd_assign()` call into a Makefile rule
+
+- [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
+  Create a shell script
+
+- [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
+  Create a Makefile
+
+- [Quick
+  Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+  How to use `cmd_assign()`
+
+- [Modular Workflows for Data
+  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Safe, flexible data analysis workflows.
+
+- Base R function
+  [`commandArgs()`](https://rdrr.io/r/base/commandArgs.html) uses a more
+  general, lower-level approach to processing command line arguments.
+  ([`commandArgs()`](https://rdrr.io/r/base/commandArgs.html) is called
+  internally by `cmd_assign()`.)
+
+- [littler](https://CRAN.R-project.org/package=littler) Alternative to
+  Rscript
+
+## Examples
+
+``` r
+if (interactive()) {
+  cmd_assign(.data = "mydata.csv",
+             n_iter = 2000,
+             .out = "results.rds")
+}
+```

@@ -1,0 +1,59 @@
+# command
+
+[![](reference/figures/sticker.png)](https://github.com/bayesiandemography/command)
+
+Process command line arguments as part of data analysis workflow.
+
+The main function is
+[cmd_assign()](https://bayesiandemography.github.io/command/reference/cmd_assign.html).
+
+For an overview of the package, see [Quick
+Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
+
+For ideas on building safe, modular workflows, see [Modular Workflows
+for Data
+Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html).
+
+## Installation
+
+``` r
+install.packages("command")
+```
+
+## Example
+
+``` r
+cmd_assign(.data = "data/raw_data.csv",
+           date_start = "2025-01-01",
+           trim_outliers = TRUE,
+           .out = "out/cleaned_data.rds")
+```
+
+# Package index
+
+## All functions
+
+- [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  [`cmd_assign_quiet()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  : Assign Values Passed at the Command Line or Interactively
+- [`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
+  : Turn a 'cmd_assign' Call Into a Makefile Rule
+- [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
+  : Turn a 'cmd_assign' Call Into a Shell Command
+- [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
+  : Create a Makefile
+- [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
+  : Create a Shell Script
+
+# Articles
+
+### All vignettes
+
+- [Quick
+  Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.md):
+- [Creating a Shell
+  Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.md):
+- [Creating a
+  Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.md):
+- [Modular Workflows for Data
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.md):

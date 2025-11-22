@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start Guide</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -115,7 +115,7 @@ orchestration file, which serves as an executable description of the
 analysis.</p>
 <p>The article describes the main elements of the strategy, presents an
 example, and lists some costs and benefits. The final section gives some
-suggestions.</p>
+suggestions about implementation details.</p>
 </div>
 <div class="section level2">
 <h2 id="a-strategy-for-constructing-a-modular-workflow">A strategy for constructing a modular workflow<a class="anchor" aria-label="anchor" href="#a-strategy-for-constructing-a-modular-workflow"></a>
@@ -137,7 +137,7 @@ own.</p>
 <col width="57%">
 </colgroup>
 <thead><tr class="header">
-<th align="left">Inputs</th>
+<th align="left">Input</th>
 <th align="left">Output</th>
 </tr></thead>
 <tbody>
@@ -193,8 +193,8 @@ script might contain only a few lines of code.</p>
 <p>Occasionally, a script does need to be long, because breaking the
 task into subtasks increases, rather than decreases, complexity. A long
 script should, however, be subjected to extra checking, and should
-include a comment explaining to future maintainers why the length was
-necessary.</p>
+include a comment explaining to future maintainers why the extra length
+was necessary.</p>
 </div>
 <div class="section level3">
 <h3 id="use-rscript-or-littler-to-run-each-script-in-a-new-session">Use Rscript or littler to run each script in a new session<a class="anchor" aria-label="anchor" href="#use-rscript-or-littler-to-run-each-script-in-a-new-session"></a>
@@ -203,7 +203,7 @@ necessary.</p>
 script has finished running. Any packages (aside from base R packages)
 that are required by a script should be loaded explicitly. Running each
 script in its own session implies that, when the script completes, all
-objects created during by the script, which were not saved to disk,
+objects created during by the script that were not saved to disk
 disappear.</p>
 <p>The best way to give each script its own session is to run the script
 from the command line, using an application such as <a href="https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html" class="external-link">Rscript</a>
@@ -251,7 +251,7 @@ specifically for data analysis workflows. Function
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> in <code>command</code> automatically checks
 and reformats arguments, and assigns values within the working
 environment. For an introduction to <code>command</code>, see <a href="https://bayesiandemography.github.io/command/articles/a1_quickstart.html">Quick
-Start Guide</a>.</p>
+Start</a>.</p>
 <p>The ability to pass arguments to scripts essentially turns the
 scripts into functions. If, for instance, we want to run the code in
 <code>my-script.R</code> on <code>my-other-data.csv</code>, rather than
@@ -330,7 +330,7 @@ are “automatic variables”. When the Makefile runs, the phrase
 <p>The <code>make</code> application uses the Makefile to construct a
 dependency graph for the inputs and outputs in the workflow. The
 Makefile above yields the graph
-<img src="makefile_deps.png" width="45%" style="display: block; margin: auto;"></p>
+<img src="makefile_deps.png" class="r-plt" width="45%" style="display: block; margin: auto;"></p>
 <p>If <code>make</code> sees that a dependency is older than one of the
 prerequisites, then it will recreate that dependency, and all
 dependencies downstream of it. For instance, in the example above, if
@@ -591,20 +591,18 @@ name clashes, is particularly acute in a long file carrying out multiple
 tasks, where it becomes necessary to distinguish, for instance, between
 <code>model_baseline</code>, <code>model_revised</code>,
 <code>model_revised_subset</code>, and so on. Having short scripts, each
-run in its own session, allows analysts to re-use clashes, and the need
-to search for distinct names.</p>
+run in its own session, allows analysts to re-use names without name
+clashes.</p>
 </div>
 <div class="section level3">
 <h3 id="reading-code">Reading code<a class="anchor" aria-label="anchor" href="#reading-code"></a>
 </h3>
 <p>Code that takes the form of small, self-contained units is also much
-easier to read. A small script with a single objective makes can be
-understood much more quickly than a large script with several
-objectives. Code constructed out of semi-independent units can be picked
-up part way through, sparing the reader the need to read all of the code
-just to understand one part of it. Having a separate orchestration file
-allows the reader to see the overall structure of the analysis,
-including the main steps, and the flow of information.</p>
+easier to read. A small script with a single objective can be understood
+much more quickly than a large script with several objectives. Code
+constructed out of semi-independent units can be picked up part way
+through, sparing the reader the need to read all the code just to
+understand one part of it.</p>
 </div>
 <div class="section level3">
 <h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
@@ -615,15 +613,13 @@ aids, such as inline comments or README files, is minimized <span class="citatio
 techniques described in this paper lead to code that is
 self-documenting. The orchestration file, for instance, serves as a
 summary of the overall workflow, and the command line arguments serve as
-a description of the inputs and outputs. In addition, when a script is
-short and has a single objective, the reader needs much less assistance
-than when a script is long and has multiple objectives.</p>
+a description of the inputs and outputs.</p>
 </div>
 <div class="section level3">
 <h3 id="debugging">Debugging<a class="anchor" aria-label="anchor" href="#debugging"></a>
 </h3>
 <p>Keeping scripts short, running each script in its own session, and
-explicitly defining the inputs to that session mean that, if something
+explicitly defining the inputs to each session mean that, if something
 goes wrong, there should only be a few objects in the working
 environment, and the origins of these objects should be clear. Debugging
 is a lot less painful than it might otherwise be.</p>
@@ -633,13 +629,12 @@ is a lot less painful than it might otherwise be.</p>
 </h3>
 <p>Small scripts, with clearly-defined inputs, outputs, and tasks are
 composable: they can be combined with other scripts in many different
-ways. Consider, for instance, the problem of extracting performance
-measures from a model object and then plotting them. If we have one
-script to derive the performance measures, and a second script to plot
-these measures, then it is easy to add a third script to display the
-measures in a table. This sort of flexibility is particularly helpful in
-data analyses where there is uncertainty about the nature of the data
-the the most appropriate models, plots, and so forth.</p>
+ways. If, for instance, we have one script to derive performance
+measures, and a second script to plot these measures, then it is easy to
+add a third script to display the performance measures in a table. This
+sort of flexibility is particularly helpful in data analyses where there
+is uncertainty about the nature of the data the the most appropriate
+models, plots, and so forth.</p>
 </div>
 <div class="section level3">
 <h3 id="scalability">Scalability<a class="anchor" aria-label="anchor" href="#scalability"></a>
@@ -649,11 +644,11 @@ needed, and reduces the need to re-run calculations from the beginning.
 These savings can be important in projects with large datasets or long
 computation times. Makefiles are particularly helpful in such settings,
 since they make sure that computations are carried out when they are
-needed, but only then.</p>
+needed, but only when they are needed.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="some-stylistic-suggestions">Some stylistic suggestions<a class="anchor" aria-label="anchor" href="#some-stylistic-suggestions"></a>
+<h2 id="some-suggestions-about-implementation">Some suggestions about implementation<a class="anchor" aria-label="anchor" href="#some-suggestions-about-implementation"></a>
 </h2>
 <div class="section level3">
 <h3 id="let-the-orchestration-file-impose-order">Let the orchestration file impose order<a class="anchor" aria-label="anchor" href="#let-the-orchestration-file-impose-order"></a>
@@ -661,20 +656,20 @@ needed, but only then.</p>
 <p>A common recommendation in advice on writing analysis code is to
 number files, such as <code>01-ingest-data.R</code>,
 <code>02-clean-data.R</code>, <code>03-fit-model.R</code>, and so on.
-The problem with this recommendation is that data analysis is
-unpredictable, and new files often need to be added, or existing files
-deleted. If, for instance, we insert an impute-missing-values step
-between the clean-data step and the fit-model step, then we need to redo
-our numbering. This quickly becomes annoying.</p>
+The problem with numbering is that analysting data is unpredictable, and
+new files often need to be added, or existing files deleted. For
+instance, we might discover that we need an impute-missing-values step
+between our clean-data step and our fit-model step. If we have numbered
+our files, any such change requires a large-sale renumbering. This can
+be annoying.</p>
 <p>An alternative is to rely entirely on the orchestration file to
-record the order in which files are run. The analyst needs to update the
-orchestration file anyway, each time a script is added or removed. When
-there is an orchestration file, numbering becomes redundant.</p>
-<p>One quirk in the case of Makefiles is that, when building a
-dependency graph, the <code>make</code> application relies entirely on
-targets and prerequisites, and ignores the physical position of rules
-within the file. As a courtesy to human readers, however, a Makefile
-should list the rules in the order in which they are executed.</p>
+record the order in which files are run. When there is an orchestration
+file, numbering becomes redundant.</p>
+<p>When building a dependency graph, the <code>make</code> application
+relies entirely on targets and prerequisites, and ignores the physical
+position of rules within the file. As a courtesy to human readers,
+however, a Makefile should list the rules in the order in which they are
+executed.</p>
 </div>
 <div class="section level3">
 <h3 id="re-use-base-names">Re-use base names<a class="anchor" aria-label="anchor" href="#re-use-base-names"></a>
@@ -724,9 +719,9 @@ power is not really needed. If ‘VPATH directives’ are added to a
 Makefile, for instance, then directory names can be omitted from file
 paths, so that <code>model.R</code> can be used instead of
 <code>src/model.R</code> <span class="citation">(Free Software
-Foundation 2024, sec. 4.5)</span>. Omitting directory names makes
-Makefiles more concise, but it also makes them harder to understand for
-readers who are not Makefile experts.</p>
+Foundation 2024, sec. 4.5)</span>. But omitting directory names makes
+Makefiles much harder to understand for readers who are not Makefile
+experts.</p>
 </div>
 <div class="section level3">
 <h3 id="orchestration-and-report-files-at-the-top">Orchestration and report files at the top<a class="anchor" aria-label="anchor" href="#orchestration-and-report-files-at-the-top"></a>
@@ -915,7 +910,7 @@ The Definitive Guide</em>. Chapman; Hall/CRC. <a href="https://bookdown.org/yihu
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
