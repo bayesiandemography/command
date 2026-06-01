@@ -11,13 +11,13 @@
 Source:
 [`DESCRIPTION`](https://github.com/bayesiandemography/command/blob/main/DESCRIPTION)
 
-Bryant J (2025). *command: Process Command Line Arguments*. R package
-version 0.1.3, <https://bayesiandemography.github.io/command/>.
+Bryant J (2026). *command: Process Command Line Arguments*. R package
+version 0.1.4, <https://bayesiandemography.github.io/command/>.
 
     @Manual{,
       title = {command: Process Command Line Arguments},
       author = {John Bryant},
-      year = {2025},
-      note = {R package version 0.1.3},
+      year = {2026},
+      note = {R package version 0.1.4},
       url = {https://bayesiandemography.github.io/command/},
     }

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Modular Workflows for Data Analysis • command</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Modular Workflows for Data Analysis">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
     
 <blockquote>
 <p>The computations and the software for data analysis should be
-trustworthy: they should do what they claim, and be seen to do so <span class="citation">(Chambers 2008, 2:3)</span>.</p>
+trustworthy: they should do what they claim, and be seen to do so <span class="citation">(Chambers 2008, 3)</span>.</p>
 </blockquote>
 <blockquote>
 <p>The only way to write complex software that won’t fall on its face is
@@ -94,17 +94,17 @@ other units.</p>
 <p>Ideas about modularity underlie much standard R advice about writing
 code for data analysis. RStudio-style projects, for instance, are an
 example of modular design <span class="citation">(Wilson et al. 2017;
-Wickham, Çetinkaya-Rundel, and Grolemund 2023; ProjectTemplate
-contributors 2025)</span>. However, many actual data analyses written in
-R are the opposite of modular. For instance, the entire workflow is
-often contained in a single, huge script that is responsible for
-everything from importing data to fitting to creating plots. Even when
-code for an analysis is divided into smaller scripts, these smaller
-scripts often have diffuse aims and complex inputs and outputs. Heavy
-use of <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> commands mean that many scripts contribute
-objects to the current working environment, and no script can be
-understood in isolation. Changes to one part of a workflow have large,
-unexpected implications for other parts of the workflow.</p>
+Wickham et al. 2023; ProjectTemplate contributors 2025)</span>. However,
+many actual data analyses written in R are the opposite of modular. For
+instance, the entire workflow is often contained in a single, huge
+script that is responsible for everything from importing data to fitting
+to creating plots. Even when code for an analysis is divided into
+smaller scripts, these smaller scripts often have diffuse aims and
+complex inputs and outputs. Heavy use of <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> commands
+mean that many scripts contribute objects to the current working
+environment, and no script can be understood in isolation. Changes to
+one part of a workflow have large, unexpected implications for other
+parts of the workflow.</p>
 <p>This article presents a strategy for making data analysis workflows
 more strictly modular. The basic unit in this strategy is a script. Each
 script is responsible for one small task, with inputs and outputs
@@ -244,8 +244,8 @@ from the call above can be retrieved using</p>
 fiddly. Packages <code>argparse</code>, <code>docopt</code>,
 <code>getopt</code>, <code>optparse</code>, and <code>R.utils</code> all
 implement high-level alternatives to base R <code><a href="https://rdrr.io/r/base/commandArgs.html" class="external-link">commandArgs()</a></code>
-<span class="citation">(Jonge, Fowler, and Keleshev 2018; Davis 2023;
-Pav 2023; Davis and Day 2020; Bengtsson 2023)</span>.</p>
+<span class="citation">(Jonge et al. 2018; Davis 2023; Pav 2023; Davis
+and Day 2020; Bengtsson 2023)</span>.</p>
 <p>The <code>command</code> package is one further alternative, designed
 specifically for data analysis workflows. Function
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> in <code>command</code> automatically checks
@@ -330,7 +330,7 @@ are “automatic variables”. When the Makefile runs, the phrase
 <p>The <code>make</code> application uses the Makefile to construct a
 dependency graph for the inputs and outputs in the workflow. The
 Makefile above yields the graph
-<img src="makefile_deps.png" class="r-plt" width="45%" style="display: block; margin: auto;"></p>
+<img src="makefile_deps.png" class="r-plt" alt="" width="45%" style="display: block; margin: auto;"></p>
 <p>If <code>make</code> sees that a dependency is older than one of the
 prerequisites, then it will recreate that dependency, and all
 dependencies downstream of it. For instance, in the example above, if
@@ -346,16 +346,16 @@ however, create <code>model.rds</code> itself, or
 <div class="section level3">
 <h3 id="reports">Reports<a class="anchor" aria-label="anchor" href="#reports"></a>
 </h3>
-<p>Applications such as R Markdown <span class="citation">(Xie, Allaire,
-and Grolemund 2018)</span> and Quarto <span class="citation">(Posit
-Software, PBC 2025)</span> allow authors to combine code and text within
-a single document. It is common to see authors put <em>all</em> the code
-for an analysis in an R Markdown or Quarto document. This can be
-effective with small analyses, such as the exploration of a new dataset.
-But it does not scale well. Analyses where all the code is contained in
-a single R Markdown or Quarto file suffer from all the usual pathologies
-of a large, complicated code file, along with the extra challenge of
-coping with markdown errors.</p>
+<p>Applications such as R Markdown <span class="citation">(Xie et al.
+2018)</span> and Quarto <span class="citation">(Posit Software, PBC
+2025)</span> allow authors to combine code and text within a single
+document. It is common to see authors put <em>all</em> the code for an
+analysis in an R Markdown or Quarto document. This can be effective with
+small analyses, such as the exploration of a new dataset. But it does
+not scale well. Analyses where all the code is contained in a single R
+Markdown or Quarto file suffer from all the usual pathologies of a
+large, complicated code file, along with the extra challenge of coping
+with markdown errors.</p>
 <p>A more modular, scalable alternative is to do the analysis outside
 the report, and to limit code within the report to snippets that read in
 results and apply formatting. A plot, for instance, can be constructed
@@ -819,7 +819,7 @@ specified by `.vals_fitted;</li>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-baker2020using" class="csl-entry">
 Baker, Peter. 2020. <span>“Using GNU Make to Manage the Workflow of Data
 Analysis Projects.”</span> <em>Journal of Statistical Software</em> 94
@@ -830,12 +830,12 @@ Bengtsson, Henrik. 2023. <em>R.utils: Various Programming
 Utilities</em>. <a href="https://CRAN.R-project.org/package=R.utils" class="external-link">https://CRAN.R-project.org/package=R.utils</a>.
 </div>
 <div id="ref-broman2013minimal" class="csl-entry">
-Broman, Karl W. 2013. <span>“Minimal Make: A Minimal Tutorial on GNU
-Make.”</span> <a href="https://kbroman.org/minimal_make/" class="external-link">https://kbroman.org/minimal_make/</a>.
+Broman, Karl W. 2013. <em>Minimal Make: A Minimal Tutorial on GNU
+Make</em>. <a href="https://kbroman.org/minimal_make/" class="external-link">https://kbroman.org/minimal_make/</a>.
 </div>
 <div id="ref-chambers2008software" class="csl-entry">
 Chambers, John M. 2008. <em>Software for Data Analysis: Programming with
-r</em>. Vol. 2. 1. Springer.
+r</em>. Vol. 2. Springer.
 </div>
 <div id="ref-david2023optparse" class="csl-entry">
 Davis, Trevor L. 2023. <em>Optparse: Command Line Option Parser</em>. <a href="https://CRAN.R-project.org/package=optparse" class="external-link">https://CRAN.R-project.org/package=optparse</a>.
@@ -858,8 +858,7 @@ Jonge, Edwin de, Martin Fowler, and Vladimir Keleshev. 2018. <em>Docopt:
 Command-Line Interface Specification Language</em>. <a href="https://CRAN.R-project.org/package=docopt" class="external-link">https://CRAN.R-project.org/package=docopt</a>.
 </div>
 <div id="ref-mcconnell2004code" class="csl-entry">
-McConnell, Steve. 2004. <em>Code Complete</em>. 2nd ed. Redmond, WA:
-Microsoft Press.
+McConnell, Steve. 2004. <em>Code Complete</em>. 2nd ed. Microsoft Press.
 </div>
 <div id="ref-pav2023argparse" class="csl-entry">
 Pav, Steven E. 2023. <em>Argparse: Command Line Optional and Positional
@@ -869,11 +868,11 @@ Argument Parser</em>. <a href="https://CRAN.R-project.org/package=argparse" clas
 Posit Software, PBC. 2025. <em>Quarto</em>. <a href="https://quarto.org" class="external-link">https://quarto.org</a>.
 </div>
 <div id="ref-projecttemplate2025project" class="csl-entry">
-ProjectTemplate contributors. 2025. <span>“ProjectTemplate.”</span> <a href="http://projecttemplate.net/" class="external-link">http://projecttemplate.net/</a>.
+ProjectTemplate contributors. 2025. <em>ProjectTemplate</em>. <a href="http://projecttemplate.net/" class="external-link">http://projecttemplate.net/</a>.
 </div>
 <div id="ref-raymond2003art" class="csl-entry">
-Raymond, Eric S. 2003. <span>“The Art of Unix Programming.”</span> In
-<em>The Art of Unix Programming</em>. <a href="http://catb.org/~esr/writings/taoup/html/index.html" class="external-link uri">http://catb.org/~esr/writings/taoup/html/index.html</a>;
+Raymond, Eric S. 2003. <span>“The Art of Unix Programming.”</span> Chap.
+1 in <em>The Art of Unix Programming</em>. <a href="http://catb.org/~esr/writings/taoup/html/index.html" class="external-link uri">Http://catb.org/~esr/writings/taoup/html/index.html</a>;
 Addison-Wesley.
 </div>
 <div id="ref-simon2019sciences" class="csl-entry">
@@ -881,7 +880,7 @@ Simon, Herbert A. 2019. <em>The Sciences of the Artificial, Reissue of
 the Third Edition with a New Introduction by John Laird</em>. MIT press.
 </div>
 <div id="ref-turing2025make" class="csl-entry">
-The Turing Way Community. 2025. <span>“Make Examples.”</span> <a href="https://book.the-turing-way.org/reproducible-research/make/make-examples.html" class="external-link">https://book.the-turing-way.org/reproducible-research/make/make-examples.html</a>.
+The Turing Way Community. 2025. <em>Make Examples</em>. <a href="https://book.the-turing-way.org/reproducible-research/make/make-examples.html" class="external-link">https://book.the-turing-way.org/reproducible-research/make/make-examples.html</a>.
 </div>
 <div id="ref-wickham2023r" class="csl-entry">
 Wickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023.

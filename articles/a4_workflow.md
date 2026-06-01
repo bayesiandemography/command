@@ -2,7 +2,7 @@
 
 > The computations and the software for data analysis should be
 > trustworthy: they should do what they claim, and be seen to do so
-> (Chambers 2008, 2:3).
+> (Chambers 2008, 3).
 
 > The only way to write complex software that won’t fall on its face is
 > to build it out of simple modules connected by well-defined
@@ -24,18 +24,18 @@ about other units.
 
 Ideas about modularity underlie much standard R advice about writing
 code for data analysis. RStudio-style projects, for instance, are an
-example of modular design (Wilson et al. 2017; Wickham,
-Çetinkaya-Rundel, and Grolemund 2023; ProjectTemplate contributors
-2025). However, many actual data analyses written in R are the opposite
-of modular. For instance, the entire workflow is often contained in a
-single, huge script that is responsible for everything from importing
-data to fitting to creating plots. Even when code for an analysis is
-divided into smaller scripts, these smaller scripts often have diffuse
-aims and complex inputs and outputs. Heavy use of
-[`source()`](https://rdrr.io/r/base/source.html) commands mean that many
-scripts contribute objects to the current working environment, and no
-script can be understood in isolation. Changes to one part of a workflow
-have large, unexpected implications for other parts of the workflow.
+example of modular design (Wilson et al. 2017; Wickham et al. 2023;
+ProjectTemplate contributors 2025). However, many actual data analyses
+written in R are the opposite of modular. For instance, the entire
+workflow is often contained in a single, huge script that is responsible
+for everything from importing data to fitting to creating plots. Even
+when code for an analysis is divided into smaller scripts, these smaller
+scripts often have diffuse aims and complex inputs and outputs. Heavy
+use of [`source()`](https://rdrr.io/r/base/source.html) commands mean
+that many scripts contribute objects to the current working environment,
+and no script can be understood in isolation. Changes to one part of a
+workflow have large, unexpected implications for other parts of the
+workflow.
 
 This article presents a strategy for making data analysis workflows more
 strictly modular. The basic unit in this strategy is a script. Each
@@ -138,6 +138,7 @@ followed by some manipulation and reformatting. For instance, values
 from the call above can be retrieved using
 
 ``` r
+
 args <- commandArgs(trailingOnly = TRUE)
 filename_input <- args[[1]]
 filename_output <- args[[2]]
@@ -149,9 +150,8 @@ As this example illustrates, using base R function
 command line arguments can be fiddly. Packages `argparse`, `docopt`,
 `getopt`, `optparse`, and `R.utils` all implement high-level
 alternatives to base R
-[`commandArgs()`](https://rdrr.io/r/base/commandArgs.html) (Jonge,
-Fowler, and Keleshev 2018; Davis 2023; Pav 2023; Davis and Day 2020;
-Bengtsson 2023).
+[`commandArgs()`](https://rdrr.io/r/base/commandArgs.html) (Jonge et al.
+2018; Davis 2023; Pav 2023; Davis and Day 2020; Bengtsson 2023).
 
 The `command` package is one further alternative, designed specifically
 for data analysis workflows. Function
@@ -186,6 +186,7 @@ ingesting of the raw data to the compilation of the final report.
 Orchestration files are often written in R, and take the form
 
 ``` r
+
 source("cleaned_data.R")
 source("model.R")
 source("performance.R")
@@ -278,15 +279,15 @@ Turing Way Community (2025).
 
 ### Reports
 
-Applications such as R Markdown (Xie, Allaire, and Grolemund 2018) and
-Quarto (Posit Software, PBC 2025) allow authors to combine code and text
-within a single document. It is common to see authors put *all* the code
-for an analysis in an R Markdown or Quarto document. This can be
-effective with small analyses, such as the exploration of a new dataset.
-But it does not scale well. Analyses where all the code is contained in
-a single R Markdown or Quarto file suffer from all the usual pathologies
-of a large, complicated code file, along with the extra challenge of
-coping with markdown errors.
+Applications such as R Markdown (Xie et al. 2018) and Quarto (Posit
+Software, PBC 2025) allow authors to combine code and text within a
+single document. It is common to see authors put *all* the code for an
+analysis in an R Markdown or Quarto document. This can be effective with
+small analyses, such as the exploration of a new dataset. But it does
+not scale well. Analyses where all the code is contained in a single R
+Markdown or Quarto file suffer from all the usual pathologies of a
+large, complicated code file, along with the extra challenge of coping
+with markdown errors.
 
 A more modular, scalable alternative is to do the analysis outside the
 report, and to limit code within the report to snippets that read in
@@ -328,6 +329,7 @@ folders for the raw data (`data`), the code (`src`) and the outputs
 (`out`).
 
 The flow of data and outputs is set out in the Makefile:
+
 
     .PHONY: all
     all: report.html
@@ -381,6 +383,7 @@ through the following steps:
 
 File `cleaned_data.R` contains the following code:
 
+
     suppressPackageStartupMessages({
       library(readr)
       library(dplyr)
@@ -413,6 +416,7 @@ This code
 - writes out the cleaned data, using the filename specified by `.out`.
 
 File `model.R` contains the code
+
 
     suppressPackageStartupMessages({
       library(MASS)
@@ -624,6 +628,7 @@ at the front. For instance, if we give object that we read in the name
 Following this convention leads to code such as
 
 ``` r
+
 cmd_assign(.data = "out/model.rds",
            .out = "out/vals_fitted.rds")
 
@@ -666,6 +671,7 @@ typically the ultimate objective of the project.
 
 File `vals_fitted.R` from the example contains the following code:
 
+
     suppressPackageStartupMessages({
       library(dplyr)
       library(tidyr)
@@ -702,6 +708,7 @@ This code
 - writes out the result, to a file specified by `.out`.
 
 File `fig_fitted.R` contains the code
+
 
     suppressPackageStartupMessages({
       library(ggplot2)
@@ -743,11 +750,11 @@ Analysis Projects.” *Journal of Statistical Software* 94 (1): 1–46.
 Bengtsson, Henrik. 2023. *R.utils: Various Programming Utilities*.
 <https://CRAN.R-project.org/package=R.utils>.
 
-Broman, Karl W. 2013. “Minimal Make: A Minimal Tutorial on GNU Make.”
+Broman, Karl W. 2013. *Minimal Make: A Minimal Tutorial on GNU Make*.
 <https://kbroman.org/minimal_make/>.
 
 Chambers, John M. 2008. *Software for Data Analysis: Programming with
-r*. Vol. 2. 1. Springer.
+r*. Vol. 2. Springer.
 
 Davis, Trevor L. 2023. *Optparse: Command Line Option Parser*.
 <https://CRAN.R-project.org/package=optparse>.
@@ -766,26 +773,25 @@ Jonge, Edwin de, Martin Fowler, and Vladimir Keleshev. 2018. *Docopt:
 Command-Line Interface Specification Language*.
 <https://CRAN.R-project.org/package=docopt>.
 
-McConnell, Steve. 2004. *Code Complete*. 2nd ed. Redmond, WA: Microsoft
-Press.
+McConnell, Steve. 2004. *Code Complete*. 2nd ed. Microsoft Press.
 
 Pav, Steven E. 2023. *Argparse: Command Line Optional and Positional
 Argument Parser*. <https://CRAN.R-project.org/package=argparse>.
 
 Posit Software, PBC. 2025. *Quarto*. <https://quarto.org>.
 
-ProjectTemplate contributors. 2025. “ProjectTemplate.”
+ProjectTemplate contributors. 2025. *ProjectTemplate*.
 <http://projecttemplate.net/>.
 
-Raymond, Eric S. 2003. “The Art of Unix Programming.” In *The Art of
-Unix Programming*.
-[http://catb.org/~esr/writings/taoup/html/index.html](http://catb.org/~esr/writings/taoup/html/index.md);
+Raymond, Eric S. 2003. “The Art of Unix Programming.” Chap. 1 in *The
+Art of Unix Programming*.
+[Http://catb.org/~esr/writings/taoup/html/index.html](http://catb.org/~esr/writings/taoup/html/index.md);
 Addison-Wesley.
 
 Simon, Herbert A. 2019. *The Sciences of the Artificial, Reissue of the
 Third Edition with a New Introduction by John Laird*. MIT press.
 
-The Turing Way Community. 2025. “Make Examples.”
+The Turing Way Community. 2025. *Make Examples*.
 <https://book.the-turing-way.org/reproducible-research/make/make-examples.html>.
 
 Wickham, Hadley, Mine Çetinkaya-Rundel, and Garrett Grolemund. 2023. *R

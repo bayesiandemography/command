@@ -65,6 +65,7 @@ from an R file, and turns it into a Makefile rule. For instance, the
 call
 
 ``` r
+
 extract_make("src/model.R")
 ```
 
@@ -103,10 +104,12 @@ into a Makefile.
 For instance, the call
 
 ``` r
+
 makefile("src")
 ```
 
 creates a new file called `Makefile` with the lines
+
 
     .PHONY: all
     all:
@@ -140,6 +143,7 @@ The output from
 needs some editing before it is ready for use. We need to a rule for
 creating the report, and make that report a prerequisite for `all:` at
 the top of the file:
+
 
     .PHONY: all
     all: report.html
@@ -275,6 +279,8 @@ metadata
   link-citations: true
   date-format: long
   lang: en
+  engines:
+    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Swiss Fertility
   
 Output created: report.html
@@ -322,6 +328,7 @@ The corresponding call to
 will look something like this:
 
 ``` r
+
 cmd_assign(.myfile = "myfile.R",
            n_iter = 100,
        .out = "myoutput.R")

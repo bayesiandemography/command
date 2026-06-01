@@ -17,12 +17,14 @@ Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html
 ## Installation
 
 ``` r
+
 install.packages("command")
 ```
 
 ## Example
 
 ``` r
+
 cmd_assign(.data = "data/raw_data.csv",
            date_start = "2025-01-01",
            trim_outliers = TRUE,

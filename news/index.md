@@ -1,6 +1,12 @@
 # Changelog
 
+## command 0.1.4
+
+- Added test coverage
+
 ## command 0.1.3
+
+CRAN release: 2025-11-22
 
 ### Documentation
 

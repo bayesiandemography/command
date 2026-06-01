@@ -62,6 +62,7 @@ from an R file, and turns it into a shell command. For instance, the
 call
 
 ``` r
+
 extract_shell("src/model.R")
 ```
 
@@ -101,10 +102,12 @@ commands into a script.
 For instance, the call
 
 ``` r
+
 shell_script("src")
 ```
 
 creates a new file called `workflow.sh` with the lines
+
 
     Rscript src/cleaned_data.R \
       data/raw_data.csv \
@@ -212,6 +215,8 @@ metadata
   link-citations: true
   date-format: long
   lang: en
+  engines:
+    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Swiss Fertility
   
 Output created: report.html

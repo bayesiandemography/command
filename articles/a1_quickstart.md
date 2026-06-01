@@ -28,6 +28,7 @@ cmd_assign(obj1 = "a",
 has the same effect as running
 
 ``` r
+
 obj1 <- "orange"
 obj2 <- 1
 ```
@@ -152,6 +153,7 @@ The file `airmiles.csv` holds data on annual passenger numbers:
 
 The file `fig_smoothed.R` contains the following code:
 
+
     ## Specify packages, inputs, and outputs ------------------
 
     suppressPackageStartupMessages({
@@ -254,6 +256,7 @@ to
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md):
 
 ``` r
+
 cmd_assign(.data = "data/dataset.csv",
            n_iter = 5,
            use_log = TRUE,
@@ -356,6 +359,7 @@ conformed to a particular naming convention: they have all had names
 that start with a dot. For instance:
 
 ``` r
+
 cmd_assign(.data = "data/dataset.csv", # '.data'
            n_iter = 5,
            use_log = TRUE,
@@ -372,6 +376,7 @@ function such as [`readRDS()`](https://rdrr.io/r/base/readRDS.html) or
 `read_csv()`, as in
 
 ``` r
+
 data <- read_csv(.data)
 ```
 
@@ -437,6 +442,7 @@ file, called `report.qmd`, creates a report with two figures:
 The second file, called `workflow.sh`, is a shell script that runs the
 whole workflow. It contains the following code:
 
+
     Rscript fig_smoothed.R airmiles.csv 5 fig_smoothed_5.png 
 
     Rscript fig_smoothed.R airmiles.csv 10 fig_smoothed_10.png 
@@ -489,6 +495,8 @@ metadata
   link-citations: true
   date-format: long
   lang: en
+  engines:
+    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Smoothed Passenger Miles
   
 Output created: report.html
@@ -518,6 +526,7 @@ An even better way to organize a data analysis workflow is to put the
 Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make).
 
 Here is the Makefile equivalent of the shell script above:
+
 
     .PHONY: all
     all: report.html
@@ -590,6 +599,8 @@ metadata
   link-citations: true
   date-format: long
   lang: en
+  engines:
+    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Smoothed Passenger Miles
   
 Output created: report.html
