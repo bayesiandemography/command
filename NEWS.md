@@ -1,6 +1,9 @@
 
-# command 0.1.3
+# command 0.1.4
 
+* Added test coverage
+
+# command 0.1.3
 
 ## Documentation
 
