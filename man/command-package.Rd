@@ -6,8 +6,10 @@
 \alias{command}
 \title{command: Process command line arguments}
 \description{
-Process arguments passed at the command line,
-as part of data analysis workflow.
+Process command line arguments, allowing scripts to
+behave like functions, with well-defined inputs and outputs.
+Helps make data analysis workflows more modular,
+and therefore more transparent, flexible, and reliable.
 }
 \details{
 \itemize{
