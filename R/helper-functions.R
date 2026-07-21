@@ -140,8 +140,9 @@ assign_args <- function(args, envir, quiet) {
     nm <- cli::col_blue(nm)
     value <- cli::col_grey("with value")
     class <- cli::col_grey("and class")
+    empty <- if (identical(arg, "")) " (an empty string)" else ""
     if (!quiet) {
-      cli::cli_alert_success("{assigned} {nm} {value} {.val {arg}} {class} {.val {class(arg)}}.")
+      cli::cli_alert_success("{assigned} {nm} {value} {.val {arg}}{empty} {class} {.val {class(arg)}}.")
     }
   }
   invisible(args)
@@ -249,6 +250,18 @@ extract_make_if_possible <- function(file, dir_make, quiet) {
 #'
 #' @noRd
 coerce_arg_cmd <- function(arg_cmd, arg_dots, nm_cmd, nm_dots) {
+  ## Empty values (e.g. Make expands --v=$(V) to --v= when V is
+  ## undefined) are allowed for character arguments, but not for
+  ## other classes, where they are almost always a mistake.
+  if (!is.character(arg_dots) && identical(arg_cmd, "")) {
+    cli::cli_abort(c("Empty value passed at command line for argument {.arg {nm_dots}}.",
+                     i = "Value specified by {.fun cmd_assign}: {.val {arg_dots}}.",
+                     i = "Class specified by {.fun cmd_assign}: {.cls {class(arg_dots)}}.",
+                     i = paste("Empty values are only allowed when {.fun cmd_assign}",
+                               "specifies a character argument."),
+                     i = paste("If this came from a Makefile, check that the Make",
+                               "variable in {.code --{nm_dots}=$(...)} is defined.")))
+  }
   if (is.character(arg_dots))
     ans <- arg_cmd
   else if (is.integer(arg_dots))

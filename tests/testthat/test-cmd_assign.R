@@ -218,3 +218,64 @@ test_that("'cmd_assign_quiet' works with valid arguments - on command line, with
   setwd(dir_curr)
   unlink(dir_tmp, recursive = TRUE)
 })
+
+
+## Empty named value from Make: --v=$(V) with V undefined → --v=
+## The empty value still counts as an argument, so arity checks pass.
+test_that("'cmd_assign' with --v= (empty Make variable) and character default", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("command::cmd_assign(.data = 'in.csv', v = 'default', .out = 'out.rds')",
+               "saveRDS(list(.data = .data, v = v, .out = .out), file = 'result.rds')"),
+             con = "script.R")
+  cmd <- sprintf("%s/bin/Rscript script.R in.csv out.rds --v=", R.home())
+  status <- system(cmd, ignore.stderr = TRUE)
+  expect_identical(status, 0L)
+  result <- readRDS("result.rds")
+  ## Currently: empty string is accepted for character v.
+  expect_identical(result$v, "")
+  expect_identical(result$.data, "in.csv")
+  expect_identical(result$.out, "out.rds")
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'cmd_assign' with --v= (empty Make variable) and integer default", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("command::cmd_assign(.data = 'in.csv', v = 1L, .out = 'out.rds')",
+               "saveRDS(list(.data = .data, v = v, .out = .out), file = 'result.rds')"),
+             con = "script.R")
+  cmd <- sprintf("%s/bin/Rscript script.R in.csv out.rds --v=", R.home())
+  status <- system(cmd, ignore.stderr = TRUE)
+  expect_false(identical(status, 0L))
+  expect_false(file.exists("result.rds"))
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'cmd_assign' with --v= (empty Make variable) and logical default", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("command::cmd_assign(.data = 'in.csv', v = TRUE, .out = 'out.rds')",
+               "saveRDS(list(.data = .data, v = v, .out = .out), file = 'result.rds')"),
+             con = "script.R")
+  cmd <- sprintf("%s/bin/Rscript script.R in.csv out.rds --v=", R.home())
+  status <- system(cmd, ignore.stderr = TRUE)
+  expect_false(identical(status, 0L))
+  expect_false(file.exists("result.rds"))
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
+})

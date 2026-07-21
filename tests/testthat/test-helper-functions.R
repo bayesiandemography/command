@@ -98,6 +98,17 @@ test_that("'assign_args' creates expected message", {
   )
 })
 
+test_that("'assign_args' notes empty string in message", {
+  args <- list(v = "")
+  envir <- new.env()
+  suppressMessages(
+    expect_message(
+      assign_args(args = args, envir = envir, quiet = FALSE),
+      "an empty string"
+    )
+  )
+})
+
 test_that("'assign_args' works with empty args", {
   args <- list()
   envir <- new.env()
@@ -294,6 +305,32 @@ test_that("'coerce_arg_cmd' works with character", {
                                  nm_dots = "val")
   ans_expected <- "X"
   expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'coerce_arg_cmd' allows empty string for character", {
+  ans_obtained <- coerce_arg_cmd(arg_cmd = "",
+                                 arg_dots = "a",
+                                 nm_cmd = "v",
+                                 nm_dots = "v")
+  expect_identical(ans_obtained, "")
+})
+
+test_that("'coerce_arg_cmd' rejects empty string for non-character", {
+  expect_error(coerce_arg_cmd(arg_cmd = "",
+                             arg_dots = 1L,
+                             nm_cmd = "v",
+                             nm_dots = "v"),
+               "Empty value passed at command line for argument `v`.")
+  expect_error(coerce_arg_cmd(arg_cmd = "",
+                             arg_dots = TRUE,
+                             nm_cmd = "v",
+                             nm_dots = "v"),
+               "Empty value passed at command line for argument `v`.")
+  expect_error(coerce_arg_cmd(arg_cmd = "",
+                             arg_dots = as.Date("2000-01-01"),
+                             nm_cmd = "v",
+                             nm_dots = "v"),
+               "Empty value passed at command line for argument `v`.")
 })
 
 test_that("'coerce_arg_cmd' works with integer", {
@@ -563,6 +600,26 @@ test_that("'get_args_cmd' works when no arguments passed", {
   system(cmd)
   args <- readRDS("args.rds")
   expect_identical(args, list())
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+## Empty value after '=' (e.g. Make expands --v=$(V) when V is undefined)
+test_that("'get_args_cmd' treats --v= as named argument with empty string", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("args <- command:::get_args_cmd()",
+               "saveRDS(args, file = 'args.rds')"),
+             con = "script.R")
+  cmd <- sprintf("%s/bin/Rscript script.R --v=", R.home())
+  system(cmd)
+  ans_obtained <- readRDS("args.rds")
+  ans_expected <- list(v = "")
+  expect_identical(ans_obtained, ans_expected)
   setwd(dir_curr)
   unlink(dir_tmp, recursive = TRUE)
 })

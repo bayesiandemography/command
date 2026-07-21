@@ -1,7 +1,18 @@
 
 # command 0.2.0
 
-* Removed dependence on `fs` package
+## Dependence on 'fs' package
+
+* Removed dependence on `fs` package (#8)
+
+## Handling of empty strings
+
+* Empty command-line values like `--v=` (e.g. from an undefined
+  Make variable) are now an error unless the corresponding
+  `cmd_assign()` argument is character
+* When an empty string is assigned, the success message notes
+  that the value is an empty string
+
 
 
 # command 0.1.4
