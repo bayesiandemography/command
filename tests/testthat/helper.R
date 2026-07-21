@@ -7,10 +7,21 @@ littler_available <- function() {
   path <- Sys.which(cmd)
   if (!nzchar(path))
     return(FALSE)
+  ## Confirm the binary identifies as littler (not some other 'r'/'lr').
   out <- suppressWarnings(system2(cmd, "--version", stdout = TRUE, stderr = TRUE))
   if (!length(out))
     out <- suppressWarnings(system2(cmd, "-h", stdout = TRUE, stderr = TRUE))
-  any(grepl("\\blittler\\b", out, ignore.case = TRUE))
+  if (!any(grepl("\\blittler\\b", out, ignore.case = TRUE)))
+    return(FALSE)
+  ## Also confirm it can actually execute R code. A stale binary linked
+  ## against an older R can still answer --version but segfault on use.
+  script <- tempfile(fileext = ".R")
+  on.exit(unlink(script), add = TRUE)
+  writeLines("invisible(NULL)", script)
+  status <- suppressWarnings(
+    system2(cmd, script, stdout = FALSE, stderr = FALSE)
+  )
+  identical(as.integer(status), 0L)
 }
 
 skip_if_no_littler_available <- function() {
