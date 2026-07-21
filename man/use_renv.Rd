@@ -9,13 +9,15 @@ use_renv(project = NULL, quiet = TRUE)
 \arguments{
 \item{project}{Optional path to a project root. If \code{NULL}
 (the default), search upward from the script's directory
-when known, otherwise from \code{getwd()}.}
+when known, otherwise from \code{getwd()}. The script directory
+is taken from \code{Rscript}'s \verb{--file=} argument when present,
+or from source references under littler.}
 
 \item{quiet}{If \code{TRUE} (the default), suppress messages.}
 }
 \value{
-The project root path (invisibly), or \code{NULL} if
-no renv project was activated.
+The project root path (invisibly) if renv was activated
+or was already active; otherwise \code{NULL}.
 }
 \description{
 Call this as the first line of a pipeline script run with
@@ -39,6 +41,10 @@ That is the usual setup for a CRAN package used across projects.
 It does not run \code{renv::restore()}, install packages, or
 activate other environment managers. It does not run
 automatically inside \code{\link[=cmd_assign]{cmd_assign()}}.
+
+If a directory has {.file renv.lock} but no {.file renv/activate.R},
+\code{use_renv()} issues a warning and returns \code{NULL} (nothing was
+activated).
 }
 
 \examples{

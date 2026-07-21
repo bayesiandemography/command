@@ -1,11 +1,72 @@
 
 ## 'script_dir' ---------------------------------------------------------------
 
-test_that("'script_dir' returns NULL outside Rscript --file sessions", {
+test_that("'script_dir' returns NULL outside Rscript --file and littler", {
   args <- commandArgs(trailingOnly = FALSE)
   if (any(grepl("^--file=", args)))
     skip("Running with --file=")
+  if (length(args) >= 1L && identical(args[[1L]], "littler"))
+    skip("Running under littler")
   expect_null(script_dir())
+})
+
+test_that("'script_dir' finds script directory under Rscript from other cwd", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  dir_other <- tempfile()
+  dir.create(dir_other)
+  script <- file.path(dir_tmp, "src", "probe.R")
+  out <- file.path(dir_tmp, "result.rds")
+  ## Use the loaded package's script_dir via load_all in the child process
+  pkg_root <- normalizePath(testthat::test_path("../.."), winslash = "/")
+  writeLines(c(
+    sprintf('suppressMessages(devtools::load_all("%s", quiet = TRUE))',
+            gsub("\\\\", "/", pkg_root)),
+    sprintf('saveRDS(command:::script_dir(), "%s")',
+            gsub("\\\\", "/", out))
+  ), script)
+  on.exit({
+    setwd(dir_curr)
+    unlink(dir_tmp, recursive = TRUE)
+    unlink(dir_other, recursive = TRUE)
+  })
+  setwd(dir_other)
+  status <- system2(file.path(R.home("bin"), "Rscript"), script, stdout = FALSE, stderr = FALSE)
+  expect_identical(as.integer(status), 0L)
+  expect_identical(readRDS(out),
+                   normalizePath(file.path(dir_tmp, "src"), winslash = "/"))
+})
+
+test_that("'script_dir' finds script directory under littler from other cwd", {
+  skip_if_no_littler_available()
+  dir_curr <- getwd()
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  dir_other <- tempfile()
+  dir.create(dir_other)
+  script <- file.path(dir_tmp, "src", "probe.R")
+  out <- file.path(dir_tmp, "result.rds")
+  pkg_root <- normalizePath(testthat::test_path("../.."), winslash = "/")
+  writeLines(c(
+    sprintf('suppressMessages(devtools::load_all("%s", quiet = TRUE))',
+            gsub("\\\\", "/", pkg_root)),
+    sprintf('saveRDS(command:::script_dir(), "%s")',
+            gsub("\\\\", "/", out))
+  ), script)
+  on.exit({
+    setwd(dir_curr)
+    unlink(dir_tmp, recursive = TRUE)
+    unlink(dir_other, recursive = TRUE)
+  })
+  setwd(dir_other)
+  cmd <- if (Sys.info()[["sysname"]] == "Darwin") "lr" else "r"
+  status <- system2(cmd, script, stdout = FALSE, stderr = FALSE)
+  expect_identical(as.integer(status), 0L)
+  expect_identical(readRDS(out),
+                   normalizePath(file.path(dir_tmp, "src"), winslash = "/"))
 })
 
 
@@ -116,18 +177,21 @@ test_that("'use_renv' is idempotent when RENV_PROJECT already set", {
   expect_identical(use_renv(project = dir_tmp), root)
 })
 
-test_that("'use_renv' with only renv.lock does not error", {
+test_that("'use_renv' with only renv.lock warns and returns NULL", {
   dir_tmp <- tempfile()
   dir.create(dir_tmp)
   writeLines("{}", file.path(dir_tmp, "renv.lock"))
-  root <- normalizePath(dir_tmp, winslash = "/")
   old <- Sys.getenv("RENV_PROJECT", unset = NA_character_)
   Sys.unsetenv("RENV_PROJECT")
   on.exit({
     if (is.na(old)) Sys.unsetenv("RENV_PROJECT") else Sys.setenv(RENV_PROJECT = old)
     unlink(dir_tmp, recursive = TRUE)
   })
-  expect_identical(use_renv(project = dir_tmp), root)
+  expect_warning(
+    ans <- use_renv(project = dir_tmp),
+    "renv.lock"
+  )
+  expect_null(ans)
 })
 
 test_that("'use_renv' errors when project path missing", {

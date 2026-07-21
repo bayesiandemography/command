@@ -2,24 +2,66 @@
 ## HAS_TESTS
 #' Directory Containing the Current Script, If Known
 #'
-#' When the session was started with `Rscript path/to/file.R`,
-#' returns the directory of that file. Otherwise returns `NULL`.
+#' Tries, in order:
+#' 1. `Rscript`'s `--file=` argument in [commandArgs()];
+#' 2. under [littler](https://CRAN.R-project.org/package=littler), a
+#'    walk of the call stack for `srcref` information
+#'    (littler keeps source references; `Rscript` does not).
+#'
+#' Returns `NULL` if the script directory cannot be determined
+#' (caller typically falls back to [getwd()]).
 #'
 #' @returns A length-1 character string, or `NULL`
 #'
 #' @noRd
 script_dir <- function() {
   args <- commandArgs(trailingOnly = FALSE)
+  ## 1) Rscript --file=/path/to/script.R
   file_arg <- grep("^--file=", args, value = TRUE)
-  if (!length(file_arg))
-    return(NULL)
-  path <- sub("^--file=", "", file_arg[[1L]])
-  ## Rscript may pass a path that does not yet exist as normalized;
-  ## dirname still gives the containing directory string.
-  dir <- dirname(path)
-  if (!nzchar(dir) || identical(dir, "."))
-    dir <- getwd()
-  normalizePath(dir, winslash = "/", mustWork = FALSE)
+  if (length(file_arg)) {
+    path <- sub("^--file=", "", file_arg[[1L]])
+    ## Rscript may pass a relative path; dirname still works.
+    dir <- dirname(path)
+    if (!nzchar(dir) || identical(dir, "."))
+      dir <- getwd()
+    return(normalizePath(dir, winslash = "/", mustWork = FALSE))
+  }
+  ## 2) littler: no --file=, but top-level expressions carry srcrefs
+  if (length(args) >= 1L && identical(args[[1L]], "littler")) {
+    dir <- script_dir_from_srcref()
+    if (!is.null(dir))
+      return(dir)
+  }
+  NULL
+}
+
+
+## HAS_TESTS
+#' Script Directory From Call-Stack Source References
+#'
+#' Used under littler, which parses scripts with source references.
+#' Walks caller frames so this works when invoked from package code
+#' (e.g. `use_renv()` → `script_dir()`), not only at top level.
+#'
+#' @returns Normalized directory path, or `NULL`
+#'
+#' @noRd
+script_dir_from_srcref <- function() {
+  n <- sys.nframe()
+  for (i in seq_len(n)) {
+    sr <- attr(sys.call(i), "srcref")
+    if (is.null(sr)) {
+      fun <- sys.function(i)
+      if (!is.null(fun))
+        sr <- attr(fun, "srcref")
+    }
+    if (is.null(sr))
+      next
+    d <- utils::getSrcDirectory(sr)
+    if (length(d) == 1L && nzchar(d))
+      return(normalizePath(d, winslash = "/", mustWork = FALSE))
+  }
+  NULL
 }
 
 
@@ -84,11 +126,13 @@ renv_active_for <- function(project) {
 #'
 #' @param project Optional path to a project root. If `NULL`
 #'   (the default), search upward from the script's directory
-#'   when known, otherwise from `getwd()`.
+#'   when known, otherwise from `getwd()`. The script directory
+#'   is taken from `Rscript`'s `--file=` argument when present,
+#'   or from source references under littler.
 #' @param quiet If `TRUE` (the default), suppress messages.
 #'
-#' @returns The project root path (invisibly), or `NULL` if
-#'   no renv project was activated.
+#' @returns The project root path (invisibly) if renv was activated
+#'   or was already active; otherwise `NULL`.
 #'
 #' @details
 #' # Finding the `command` package
@@ -103,6 +147,10 @@ renv_active_for <- function(project) {
 #' It does not run `renv::restore()`, install packages, or
 #' activate other environment managers. It does not run
 #' automatically inside [cmd_assign()].
+#'
+#' If a directory has {.file renv.lock} but no {.file renv/activate.R},
+#' `use_renv()` issues a warning and returns `NULL` (nothing was
+#' activated).
 #'
 #' @seealso
 #' - [cmd_assign()] Process command line arguments
@@ -156,11 +204,14 @@ use_renv <- function(project = NULL, quiet = TRUE) {
 
   activate <- file.path(root, "renv", "activate.R")
   if (!file.exists(activate)) {
-    if (!quiet)
-      cli::cli_alert_warning(
-        "Found {.file renv.lock} but no {.file renv/activate.R} at {.path {root}}."
-      )
-    return(invisible(root))
+    ## Always warn: quiet only suppresses happy-path messages.
+    cli::cli_warn(c(
+      "Found {.file renv.lock} but no {.file renv/activate.R}.",
+      i = "Project: {.path {root}}.",
+      i = paste("Nothing was activated. If this project uses renv,",
+                "restore or recreate {.file renv/activate.R}.")
+    ))
+    return(invisible(NULL))
   }
 
   source(activate, local = FALSE)

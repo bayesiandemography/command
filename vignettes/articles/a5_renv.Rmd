@@ -65,11 +65,11 @@ use_renv(project = NULL, quiet = TRUE)
 
 In outline:
 
-1. Decide where to start looking — an explicit `project` directory if you pass one; otherwise the directory of the script being run (when that can be determined), or else `getwd()`.
+1. Decide where to start looking — an explicit `project` directory if you pass one; otherwise the directory of the script being run when that can be determined (`Rscript`'s `--file=` argument, or source references under littler), or else `getwd()`.
 2. Walk up the directory tree until a renv project root is found. A directory counts as a root if it contains `renv/activate.R` or `renv.lock`.
 3. If no root is found, return `NULL` (quietly, when `quiet = TRUE`). Non-renv projects are fine.
 4. If renv is already active for that project, do nothing and return the root.
-5. Otherwise, if `renv/activate.R` exists, `source()` it once for this R process, then return the root.
+5. Otherwise, if `renv/activate.R` exists, `source()` it once for this R process, then return the root. If there is a `renv.lock` but no `renv/activate.R`, issue a warning and return `NULL`.
 
 The return value is the project root path, invisibly, or `NULL` when nothing was activated.
 
