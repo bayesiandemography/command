@@ -3,9 +3,9 @@
 
 ## Dependence on 'fs' package (#8)
 
-* Removed dependence on `fs` package (#8)
+* Removed dependence on `fs` package
 
-## Handling of empty strings
+## Handling of empty strings (#6)
 
 * Empty command-line values like `--v=` (e.g. from an undefined
   Make variable) are now an error unless the corresponding

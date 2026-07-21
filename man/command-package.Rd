@@ -2,8 +2,8 @@
 % Please edit documentation in R/command-package.R
 \docType{package}
 \name{command-package}
-\alias{command}
 \alias{command-package}
+\alias{command}
 \title{command: Process command line arguments}
 \description{
 Process arguments passed at the command line,
@@ -45,4 +45,3 @@ Other contributors:
 }
 
 }
-\keyword{internal}

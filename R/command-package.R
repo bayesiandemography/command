@@ -14,7 +14,9 @@
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
 #'   Safe, flexible data analysis workflows
 #' 
-#' @keywords internal
+#' @docType package
+#' @name command-package
+#' @aliases command
 "_PACKAGE"
 utils::globalVariables("argv")
 ## usethis namespace: start
