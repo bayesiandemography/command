@@ -1,7 +1,7 @@
 
 # command 0.2.0
 
-## Dependence on 'fs' package
+## Dependence on 'fs' package (#8)
 
 * Removed dependence on `fs` package (#8)
 
@@ -12,6 +12,11 @@
   `cmd_assign()` argument is character
 * When an empty string is assigned, the success message notes
   that the value is an empty string
+
+## Paths
+
+* `extract_make()` and `extract_shell()` no longer prefix relative
+  paths with `./`
 
 
 

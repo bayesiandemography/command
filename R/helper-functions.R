@@ -5,6 +5,9 @@
 #' Base-R stand-in for `fs::path()`, using
 #' forward slashes so paths are suitable for
 #' Makefiles and shell scripts on all platforms.
+#' Components that are `"."` are dropped so that
+#' joining with the current directory does not
+#' produce a redundant `"./"` prefix.
 #'
 #' @param ... Path components
 #'
@@ -12,7 +15,11 @@
 #'
 #' @noRd
 path_join <- function(...) {
-  file.path(..., fsep = "/")
+  parts <- unlist(list(...), use.names = FALSE)
+  parts <- parts[nzchar(parts) & parts != "."]
+  if (!length(parts))
+    return(".")
+  paste(parts, collapse = "/")
 }
 
 

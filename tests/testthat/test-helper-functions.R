@@ -3,7 +3,9 @@
 
 test_that("'path_join' joins with forward slashes", {
   expect_identical(path_join("a", "b", "c"), "a/b/c")
-  expect_identical(path_join(".", "src/script.R"), "./src/script.R")
+  expect_identical(path_join(".", "src/script.R"), "src/script.R")
+  expect_identical(path_join("."), ".")
+  expect_identical(path_join("src", ".", "script.R"), "src/script.R")
 })
 
 
