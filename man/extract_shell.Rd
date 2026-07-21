@@ -91,13 +91,12 @@ like they could be.
 }
 
 \examples{
-library(fs)
 library(withr)
 
 with_tempdir({
 
   ## create 'src' directory
-  dir_create("src")
+  dir.create("src")
 
   ## add an R script containing a call to 'cmd_assign'
   writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",

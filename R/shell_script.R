@@ -58,13 +58,12 @@
 #'   Introduction to Rscript
 #'
 #' @examples
-#' library(fs)
 #' library(withr)
 #'
 #' with_tempdir({
 #'
 #'   ## create 'src'  directory
-#'   dir_create("src")
+#'   dir.create("src")
 #'
 #'   ## put R scripts containing calls to
 #'   ## 'cmd_assign' in the 'src' directory
@@ -82,7 +81,7 @@
 #'                dir_shell = ".")
 #'
 #'   ## shell script has been created
-#'   dir_tree()
+#'   list.files()
 #'
 #'   ## print contents of shell script
 #'   cat(readLines("workflow.sh"), sep = "\n")
@@ -119,8 +118,8 @@ shell_script <- function(path_files,
   lines <- c(lines,
              "")
   if (has_name_shell) {
-    path_shell <- fs::path(dir_shell, name_shell)
-    if (fs::file_exists(path_shell) && !overwrite)
+    path_shell <- path_join(dir_shell, name_shell)
+    if (file.exists(path_shell) && !overwrite)
       cli::cli_abort(c(paste("Directory {.file {dir_shell}} already contains a",
                              "file called {.file {name_shell}}."),
                        i = "To overwrite an existing file, set {.arg overwrite} to {.val {TRUE}}."))

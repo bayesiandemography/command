@@ -94,13 +94,12 @@
 #' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'
 #' @examples
-#' library(fs)
 #' library(withr)
 #' 
 #' with_tempdir({
 #'
 #'   ## create 'src' directory
-#'   dir_create("src")
+#'   dir.create("src")
 #'
 #'   ## add an R script containing a call to 'cmd_assign'
 #'   writeLines(c("cmd_assign(x = 1, .out = 'out/results.rds')",
@@ -125,7 +124,7 @@ extract_shell <- function(path_file, dir_shell = NULL) {
                         dir = dir_shell,
                         nm_dir_arg = "dir_shell",
                         has_dir_arg = has_dir_arg)
-  path_file_comb <- fs::path(dir_shell, path_file)
+  path_file_comb <- path_join(dir_shell, path_file)
   check_is_r_code(path_file_comb)
   args <- extract_args(path_file_comb)
   ans <- format_args_shell(file = path_file_comb,

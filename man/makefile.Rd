@@ -63,13 +63,12 @@ commands, while the output from
 from \code{files}.
 }
 \examples{
-library(fs)
 library(withr)
 
 with_tempdir({
 
   ## create 'src'  directory
-  dir_create("src")
+  dir.create("src")
 
   ## put R scripts containing calls to
   ## 'cmd_assign' in the 'src' directory
@@ -87,7 +86,7 @@ with_tempdir({
            dir_make = ".")
 
   ## Makefile has been created
-  dir_tree()
+  list.files()
 
   ## print contents of Makefile
   cat(readLines("Makefile"), sep = "\n")

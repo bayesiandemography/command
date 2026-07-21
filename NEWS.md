@@ -1,4 +1,9 @@
 
+# command 0.2.0
+
+* Removed dependence on `fs` package
+
+
 # command 0.1.4
 
 * Added test coverage

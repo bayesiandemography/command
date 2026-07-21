@@ -109,12 +109,11 @@
 #'   Introduction to Rscript
 #'
 #' @examples
-#' library(fs)
 #' library(withr)
 #' with_tempdir({
 #'
 #'   ## create 'src'  directory
-#'   dir_create("src")
+#'   dir.create("src")
 #'
 #'   ## put an R script containing a call to
 #'   ## 'cmd_assign' in the 'src' directory
@@ -140,7 +139,7 @@ extract_make <- function(path_file, dir_make = NULL) {
                         dir = dir_make,
                         nm_dir_arg = "dir_make",
                         has_dir_arg = has_dir_arg)
-  path_file_comb <- fs::path(dir_make, path_file)
+  path_file_comb <- path_join(dir_make, path_file)
   check_is_r_code(path_file_comb)
   args <- extract_args(path_file_comb)
   ans <- format_args_make(file = path_file_comb,

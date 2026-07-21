@@ -62,13 +62,12 @@ also includes some general-purpose Makefile
 commands.
 }
 \examples{
-library(fs)
 library(withr)
 
 with_tempdir({
 
   ## create 'src'  directory
-  dir_create("src")
+  dir.create("src")
 
   ## put R scripts containing calls to
   ## 'cmd_assign' in the 'src' directory
@@ -86,7 +85,7 @@ with_tempdir({
                dir_shell = ".")
 
   ## shell script has been created
-  dir_tree()
+  list.files()
 
   ## print contents of shell script
   cat(readLines("workflow.sh"), sep = "\n")

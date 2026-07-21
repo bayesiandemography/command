@@ -6,8 +6,8 @@ test_that("'makefile' works with has dir_make, no name_make", {
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  dir.create(fs::path(dir_tmp, "src"))
-  file_path <- fs::path(path = file.path(dir_tmp, "src/script.R"))
+  dir.create(path_join(dir_tmp, "src"))
+  file_path <- path_join(dir_tmp, "src/script.R")
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = file_path)
   suppressMessages(ans_obtained <- makefile(path_files = "src", dir_make = dir_tmp))
@@ -24,7 +24,7 @@ test_that("'makefile' works with has dir_make, no name_make", {
                          "\trm -rf out\n",
                          "\tmkdir out\n\n")
   expect_identical(ans_obtained, ans_expected)
-  expect_true(file.exists(fs::path(dir_tmp, "Makefile")))
+  expect_true(file.exists(path_join(dir_tmp, "Makefile")))
   unlink(dir_tmp, recursive = TRUE)
 })
 
@@ -74,7 +74,7 @@ test_that("'makefile' works with no dir_make, no path_files", {
                          "\trm -rf out\n",
                          "\tmkdir out\n\n")
   expect_identical(ans_obtained, ans_expected)
-  expect_true(file.exists(fs::path(dir_tmp, "Makefile")))
+  expect_true(file.exists(path_join(dir_tmp, "Makefile")))
   unlink(dir_tmp, recursive = TRUE)
   setwd(dir_curr)
 })
@@ -84,17 +84,16 @@ test_that("'makefile' throws appropriate error when file already exists", {
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  dir.create(fs::path(dir_tmp, "src"))
-  file_path <- fs::path(dir_tmp, "src/script.R")
+  dir.create(path_join(dir_tmp, "src"))
+  file_path <- path_join(dir_tmp, "src/script.R")
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = file_path)
   writeLines("bla",
-             con = fs::path(dir_tmp, "Makefile"))
+             con = path_join(dir_tmp, "Makefile"))
   expect_error(suppressMessages(makefile(path_files = "src", dir_make = dir_tmp)),
                "already contains a file called")
   suppressMessages(makefile(path_files = "src", dir_make = dir_tmp, overwrite = TRUE))
-  ans <- readLines(fs::path(dir_tmp, "Makefile"))
+  ans <- readLines(path_join(dir_tmp, "Makefile"))
   expect_identical(ans[[2]], ".PHONY: all")
   unlink(dir_tmp, recursive = TRUE)
 })
-

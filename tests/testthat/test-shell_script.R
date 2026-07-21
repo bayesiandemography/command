@@ -6,8 +6,8 @@ test_that("'shell_script' works with has dir_shell, no name_shell", {
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  dir.create(fs::path(dir_tmp, "src"))
-  file_path <- fs::path(path = file.path(dir_tmp, "src/script.R"))
+  dir.create(path_join(dir_tmp, "src"))
+  file_path <- path_join(dir_tmp, "src/script.R")
   writeLines("cmd_assign(.data = 'data/mydata.csv', use_log = FALSE, .out = 'out/cleaned.rds')",
              con = file_path)
   suppressMessages(ans_obtained <- shell_script(path_files = "src", dir_shell = dir_tmp))
@@ -17,7 +17,7 @@ test_that("'shell_script' works with has dir_shell, no name_shell", {
                          "  out/cleaned.rds \\\n",
                          "  --use_log=FALSE\n\n")
   expect_identical(ans_obtained, ans_expected)
-  expect_true(file.exists(fs::path(dir_tmp, "workflow.sh")))
+  expect_true(file.exists(path_join(dir_tmp, "workflow.sh")))
   unlink(dir_tmp, recursive = TRUE)
 })
 
@@ -68,10 +68,3 @@ test_that("'shell_script' throws appropriate error when file already exists", {
   unlink(dir_tmp, recursive = TRUE)
   setwd(dir_curr)
 })
-
-
-
-
-
-
-

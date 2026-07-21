@@ -123,7 +123,7 @@ check_args_dots <- function(args_dots) {
 check_dir <- function(dir, nm) {
   if (!identical(length(dir), 1L))
     cli::cli_abort("{.arg {nm}} does not have length 1.")
-  if (!fs::dir_exists(dir))
+  if (!dir.exists(dir))
     cli::cli_abort(c("Problem with {.arg {nm}}.",
                      i = "Directory {.file {dir}} does exist."))
   invisible(TRUE)
@@ -151,12 +151,12 @@ check_dir <- function(dir, nm) {
 #'
 #' @noRd
 check_path_file_valid <- function(path_file, dir, nm_dir_arg, has_dir_arg) {
-  if (fs::is_absolute_path(path_file))
+  if (is_absolute_path(path_file))
     cli::cli_abort(c("{.arg path_file} is an absolute path.",
                      i = "{.arg path_file}: {.path {path_file}}.",
                      i = "{.arg path_file} must be a relative path."))
-  path_file_comb <- fs::path(dir, path_file)
-  if (!fs::file_exists(path_file_comb)) {
+  path_file_comb <- path_join(dir, path_file)
+  if (!file.exists(path_file_comb)) {
     msg1 <- "Can't find R script."
     if (has_dir_arg)
       msg2 <- paste("Path to R script constructed from",
@@ -195,12 +195,12 @@ check_path_file_valid <- function(path_file, dir, nm_dir_arg, has_dir_arg) {
 #'
 #' @noRd
 check_path_files_valid <- function(path_files, dir, nm_dir_arg, has_dir_arg) {
-  if (fs::is_absolute_path(path_files))
+  if (is_absolute_path(path_files))
     cli::cli_abort(c("{.arg path_files} is an absolute path.",
                      i = "{.arg path_files}: {.path {path_files}}.",
                      i = "{.arg path_files} must be a relative path."))
-  path_files_comb <- fs::path(dir, path_files)
-  if (!fs::dir_exists(path_files_comb)) {
+  path_files_comb <- path_join(dir, path_files)
+  if (!dir.exists(path_files_comb)) {
     msg1 <- "Can't find directory containing R scripts."
     if (has_dir_arg)
       msg2 <- paste("Path to directory constructed from",

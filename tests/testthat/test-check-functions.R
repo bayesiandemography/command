@@ -109,7 +109,7 @@ test_that("'check_path_file_valid' returns true with valid inputs, with dir spec
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   writeLines("x <- 1",
-             con = fs::path(dir_tmp, "script.R"))
+             con = path_join(dir_tmp, "script.R"))
   expect_true(check_path_file_valid(path_file = "script.R",
                                     dir = dir_tmp,
                                     nm_dir_arg = "d",
@@ -123,8 +123,8 @@ test_that("'check_path_file_valid' returns true with valid inputs, with dir not 
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   writeLines("x <- 1",
-             con = fs::path(dir_tmp, "script.R"))
-  expect_true(check_path_file_valid(path_file = fs::path(fs::path_rel(dir_tmp, getwd()), "script.R"),
+             con = path_join(dir_tmp, "script.R"))
+  expect_true(check_path_file_valid(path_file = path_join(path_rel(dir_tmp, getwd()), "script.R"),
                                     dir = getwd(),
                                     nm_dir_arg = "d",
                                     has_dir_arg = FALSE))
@@ -178,7 +178,7 @@ test_that("'check_path_files_valid' returns true with valid inputs, with dir spe
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  dir.create(fs::path(dir_tmp, "src"))
+  dir.create(path_join(dir_tmp, "src"))
   expect_true(check_path_files_valid(path_files = "src",
                                  dir = dir_tmp,
                                  nm_dir_arg = "dir_make",
@@ -191,8 +191,8 @@ test_that("'check_path_files_valid' returns true with valid inputs, with dir not
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
-  dir.create(fs::path(dir_tmp, "src"))
-  expect_true(check_path_files_valid(path_files = fs::path(fs::path_rel(dir_tmp, getwd()), "src"),
+  dir.create(path_join(dir_tmp, "src"))
+  expect_true(check_path_files_valid(path_files = path_join(path_rel(dir_tmp, getwd()), "src"),
                                  dir = getwd(),
                                  nm_dir_arg = "dir_make",
                                  has_dir_arg = FALSE))

@@ -1,5 +1,66 @@
 
 ## HAS_TESTS
+#' Join Path Components with Forward Slashes
+#'
+#' Base-R stand-in for `fs::path()`, using
+#' forward slashes so paths are suitable for
+#' Makefiles and shell scripts on all platforms.
+#'
+#' @param ... Path components
+#'
+#' @returns A character vector of length 1
+#'
+#' @noRd
+path_join <- function(...) {
+  file.path(..., fsep = "/")
+}
+
+
+## HAS_TESTS
+#' Test Whether a Path is Absolute
+#'
+#' Base-R stand-in for `fs::is_absolute_path()`.
+#' Recognises Unix paths and Windows drive / UNC paths.
+#'
+#' @param path A length-1 character string
+#'
+#' @returns TRUE or FALSE
+#'
+#' @noRd
+is_absolute_path <- function(path) {
+  grepl("^(/|[A-Za-z]:([/\\\\]|$)|\\\\\\\\)", path)
+}
+
+
+## HAS_TESTS
+#' Make Paths Relative to a Start Directory
+#'
+#' Base-R stand-in for `fs::path_rel()`.
+#'
+#' @param path Character vector of paths
+#' @param start Directory to make paths relative to
+#'
+#' @returns A character vector the same length as `path`
+#'
+#' @noRd
+path_rel <- function(path, start = ".") {
+  path <- normalizePath(path, winslash = "/", mustWork = FALSE)
+  start <- normalizePath(start, winslash = "/", mustWork = TRUE)
+  prefix <- paste0(start, "/")
+  ans <- character(length(path))
+  for (i in seq_along(path)) {
+    if (identical(path[[i]], start))
+      ans[[i]] <- "."
+    else if (startsWith(path[[i]], prefix))
+      ans[[i]] <- substring(path[[i]], nchar(prefix) + 1L)
+    else
+      cli::cli_abort("Can't make {.path {path[[i]]}} relative to {.path {start}}.")
+  }
+  ans
+}
+
+
+## HAS_TESTS
 #' Reorder 'args_cmd' and Add Names So That
 #' It Aligns With 'args_dots'
 #'
@@ -101,8 +162,8 @@ assign_args <- function(args, envir, quiet) {
 #'
 #' @noRd
 extract_shell_if_possible <- function(file, dir_shell, quiet) {
-  path_file <- fs::path(dir_shell, file)
-  ext <- fs::path_ext(path_file)
+  path_file <- path_join(dir_shell, file)
+  ext <- tools::file_ext(path_file)
   if (!ext %in% c("r", "R"))
     return(NULL)
   text <- paste(readLines(path_file), collapse = "\n")
@@ -145,8 +206,8 @@ extract_shell_if_possible <- function(file, dir_shell, quiet) {
 #'
 #' @noRd
 extract_make_if_possible <- function(file, dir_make, quiet) {
-  path_file <- fs::path(dir_make, file)
-  ext <- fs::path_ext(path_file)
+  path_file <- path_join(dir_make, file)
+  ext <- tools::file_ext(path_file)
   if (!ext %in% c("r", "R"))
     return(NULL)
   text <- paste(readLines(path_file), collapse = "\n")
@@ -497,9 +558,9 @@ is_varname_valid <- function(nm) {
 make_commands <- function(path_files,
                           dir_shell,
                           quiet) {
-  path_files_comb <- fs::path(dir_shell, path_files)
-  file <- fs::dir_ls(path_files_comb)
-  file <- fs::path_rel(file, start = dir_shell)
+  path_files_comb <- path_join(dir_shell, path_files)
+  file <- list.files(path_files_comb, full.names = TRUE)
+  file <- path_rel(file, start = dir_shell)
   ans <- .mapply(extract_shell_if_possible,
                  dots = list(file = file),
                  MoreArgs = list(dir_shell = dir_shell,
@@ -532,9 +593,9 @@ make_commands <- function(path_files,
 make_rules <- function(path_files,
                        dir_make,
                        quiet) {
-  path_files_comb <- fs::path(dir_make, path_files)
-  file <- fs::dir_ls(path_files_comb)
-  file <- fs::path_rel(file, start = dir_make)
+  path_files_comb <- path_join(dir_make, path_files)
+  file <- list.files(path_files_comb, full.names = TRUE)
+  file <- path_rel(file, start = dir_make)
   ans <- .mapply(extract_make_if_possible,
                  dots = list(file = file),
                  MoreArgs = list(dir_make = dir_make,

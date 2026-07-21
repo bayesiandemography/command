@@ -1,4 +1,41 @@
 
+## 'path_join' ----------------------------------------------------------------
+
+test_that("'path_join' joins with forward slashes", {
+  expect_identical(path_join("a", "b", "c"), "a/b/c")
+  expect_identical(path_join(".", "src/script.R"), "./src/script.R")
+})
+
+
+## 'is_absolute_path' ---------------------------------------------------------
+
+test_that("'is_absolute_path' recognises absolute paths", {
+  expect_true(is_absolute_path("/tmp"))
+  expect_true(is_absolute_path("C:/"))
+  expect_true(is_absolute_path("C:\\Windows"))
+  expect_true(is_absolute_path("\\\\server\\share"))
+  expect_false(is_absolute_path("src/script.R"))
+  expect_false(is_absolute_path("./script.R"))
+  expect_false(is_absolute_path("~/script.R"))
+})
+
+
+## 'path_rel' -----------------------------------------------------------------
+
+test_that("'path_rel' makes paths relative to start", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  writeLines("1", con = file.path(dir_tmp, "src/script.R"))
+  expect_identical(path_rel(file.path(dir_tmp, "src/script.R"), start = dir_tmp),
+                   "src/script.R")
+  expect_identical(path_rel(dir_tmp, start = dir_tmp), ".")
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+
 ## 'align_cmd_to_dots' --------------------------------------------------------
 
 test_that("'align_cmd_to_dots' works on typical inputs supplied by makefile", {

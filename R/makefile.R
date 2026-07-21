@@ -62,13 +62,12 @@
 #'   Introduction to Rscript
 #'
 #' @examples
-#' library(fs)
 #' library(withr)
 #'
 #' with_tempdir({
 #'
 #'   ## create 'src'  directory
-#'   dir_create("src")
+#'   dir.create("src")
 #'
 #'   ## put R scripts containing calls to
 #'   ## 'cmd_assign' in the 'src' directory
@@ -86,7 +85,7 @@
 #'            dir_make = ".")
 #'
 #'   ## Makefile has been created
-#'   dir_tree()
+#'   list.files()
 #'
 #'   ## print contents of Makefile
 #'   cat(readLines("Makefile"), sep = "\n")
@@ -135,8 +134,8 @@ makefile <- function(path_files = NULL,
              "\trm -rf out",
              "\tmkdir out\n\n")
   if (has_name_make) {
-    path_make <- fs::path(dir_make, name_make)
-    if (fs::file_exists(path_make) && !overwrite)
+    path_make <- path_join(dir_make, name_make)
+    if (file.exists(path_make) && !overwrite)
       cli::cli_abort(c(paste("Directory {.file {dir_make}} already contains a",
                              "file called {.file {name_make}}."),
                        i = "To overwrite an existing file, set {.arg overwrite} to {.val {TRUE}}."))

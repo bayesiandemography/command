@@ -19,7 +19,6 @@ Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports:
     cli,
-    fs,
     methods,
     tools
 Suggests: 
@@ -35,8 +34,8 @@ Suggests:
     tidyr,
     withr
 Config/testthat/edition: 3
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 URL: https://bayesiandemography.github.io/command/, https://github.com/bayesiandemography/command
-Config/Needs/website: quarto, rmarkdown
+Config/Needs/website: quarto, rmarkdown, fs
 BugReports: https://github.com/bayesiandemography/command/issues
+Config/roxygen2/version: 8.0.0
