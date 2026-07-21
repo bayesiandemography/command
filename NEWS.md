@@ -18,7 +18,16 @@
 * `extract_make()` and `extract_shell()` no longer prefix relative
   paths with `./`
 
+## DESCRIPTION and package help (#5)
 
+* Revised descriptions, and removed `internal` keyword from 
+  `command-package.R`.
+
+## renv (#7)
+
+* Added `use_renv()` to activate a renv project at the start of
+  pipeline scripts run with `Rscript` (which skips `.Rprofile`)
+* Added article "Using command with renv"
 
 # command 0.1.4
 

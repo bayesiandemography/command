@@ -113,10 +113,13 @@
 #' - [extract_make()] Turn a `cmd_assign()` call into a Makefile rule
 #' - [shell_script()] Create a shell script
 #' - [makefile()] Create a Makefile
+#' - [use_renv()] Activate a renv project before loading packages
 #' - [Quick Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
 #'   How to use `cmd_assign()`
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
 #'   Safe, flexible data analysis workflows.
+#' - [Using command with renv](https://bayesiandemography.github.io/command/articles/a5_renv.html)
+#'   Running pipeline scripts with renv
 #' - Base R function [commandArgs()] uses a more general,
 #'   lower-level approach to processing command line arguments.
 #'   (`commandArgs()` is called internally by `cmd_assign()`.)
