@@ -2,7 +2,7 @@
 % Please edit documentation in R/use_renv.R
 \name{use_renv}
 \alias{use_renv}
-\title{Activate a renv Project for the Current Session}
+\title{Activate an renv Project for the Current Session}
 \usage{
 use_renv(project = NULL, quiet = TRUE)
 }
@@ -20,49 +20,32 @@ The project root path (invisibly) if renv was activated
 or was already active; otherwise \code{NULL}.
 }
 \description{
-Call this as the first line of a pipeline script run with
-\code{Rscript} (or littler), \strong{before} any \code{library()} calls.
-\code{Rscript} does not source \code{.Rprofile}, so renv is otherwise
-not activated and packages may be loaded from the wrong library.
+Make sure \code{renv} is activated, even if a script is run from
+Rscript or littler.
 }
 \details{
-\code{use_renv()} looks for a renv project root, and if one is found
-and not already active, sources \code{renv/activate.R}. If no renv
-project is found, it does nothing. Non-renv projects are fine.
-}
-\section{Finding the \code{command} package}{
-To call \code{command::use_renv()} before \code{library(command)},
-\code{command} must already be findable—typically because it is
-installed in your user or system library (e.g. from CRAN).
-That is the usual setup for a CRAN package used across projects.
-}
+Package \href{https://rstudio.github.io/renv/}{renv}
+makes workflows reproducible by locking down the versions of
+R packages. Normal \code{renv} mechanisms can fail, however,
+if a script is run from Rscript or littler.
+Adding
 
-\section{What \code{use_renv()} does not do}{
-It does not run \code{renv::restore()}, install packages, or
-activate other environment managers. It does not run
-automatically inside \code{\link[=cmd_assign]{cmd_assign()}}.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{command::use_renv()
+}\if{html}{\out{</div>}}
 
-If a directory has {.file renv.lock} but no {.file renv/activate.R},
-\code{use_renv()} issues a warning and returns \code{NULL} (nothing was
-activated).
+to the top of R scripts fixes the problem.
+
+For more details, see the article
+\href{https://bayesiendemography.github.io/command/articles/a5_renv.html}{Using command with renv}.
 }
-
 \examples{
-\dontrun{
-# At the top of a pipeline script:
-command::use_renv()
+command::use_renv() ## if renv not used here, no effect
 
-library(dplyr)
-library(command)
-
-cmd_assign(.data = "data/cleaned.rds",
-           .out = "out/model.rds")
-}
+## see article for full example
 }
 \seealso{
 \itemize{
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
 \item \href{https://bayesiandemography.github.io/command/articles/a5_renv.html}{Using command with renv}
-\item \href{https://rstudio.github.io/renv/}{renv}
 }
 }

@@ -113,16 +113,23 @@ renv_active_for <- function(project) {
 }
 
 
-#' Activate a renv Project for the Current Session
+#' Activate an renv Project for the Current Session
 #'
-#' Call this as the first line of a pipeline script run with
-#' `Rscript` (or littler), **before** any `library()` calls.
-#' `Rscript` does not source `.Rprofile`, so renv is otherwise
-#' not activated and packages may be loaded from the wrong library.
+#' Make sure `renv` is activated, even if a script is run from 
+#' Rscript or littler.
 #'
-#' `use_renv()` looks for a renv project root, and if one is found
-#' and not already active, sources `renv/activate.R`. If no renv
-#' project is found, it does nothing. Non-renv projects are fine.
+#' Package [renv](https://rstudio.github.io/renv/)
+#' makes workflows reproducible by locking down the versions of 
+#' R packages. Normal `renv` mechanisms can fail, however,
+#' if a script is run from Rscript or littler.
+#' Adding
+#' ```
+#' command::use_renv()
+#' ```
+#' to the top of R scripts fixes the problem.
+#' 
+#' For more details, see the article
+#' [Using command with renv](https://bayesiendemography.github.io/command/articles/a5_renv.html).
 #'
 #' @param project Optional path to a project root. If `NULL`
 #'   (the default), search upward from the script's directory
@@ -134,40 +141,14 @@ renv_active_for <- function(project) {
 #' @returns The project root path (invisibly) if renv was activated
 #'   or was already active; otherwise `NULL`.
 #'
-#' @details
-#' # Finding the `command` package
-#'
-#' To call `command::use_renv()` before `library(command)`,
-#' `command` must already be findable—typically because it is
-#' installed in your user or system library (e.g. from CRAN).
-#' That is the usual setup for a CRAN package used across projects.
-#'
-#' # What `use_renv()` does not do
-#'
-#' It does not run `renv::restore()`, install packages, or
-#' activate other environment managers. It does not run
-#' automatically inside [cmd_assign()].
-#'
-#' If a directory has {.file renv.lock} but no {.file renv/activate.R},
-#' `use_renv()` issues a warning and returns `NULL` (nothing was
-#' activated).
-#'
 #' @seealso
 #' - [cmd_assign()] Process command line arguments
 #' - [Using command with renv](https://bayesiandemography.github.io/command/articles/a5_renv.html)
-#' - [renv](https://rstudio.github.io/renv/)
 #'
 #' @examples
-#' \dontrun{
-#' # At the top of a pipeline script:
-#' command::use_renv()
-#'
-#' library(dplyr)
-#' library(command)
-#'
-#' cmd_assign(.data = "data/cleaned.rds",
-#'            .out = "out/model.rds")
-#' }
+#' command::use_renv() ## if renv not used here, no effect
+#' 
+#' ## see article for full example
 #' @export
 use_renv <- function(project = NULL, quiet = TRUE) {
   check_flag(x = quiet, nm = "quiet")
