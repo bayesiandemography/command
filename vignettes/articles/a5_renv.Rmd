@@ -9,74 +9,33 @@ knitr::opts_chunk$set(collapse = TRUE,
                       comment = "")
 ```
 
+# Key message
+
+If a project uses package `renv`, all R scripts should start with the line
+```{r, eval = FALSE}
+command::use_renv()
+```
+
+
 # Introduction
 
-Data analysis workflows built with `command` typically run each script in its own R session, using [Rscript](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html) (or [littler](https://CRAN.R-project.org/package=littler)), often from a Makefile or shell script. That pattern works well with [renv](https://rstudio.github.io/renv/), which keeps a project-specific package library. There is a catch, though: `Rscript` does not source the project `.Rprofile`, so renv is never activated, and scripts may load the wrong packages—or fail to find packages at all.
+One obstacle to creating reproducible workflows in R is that the behavior of R packages can differ across versions. An R script that behaves one way if it is run using version 1.0 of a package may behave a different way if it is run using version 2.0 of the package. The [renv](https://rstudio.github.io/renv/) package solves this problem by allowing users to lock down the exact versions of the packages a project uses.
 
-This article explains that problem and introduces `use_renv()`, a small helper that activates a renv project at the start of a pipeline script.
+The mechanism that `renv` uses to lock packages down is, however, bypassed by [Rscript](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/Rscript.html) or [littler](https://CRAN.R-project.org/package=littler). A workflow that uses Rscript or littler needs to be tweaked before `renv` performs correctly. Function `command::use_renv()` helps with this tweaking.
 
-# The problem
 
-A typical renv project has a `.Rprofile` that sources `renv/activate.R` when R starts. In an interactive session, or when you start R from the project directory in the usual way, that bootstrap runs and the project library is put on the search path before any packages are loaded.
+# How renv can fail with Rscript and littler
 
-`Rscript` is different. It starts a clean session and does **not** run `.Rprofile`. So this common pipeline pattern:
+A project that uses `renv` contains a script `renv/activate.R`. That script tells R which package versions to use when running project code. `renv` only performs correctly if R runs `renv/activate.R` when the session starts.
 
-```{bash, eval = FALSE}
-Rscript src/model.R data/cleaned.rds out/model.rds --n_iter=2000
-```
+`renv` arranges for `renv/activate.R` to be run at startup by adding instructions to a file called `.Rprofile`. Normally, when R is launched, it looks for `.Rprofile` and follows any instructions the file contains, including sourcing `renv/activate.R`.
 
-runs `src/model.R` without renv. If the script then does
+If R is launched from `Rscript` or `littler`, however, it does *not* look for an `.Rprofile` file. Since it ignores `.Rprofile`, it does not run `renv/activate.R`, and `renv` does not work.
 
-```{r, eval = FALSE}
-library(dplyr)
-library(command)
-```
 
-those packages are resolved from the default user or system library, not from the project's renv library.
+# Fixing the problem with `command::use_renv()`
 
-Putting activation inside `cmd_assign()` would be too late: by the time `cmd_assign()` runs, `library()` calls have usually already happened, and the library search path is already wrong.
-
-A shell wrapper that sources `renv/activate.R` before calling `Rscript` can work, but each project tends to reinvent its own wrapper, and the wrapper does not travel with the scripts themselves.
-
-# Why not just `source("renv/activate.R")`?
-
-You can activate renv from inside a script with base R:
-
-```{r, eval = FALSE}
-source("renv/activate.R")
-```
-
-That avoids loading the renv package first, which is good. In practice it is easy to get wrong:
-
-- The path is relative to the **current working directory**, not necessarily the script's location. Makefiles and ad hoc `Rscript` calls do not always use the project root as the working directory.
-- Scripts in subdirectories need paths like `../renv/activate.R` or `../../renv/activate.R`, which break when the layout or the working directory changes.
-- Non-renv projects need an extra `if (file.exists(...))` guard, or the script errors.
-- The same boilerplate is copied into every script.
-
-`use_renv()` is meant to replace that fragile pattern with one quiet, reusable call.
-
-# What `use_renv()` does
-
-`use_renv()` is a lightweight bootstrap, in the same spirit as `cmd_assign()`: few arguments, sensible defaults, and a single job.
-
-```{r, eval = FALSE}
-use_renv(project = NULL, quiet = TRUE)
-```
-
-In outline:
-
-1. Decide where to start looking — an explicit `project` directory if you pass one; otherwise the directory of the script being run when that can be determined (`Rscript`'s `--file=` argument, or source references under littler), or else `getwd()`.
-2. Walk up the directory tree until a renv project root is found. A directory counts as a root if it contains `renv/activate.R` or `renv.lock`.
-3. If no root is found, return `NULL` (quietly, when `quiet = TRUE`). Non-renv projects are fine.
-4. If renv is already active for that project, do nothing and return the root.
-5. Otherwise, if `renv/activate.R` exists, `source()` it once for this R process, then return the root. If there is a `renv.lock` but no `renv/activate.R`, issue a warning and return `NULL`.
-
-The return value is the project root path, invisibly, or `NULL` when nothing was activated.
-
-# Recommended script pattern
-
-Call `use_renv()` as the **first executable line**, before any `library()` calls:
-
+The problem of `Rscript` and `littler` bypassing `renv/activate.R` can be fixed by including the line `command::use_renv()` at the top of each R script in the project, as in,
 ```{r, eval = FALSE}
 command::use_renv()
 
@@ -92,32 +51,35 @@ cmd_assign(.data = "data/cleaned.rds",
 # ... rest of script ...
 ```
 
-Using `command::use_renv()` (with the `command::` prefix) means the function can run before `library(command)`. After activation, later `library()` calls see the project library.
+Function `use_renv()` looks for `renv` infrastructure and, if it finds it, sources `renv/activate.R`. The sourcing occurs later than it would in a normal `.Rprofile` startup, but early enough for subsequent `library()` calls to see the project library.
 
-The same pattern works whether you run the script with `Rscript` from the project root, from a subdirectory (when discovery can walk up to the root), or from a Makefile whose working directory is the project root.
+If `use_renv()` does not find any `renv` infrastructure, it simply returns `NULL`. Including `command::use_renv()` in projects that do not use `renv` does no harm.
 
-# Finding `command` before renv is active
 
-There is an unavoidable ordering issue: to call `command::use_renv()`, R must already be able to find the `command` package—typically because it is installed in your user or system library (for example via `install.packages("command")` from CRAN).
+# The exact format matters
 
-That is the usual setup for a CRAN package used across many projects. Once `use_renv()` has sourced `renv/activate.R`, the project library is prepended to `.libPaths()`, and project-specific packages load from there as intended.
+The call to `command::use_renv()` must come before any calls to `library()`. If `library()` has already been called, then `renv/activate.R` does not work properly.
 
-If `command` existed *only* inside a project's renv library, and nowhere else, then `command::use_renv()` could not run until renv was already active. In normal use that does not arise.
+The prohibition against calling `library()` before `command::use_renv()` includes not calling `library(command)`. Use the `::` operator instead:
+```{r, eval = FALSE}
+command::use_renv()
 
-# What `use_renv()` does not do
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(command)
+})
 
-To keep the helper small, `use_renv()` does **not**:
+# ... rest of script ...
+```
+Do *not* load `command` first:
+```{r, eval = FALSE}
+library(command)  ## not correct!!
+use_renv()        ## not correct!!
 
-- call `renv::restore()` or install packages
-- replace `.Rprofile`, `renv::run()`, or a Makefile-level wrapper for every possible workflow
-- activate other environment managers (conda, poetry, and so on)
-- run automatically inside `cmd_assign()`
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(command)
+})
 
-Those remain out of scope. The goal is one reliable line at the top of a pipeline script.
-
-# Summary
-
-- `Rscript` skips `.Rprofile`, so renv is not activated for typical `command` pipeline scripts.
-- Hard-coding `source("renv/activate.R")` is brittle across working directories and project layouts.
-- `use_renv()` discovers a renv project (when present), sources `renv/activate.R` if needed, and otherwise does nothing.
-- Put `command::use_renv()` first in each pipeline script, then load packages, then call `cmd_assign()`.
+# ... rest of script ...
+```
