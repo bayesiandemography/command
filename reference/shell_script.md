@@ -99,13 +99,12 @@ also includes some general-purpose Makefile commands.
 ## Examples
 
 ``` r
-library(fs)
 library(withr)
 
 with_tempdir({
 
   ## create 'src'  directory
-  dir_create("src")
+  dir.create("src")
 
   ## put R scripts containing calls to
   ## 'cmd_assign' in the 'src' directory
@@ -123,7 +122,7 @@ with_tempdir({
                dir_shell = ".")
 
   ## shell script has been created
-  dir_tree()
+  list.files()
 
   ## print contents of shell script
   cat(readLines("workflow.sh"), sep = "\n")
@@ -131,11 +130,6 @@ with_tempdir({
 })
 #> ✔ Extracted call to `cmd_assign()` in src/more_results.R.
 #> ✔ Extracted call to `cmd_assign()` in src/results.R.
-#> .
-#> ├── src
-#> │   ├── more_results.R
-#> │   └── results.R
-#> └── workflow.sh
 #> 
 #> Rscript src/more_results.R \
 #>   out/more_results.rds \

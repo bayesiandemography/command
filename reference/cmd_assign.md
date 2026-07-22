@@ -122,6 +122,9 @@ then `cmd_assign()` will create
 - [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
   Create a Makefile
 
+- [`use_renv()`](https://bayesiandemography.github.io/command/reference/use_renv.md)
+  Activate a renv project before loading packages
+
 - [Quick
   Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
   How to use `cmd_assign()`
@@ -129,6 +132,10 @@ then `cmd_assign()` will create
 - [Modular Workflows for Data
   Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
   Safe, flexible data analysis workflows.
+
+- [Using command with
+  renv](https://bayesiandemography.github.io/command/articles/a5_renv.html)
+  Running pipeline scripts with renv
 
 - Base R function
   [`commandArgs()`](https://rdrr.io/r/base/commandArgs.html) uses a more

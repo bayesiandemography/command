@@ -71,7 +71,7 @@ extract_make("src/model.R")
 
 has return value
 
-    out/model.rds: ./src/model.R \
+    out/model.rds: src/model.R \
       out/cleaned_data.rds
         Rscript $^ $@ --rlm_method=M
 

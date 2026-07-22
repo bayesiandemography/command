@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/a5_renv.html">Using command with renv</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -39,6 +40,33 @@
       <small>Source: <a href="https://github.com/bayesiandemography/command/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="command-020">command 0.2.0<a class="anchor" aria-label="anchor" href="#command-020"></a></h2>
+<div class="section level3">
+<h3 id="dependence-on-fs-package-0-2-0">Dependence on ‘fs’ package (<a href="https://github.com/bayesiandemography/command/issues/8" class="external-link">#8</a>)<a class="anchor" aria-label="anchor" href="#dependence-on-fs-package-0-2-0"></a></h3>
+<ul><li>Removed dependence on <code>fs</code> package</li>
+</ul></div>
+<div class="section level3">
+<h3 id="handling-of-empty-strings-0-2-0">Handling of empty strings (<a href="https://github.com/bayesiandemography/command/issues/6" class="external-link">#6</a>)<a class="anchor" aria-label="anchor" href="#handling-of-empty-strings-0-2-0"></a></h3>
+<ul><li>Empty command-line values like <code>--v=</code> (e.g. from an undefined Make variable) are now an error unless the corresponding <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> argument is character</li>
+<li>When an empty string is assigned, the success message notes that the value is an empty string</li>
+</ul></div>
+<div class="section level3">
+<h3 id="paths-0-2-0">Paths<a class="anchor" aria-label="anchor" href="#paths-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/extract_make.html">extract_make()</a></code> and <code><a href="../reference/extract_shell.html">extract_shell()</a></code> no longer prefix relative paths with <code>./</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="description-and-package-help-0-2-0">DESCRIPTION and package help (<a href="https://github.com/bayesiandemography/command/issues/5" class="external-link">#5</a>)<a class="anchor" aria-label="anchor" href="#description-and-package-help-0-2-0"></a></h3>
+<ul><li>Revised descriptions, and removed <code>internal</code> keyword from <code>command-package.R</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="renv-0-2-0">renv (<a href="https://github.com/bayesiandemography/command/issues/7" class="external-link">#7</a>)<a class="anchor" aria-label="anchor" href="#renv-0-2-0"></a></h3>
+<ul><li>Added <code><a href="../reference/use_renv.html">use_renv()</a></code> to activate a renv project at the start of pipeline scripts run with <code>Rscript</code> (which skips <code>.Rprofile</code>). Warns and returns <code>NULL</code> if <code>renv.lock</code> is present but <code>renv/activate.R</code> is missing. Discovers the script directory via <code>Rscript</code>’s <code>--file=</code> or littler source references.</li>
+<li>Added article “Using command with renv”</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.4" id="command-014">command 0.1.4<a class="anchor" aria-label="anchor" href="#command-014"></a></h2>
 <ul><li>Added test coverage</li>
@@ -71,7 +99,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

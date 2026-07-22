@@ -10,3 +10,5 @@
   Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.md):
 - [Modular Workflows for Data
   Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.md):
+- [Using command with
+  renv](https://bayesiandemography.github.io/command/articles/a5_renv.md):

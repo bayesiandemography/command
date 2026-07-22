@@ -144,12 +144,11 @@ following heuristic:
 ## Examples
 
 ``` r
-library(fs)
 library(withr)
 with_tempdir({
 
   ## create 'src'  directory
-  dir_create("src")
+  dir.create("src")
 
   ## put an R script containing a call to
   ## 'cmd_assign' in the 'src' directory
@@ -163,6 +162,6 @@ with_tempdir({
                dir_make = ".")
 
 })
-#> out/results.rds: ./src/results.R
+#> out/results.rds: src/results.R
 #>  Rscript $^ $@ --x=1
 ```

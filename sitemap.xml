@@ -6,6 +6,7 @@
 <url><loc>https://bayesiandemography.github.io/command/articles/a2_shell_script.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/articles/a3_makefile.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/articles/a4_workflow.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/command/articles/a5_renv.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/articles/index.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/authors.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/index.html</loc></url>
@@ -17,5 +18,6 @@
 <url><loc>https://bayesiandemography.github.io/command/reference/index.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/reference/makefile.html</loc></url>
 <url><loc>https://bayesiandemography.github.io/command/reference/shell_script.html</loc></url>
+<url><loc>https://bayesiandemography.github.io/command/reference/use_renv.html</loc></url>
 </urlset>
 

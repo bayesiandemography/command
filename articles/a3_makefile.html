@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/a5_renv.html">Using command with renv</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -136,7 +137,7 @@ rule. For instance, the call</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/extract_make.html">extract_make</a></span><span class="op">(</span><span class="st">"src/model.R"</span><span class="op">)</span></span></code></pre></div>
 <p>has return value</p>
-<pre><code>out/model.rds: ./src/model.R \
+<pre><code>out/model.rds: src/model.R \
   out/cleaned_data.rds
     Rscript $^ $@ --rlm_method=M</code></pre>
 <p>In the call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> above, the names
@@ -399,7 +400,7 @@ Programs</a> Introduction to Rscript</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

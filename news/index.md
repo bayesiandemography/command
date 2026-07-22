@@ -1,5 +1,43 @@
 # Changelog
 
+## command 0.2.0
+
+### Dependence on ‘fs’ package ([\#8](https://github.com/bayesiandemography/command/issues/8))
+
+- Removed dependence on `fs` package
+
+### Handling of empty strings ([\#6](https://github.com/bayesiandemography/command/issues/6))
+
+- Empty command-line values like `--v=` (e.g. from an undefined Make
+  variable) are now an error unless the corresponding
+  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  argument is character
+- When an empty string is assigned, the success message notes that the
+  value is an empty string
+
+### Paths
+
+- [`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
+  and
+  [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
+  no longer prefix relative paths with `./`
+
+### DESCRIPTION and package help ([\#5](https://github.com/bayesiandemography/command/issues/5))
+
+- Revised descriptions, and removed `internal` keyword from
+  `command-package.R`.
+
+### renv ([\#7](https://github.com/bayesiandemography/command/issues/7))
+
+- Added
+  [`use_renv()`](https://bayesiandemography.github.io/command/reference/use_renv.md)
+  to activate a renv project at the start of pipeline scripts run with
+  `Rscript` (which skips `.Rprofile`). Warns and returns `NULL` if
+  `renv.lock` is present but `renv/activate.R` is missing. Discovers the
+  script directory via `Rscript`’s `--file=` or littler source
+  references.
+- Added article “Using command with renv”
+
 ## command 0.1.4
 
 - Added test coverage

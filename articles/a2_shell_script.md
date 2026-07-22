@@ -68,7 +68,7 @@ extract_shell("src/model.R")
 
 has return value
 
-    Rscript ./src/model.R \
+    Rscript src/model.R \
       out/cleaned_data.rds \
       out/model.rds \
       --rlm_method=M
