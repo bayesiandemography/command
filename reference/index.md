@@ -17,4 +17,4 @@
 - [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
   : Create a Shell Script
 - [`use_renv()`](https://bayesiandemography.github.io/command/reference/use_renv.md)
-  : Activate a renv Project for the Current Session
+  : Activate an renv Project for the Current Session

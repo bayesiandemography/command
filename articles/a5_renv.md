@@ -45,7 +45,7 @@ If R is launched from `Rscript` or `littler`, however, it does *not*
 look for an `.Rprofile` file. Since it ignores `.Rprofile`, it does not
 run `renv/activate.R`, and `renv` does not work.
 
-## Fixing the problem with `command::use_renv()`
+## `command::use_renv()` fixes the problem
 
 The problem of `Rscript` and `littler` bypassing `renv/activate.R` can
 be fixed by including the line
