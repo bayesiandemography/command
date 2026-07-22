@@ -27,9 +27,6 @@
 
 * Added `use_renv()` to activate a renv project at the start of
   pipeline scripts run with `Rscript` (which skips `.Rprofile`).
-  Warns and returns `NULL` if `renv.lock` is present but
-  `renv/activate.R` is missing. Discovers the script directory
-  via `Rscript`'s `--file=` or littler source references.
 * Added article "Using command with renv"
 
 # command 0.1.4
