@@ -1,4 +1,15 @@
 
+# Submission of version 0.2.0, 23 July 2026
+
+Changes since version 0.1.3:
+
+* Added function `use_renv()` to make `renv` work properly when a 
+  script is run using Rscript
+* Removed dependence on `fs` package
+* Minor change to `extract_make()` and `extract_shell()` functions
+* Tidy documentation
+* Better handling of case where command line argument is `""`
+
 # Submission of version 0.1.3, 22 November 2025
 
 Changes since version 0.1.1:

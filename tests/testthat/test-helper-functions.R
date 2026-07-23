@@ -37,6 +37,21 @@ test_that("'path_rel' makes paths relative to start", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
+test_that("'path_rel' works when tempfile is under getwd() on Windows", {
+  skip_if_not(.Platform$OS.type == "windows")
+  ## tempfile()/getwd() can disagree on drive-letter case after
+  ## normalizePath() (e.g. d: vs D:), which broke extract_make() on WinBuilder.
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  writeLines("1", con = file.path(dir_tmp, "script.R"))
+  rel <- path_rel(file.path(dir_tmp, "script.R"), start = getwd())
+  expect_false(is_absolute_path(rel))
+  expect_match(rel, "script\\.R$")
+})
+
 
 ## 'align_cmd_to_dots' --------------------------------------------------------
 

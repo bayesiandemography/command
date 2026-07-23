@@ -54,12 +54,16 @@ path_rel <- function(path, start = ".") {
   path <- normalizePath(path, winslash = "/", mustWork = FALSE)
   start <- normalizePath(start, winslash = "/", mustWork = TRUE)
   prefix <- paste0(start, "/")
+  ## Windows paths are case-insensitive; normalizePath() may still
+  ## disagree on drive-letter case (e.g. d: vs D: on WinBuilder).
+  fold <- if (.Platform$OS.type == "windows") tolower else identity
   ans <- character(length(path))
   for (i in seq_along(path)) {
-    if (identical(path[[i]], start))
+    p <- path[[i]]
+    if (identical(fold(p), fold(start)))
       ans[[i]] <- "."
-    else if (startsWith(path[[i]], prefix))
-      ans[[i]] <- substring(path[[i]], nchar(prefix) + 1L)
+    else if (startsWith(fold(p), fold(prefix)))
+      ans[[i]] <- substring(p, nchar(prefix) + 1L)
     else
       cli::cli_abort("Can't make {.path {path[[i]]}} relative to {.path {start}}.")
   }
