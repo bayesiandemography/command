@@ -48,8 +48,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="handling-of-empty-strings-0-2-0">Handling of empty strings (<a href="https://github.com/bayesiandemography/command/issues/6" class="external-link">#6</a>)<a class="anchor" aria-label="anchor" href="#handling-of-empty-strings-0-2-0"></a></h3>
-<ul><li>Empty command-line values like <code>--v=</code> (e.g. from an undefined Make variable) are now an error unless the corresponding <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> argument is character</li>
-<li>When an empty string is assigned, the success message notes that the value is an empty string</li>
+<ul><li>Empty command line values like <code>--v=</code> (from an undefined Make variable) are now an error unless the corresponding <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> argument is character</li>
+<li>When an empty string is assigned, the message notes that the value is an empty string</li>
 </ul></div>
 <div class="section level3">
 <h3 id="paths-0-2-0">Paths<a class="anchor" aria-label="anchor" href="#paths-0-2-0"></a></h3>
@@ -63,7 +63,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="renv-0-2-0">renv (<a href="https://github.com/bayesiandemography/command/issues/7" class="external-link">#7</a>)<a class="anchor" aria-label="anchor" href="#renv-0-2-0"></a></h3>
-<ul><li>Added <code><a href="../reference/use_renv.html">use_renv()</a></code> to activate a renv project at the start of pipeline scripts run with <code>Rscript</code> (which skips <code>.Rprofile</code>). Warns and returns <code>NULL</code> if <code>renv.lock</code> is present but <code>renv/activate.R</code> is missing. Discovers the script directory via <code>Rscript</code>’s <code>--file=</code> or littler source references.</li>
+<ul><li>Added <code><a href="../reference/use_renv.html">use_renv()</a></code>, which activates a renv project at the start of scripts run with <code>Rscript</code> (which skips <code>.Rprofile</code>).</li>
 <li>Added article “Using command with renv”</li>
 </ul></div>
 </div>

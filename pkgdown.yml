@@ -7,7 +7,7 @@ articles:
   articles/a3_makefile: a3_makefile.html
   articles/a4_workflow: a4_workflow.html
   articles/a5_renv: a5_renv.html
-last_built: 2026-07-22T08:08Z
+last_built: 2026-07-23T00:22Z
 urls:
   reference: https://bayesiandemography.github.io/command/reference
   article: https://bayesiandemography.github.io/command/articles

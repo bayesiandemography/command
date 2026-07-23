@@ -40,7 +40,7 @@ littler. Adding
 to the top of R scripts fixes the problem.
 
 For more details, see the article [Using command with
-renv](https://bayesiendemography.github.io/command/articles/a5_renv.html).
+renv](https://bayesiandemography.github.io/command/articles/a5_renv.html).
 
 ## See also
 
