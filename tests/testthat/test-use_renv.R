@@ -19,21 +19,15 @@ test_that("'script_dir' finds script directory under Rscript from other cwd", {
   dir.create(dir_other)
   script <- file.path(dir_tmp, "src", "probe.R")
   out <- file.path(dir_tmp, "result.rds")
-  ## Use the loaded package's script_dir via load_all in the child process
-  pkg_root <- normalizePath(testthat::test_path("../.."), winslash = "/")
-  writeLines(c(
-    sprintf('suppressMessages(devtools::load_all("%s", quiet = TRUE))',
-            gsub("\\\\", "/", pkg_root)),
-    sprintf('saveRDS(command:::script_dir(), "%s")',
-            gsub("\\\\", "/", out))
-  ), script)
+  write_script_dir_probe(script, out)
   on.exit({
     setwd(dir_curr)
     unlink(dir_tmp, recursive = TRUE)
     unlink(dir_other, recursive = TRUE)
   })
   setwd(dir_other)
-  status <- system2(file.path(R.home("bin"), "Rscript"), script, stdout = FALSE, stderr = FALSE)
+  status <- system2(file.path(R.home("bin"), "Rscript"), script,
+                    stdout = FALSE, stderr = FALSE)
   expect_identical(as.integer(status), 0L)
   expect_identical(readRDS(out),
                    normalizePath(file.path(dir_tmp, "src"), winslash = "/"))
@@ -49,13 +43,7 @@ test_that("'script_dir' finds script directory under littler from other cwd", {
   dir.create(dir_other)
   script <- file.path(dir_tmp, "src", "probe.R")
   out <- file.path(dir_tmp, "result.rds")
-  pkg_root <- normalizePath(testthat::test_path("../.."), winslash = "/")
-  writeLines(c(
-    sprintf('suppressMessages(devtools::load_all("%s", quiet = TRUE))',
-            gsub("\\\\", "/", pkg_root)),
-    sprintf('saveRDS(command:::script_dir(), "%s")',
-            gsub("\\\\", "/", out))
-  ), script)
+  write_script_dir_probe(script, out)
   on.exit({
     setwd(dir_curr)
     unlink(dir_tmp, recursive = TRUE)

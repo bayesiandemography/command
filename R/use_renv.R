@@ -129,7 +129,7 @@ renv_active_for <- function(project) {
 #' to the top of R scripts fixes the problem.
 #' 
 #' For more details, see the article
-#' [Using command with renv](https://bayesiendemography.github.io/command/articles/a5_renv.html).
+#' [Using command with renv](https://bayesiandemography.github.io/command/articles/a5_renv.html).
 #'
 #' @param project Optional path to a project root. If `NULL`
 #'   (the default), search upward from the script's directory

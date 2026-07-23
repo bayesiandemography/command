@@ -7,10 +7,10 @@
 
 ## Handling of empty strings (#6)
 
-* Empty command-line values like `--v=` (e.g. from an undefined
+* Empty command line values like `--v=` (from an undefined
   Make variable) are now an error unless the corresponding
   `cmd_assign()` argument is character
-* When an empty string is assigned, the success message notes
+* When an empty string is assigned, the message notes
   that the value is an empty string
 
 ## Paths
@@ -25,8 +25,8 @@
 
 ## renv (#7)
 
-* Added `use_renv()` to activate a renv project at the start of
-  pipeline scripts run with `Rscript` (which skips `.Rprofile`).
+* Added `use_renv()`, which activates a renv project at the start of
+  scripts run with `Rscript` (which skips `.Rprofile`).
 * Added article "Using command with renv"
 
 # command 0.1.4

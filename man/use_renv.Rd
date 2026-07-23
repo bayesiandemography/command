@@ -36,7 +36,7 @@ Adding
 to the top of R scripts fixes the problem.
 
 For more details, see the article
-\href{https://bayesiendemography.github.io/command/articles/a5_renv.html}{Using command with renv}.
+\href{https://bayesiandemography.github.io/command/articles/a5_renv.html}{Using command with renv}.
 }
 \examples{
 command::use_renv() ## if renv not used here, no effect
