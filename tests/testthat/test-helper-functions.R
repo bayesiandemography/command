@@ -52,6 +52,18 @@ test_that("'path_rel' works when tempfile is under getwd() on Windows", {
   expect_match(rel, "script\\.R$")
 })
 
+test_that("'path_rel' errors when path is not under start", {
+  dir_a <- tempfile()
+  dir_b <- tempfile()
+  dir.create(dir_a)
+  dir.create(dir_b)
+  on.exit({
+    unlink(dir_a, recursive = TRUE)
+    unlink(dir_b, recursive = TRUE)
+  }, add = TRUE)
+  expect_error(path_rel(dir_a, start = dir_b), "Can't make")
+})
+
 
 ## 'align_cmd_to_dots' --------------------------------------------------------
 

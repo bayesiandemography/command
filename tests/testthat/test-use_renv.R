@@ -57,6 +57,34 @@ test_that("'script_dir' finds script directory under littler from other cwd", {
                    normalizePath(file.path(dir_tmp, "src"), winslash = "/"))
 })
 
+test_that("'script_dir' falls back to getwd() when --file= is a basename", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  script <- file.path(dir_tmp, "probe.R")
+  out <- file.path(dir_tmp, "result.rds")
+  write_script_dir_probe(script, out)
+  on.exit({
+    setwd(dir_curr)
+    unlink(dir_tmp, recursive = TRUE)
+  })
+  ## Rscript probe.R → --file=probe.R → dirname is "."
+  setwd(dir_tmp)
+  status <- system2(file.path(R.home("bin"), "Rscript"), "probe.R",
+                    stdout = FALSE, stderr = FALSE)
+  expect_identical(as.integer(status), 0L)
+  expect_identical(readRDS(out),
+                   normalizePath(dir_tmp, winslash = "/"))
+})
+
+test_that("'script_dir_from_srcref' returns NULL when no usable srcref", {
+  local_mocked_bindings(
+    getSrcDirectory = function(...) character(),
+    .package = "utils"
+  )
+  expect_null(script_dir_from_srcref())
+})
+
 
 ## 'find_renv_root' -----------------------------------------------------------
 
@@ -85,6 +113,31 @@ test_that("'find_renv_root' returns NULL when no project", {
   dir.create(dir_tmp)
   expect_null(find_renv_root(dir_tmp))
   unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'find_renv_root' accepts a file path as start", {
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "renv"))
+  writeLines("# stub", file.path(dir_tmp, "renv", "activate.R"))
+  dir.create(file.path(dir_tmp, "src"))
+  file <- file.path(dir_tmp, "src", "script.R")
+  writeLines("1", file)
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  expect_identical(find_renv_root(file),
+                   normalizePath(dir_tmp, winslash = "/"))
+})
+
+test_that("'find_renv_root' returns NULL when start does not exist", {
+  expect_null(find_renv_root(tempfile()))
+})
+
+test_that("'find_renv_root' returns NULL when max_depth exhausted", {
+  dir_tmp <- tempfile()
+  deep <- file.path(dir_tmp, "a", "b", "c")
+  dir.create(deep, recursive = TRUE)
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  expect_null(find_renv_root(deep, max_depth = 1L))
 })
 
 
@@ -208,4 +261,55 @@ test_that("'use_renv' discovers project by walking up from getwd()", {
   ans <- use_renv()
   expect_identical(ans, normalizePath(dir_tmp, winslash = "/"))
   expect_true(file.exists(marker))
+})
+
+test_that("'use_renv' errors when project is not a single string", {
+  expect_error(use_renv(project = 1L), "must be a single character string")
+  expect_error(use_renv(project = c("a", "b")), "must be a single character string")
+  expect_error(use_renv(project = NA_character_), "must be a single character string")
+})
+
+test_that("'use_renv' messages when quiet = FALSE and project has no renv", {
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  expect_message(
+    expect_null(use_renv(project = dir_tmp, quiet = FALSE)),
+    "No renv project found"
+  )
+})
+
+test_that("'use_renv' messages when quiet = FALSE and no project discovered", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  old <- Sys.getenv("RENV_PROJECT", unset = NA_character_)
+  Sys.unsetenv("RENV_PROJECT")
+  setwd(dir_tmp)
+  on.exit({
+    setwd(dir_curr)
+    if (is.na(old)) Sys.unsetenv("RENV_PROJECT") else Sys.setenv(RENV_PROJECT = old)
+    unlink(dir_tmp, recursive = TRUE)
+  })
+  expect_message(
+    expect_null(use_renv(quiet = FALSE)),
+    "No renv project found"
+  )
+})
+
+test_that("'use_renv' messages when quiet = FALSE and activation succeeds", {
+  dir_tmp <- tempfile()
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "renv"))
+  writeLines("# stub", file.path(dir_tmp, "renv", "activate.R"))
+  old <- Sys.getenv("RENV_PROJECT", unset = NA_character_)
+  Sys.unsetenv("RENV_PROJECT")
+  on.exit({
+    if (is.na(old)) Sys.unsetenv("RENV_PROJECT") else Sys.setenv(RENV_PROJECT = old)
+    unlink(dir_tmp, recursive = TRUE)
+  })
+  expect_message(
+    use_renv(project = dir_tmp, quiet = FALSE),
+    "Activated renv project"
+  )
 })
