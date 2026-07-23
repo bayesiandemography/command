@@ -2,6 +2,8 @@
 
 ## command 0.2.0
 
+CRAN release: 2026-07-23
+
 ### Dependence on ‘fs’ package ([\#8](https://github.com/bayesiandemography/command/issues/8))
 
 - Removed dependence on `fs` package
