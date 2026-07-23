@@ -1,7 +1,7 @@
 
 # Submission of version 0.2.0, 23 July 2026
 
-Changes since version 0.1.3:
+## Changes since version 0.1.3:
 
 * Added function `use_renv()` to make `renv` work properly when a 
   script is run using Rscript
@@ -9,6 +9,16 @@ Changes since version 0.1.3:
 * Minor change to `extract_make()` and `extract_shell()` functions
 * Tidy documentation
 * Better handling of case where command line argument is `""`
+
+## Test environments:
+
+* local macOS, R 4.6.1
+* win-builder (R-devel)
+* GitHub Actions (ubuntu/macOS/Windows; release, devel, oldrel-1)
+
+## R CMD check results
+
+0 errors | 0 warnings | 0 notes
 
 # Submission of version 0.1.3, 22 November 2025
 
