@@ -15,7 +15,7 @@ makefile(
 \arguments{
 \item{path_files}{A path from \code{dir_make} to a
 directory with R scripts containing
-calls to \code{\link[=cmd_assign]{cmd_assign()}}.
+calls to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_dots]{cmd_assign_dots()}}.
 Optional.}
 
 \item{dir_make}{The directory where

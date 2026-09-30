@@ -101,6 +101,24 @@
 #' - a date vector called `date` with value `"2025-01-01"`, and
 #' - a character vector called `.out` with value `"fit.rds".
 #'
+#' # File names
+#'
+#' `cmd_assign()` does not require the names of arguments
+#' that hold file paths to start with a dot.
+#' The leading dot is a convention used by
+#' [extract_make()], [extract_shell()], [makefile()],
+#' and [shell_script()] when they decide which
+#' arguments are file names:
+#'
+#' - If any argument name starts with a dot, those
+#'   arguments are the file names.
+#' - Otherwise an argument is a file name when the
+#'   file exists, or when the value looks like a path.
+#'
+#' Dotted names such as `.data` and `.out` make that
+#' choice explicit. They are not required when the
+#' script is run.
+#'
 #' @param ... Name-value pairs.
 #' 
 #' @returns `cmd_assign()` is called
@@ -109,6 +127,8 @@
 #' also invisibly returns a named list of objects.
 #'
 #' @seealso
+#' - [cmd_assign_dots()] Collect unnamed command line arguments
+#'   into one character vector
 #' - [extract_shell()] Turn a `cmd_assign()` call into a shell command
 #' - [extract_make()] Turn a `cmd_assign()` call into a Makefile rule
 #' - [shell_script()] Create a shell script
@@ -178,5 +198,133 @@ cmd_assign_quiet <- function(...) {
   assign_args(args = args,
               envir = envir,
               quiet = TRUE)
+}
+
+
+#' Assign a Variable Number of Command Line Arguments
+#'
+#' @description
+#' Assign values to names in the working environment,
+#' like [cmd_assign()], but collect every unnamed
+#' command line argument into one character vector.
+#'
+#' Use `cmd_assign_dots()` when a script must accept
+#' a number of file paths that is known only when the
+#' script is run. The script can then decide whether
+#' the first element, the last element, or neither
+#' is special.
+#'
+#' @details
+#' # Matching names and values
+#'
+#' Named command line arguments are matched by name,
+#' as in [cmd_assign()]. Exactly one argument must
+#' be left over. That argument is assigned every
+#' unnamed command line value, in order, as a character
+#' vector. The vector can have any length, including zero,
+#' and its length need not match the default.
+#'
+#' If, for instance, the script `combine.R` contains
+#'
+#' ```
+#' cmd_assign_dots(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+#'                 use_log = TRUE)
+#' inputs <- head(files, -1)
+#' out <- tail(files, 1)
+#' ```
+#'
+#' and if `combine.R` is run from the command line using
+#'
+#' ```
+#' Rscript combine.R data/a.csv data/c.csv out/combined.rds --use_log=TRUE
+#' ```
+#'
+#' then `files` is `c("data/a.csv", "data/c.csv", "out/combined.rds")`
+#' and `use_log` is `TRUE`. `files` was not passed as
+#' `--files=...`. Leaving more than one argument unnamed
+#' on the command line is an error, as is passing every
+#' argument by name. The argument that remains must be
+#' character.
+#'
+#' Values passed at the command line are not expanded.
+#' A shell or Makefile that uses a glob expands it
+#' before `Rscript` runs, and `cmd_assign_dots()`
+#' receives one string per path.
+#'
+#' Interactive use assigns the values written in the call.
+#'
+#' # File names
+#'
+#' `cmd_assign_dots()` does not require the name of the
+#' character vector to start with a dot.
+#' The leading dot is a convention used by
+#' [extract_make()], [extract_shell()], [makefile()],
+#' and [shell_script()] when they decide which
+#' arguments are file names:
+#'
+#' - If any argument name starts with a dot, those
+#'   arguments are the file names.
+#' - Otherwise an argument is a file name when the
+#'   file exists, or when the value looks like a path.
+#'
+#' Dotted names such as `.data` and `.out` make that
+#' choice explicit. They are not required when the
+#' script is run.
+#'
+#' For `cmd_assign_dots()`, a character vector is handled
+#' in the same way. If its name starts with a dot, or if
+#' no argument name starts with a dot and each element
+#' looks like a path, every element is a file name.
+#' In a Makefile rule, the last element is the target
+#' and the earlier elements are prerequisites.
+#'
+#' @param ... Name-value pairs. Exactly one argument
+#' receives the unnamed command line values. That
+#' argument must be character, and can have any length.
+#' Every other argument must have length 1, and on the
+#' command line must be passed by name.
+#'
+#' @returns `cmd_assign_dots()` is called
+#' for its side effect, which is to create objects
+#' in the global environment. However, `cmd_assign_dots()`
+#' also invisibly returns a named list of objects.
+#'
+#' @seealso
+#' - [cmd_assign()] Process command line arguments
+#'   with one value per argument
+#' - [extract_shell()] Turn a `cmd_assign()` or
+#'   `cmd_assign_dots()` call into a shell command
+#' - [extract_make()] Turn a `cmd_assign()` or
+#'   `cmd_assign_dots()` call into a Makefile rule
+#' - [shell_script()] Create a shell script
+#' - [makefile()] Create a Makefile
+#' - [Quick Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#'   How to use `cmd_assign()`
+#'
+#' @examples
+#' if (interactive()) {
+#'   cmd_assign_dots(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+#'                   use_log = TRUE)
+#' }
+#' @export
+cmd_assign_dots <- function(...) {
+  envir <- parent.frame()
+  args_dots <- list(...)
+  check_args_dots(args_dots, variadic = TRUE)
+  if (interactive())
+    args <- args_dots # nocov
+  else {
+    args_cmd <- get_args_cmd()
+    check_args_cmd_dots(args_cmd = args_cmd,
+                        args_dots = args_dots)
+    args_cmd <- align_cmd_dots(args_cmd = args_cmd,
+                               args_dots = args_dots)
+    args_cmd <- coerce_to_dots_class(args_cmd = args_cmd,
+                                     args_dots = args_dots)
+    args <- args_cmd
+  }
+  assign_args(args = args,
+              envir = envir,
+              quiet = FALSE)
 }
 

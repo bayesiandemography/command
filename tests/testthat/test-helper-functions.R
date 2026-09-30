@@ -104,6 +104,32 @@ test_that("'align_cmd_to_dots' works 'args_cmd' and 'args_dots' both length 0", 
 })
 
 
+## 'align_cmd_dots' -----------------------------------------------------------
+
+test_that("'align_cmd_dots' puts every unnamed value into the leftover argument", {
+  args_cmd <- list("data/a.csv", "data/c.csv", "out/combined.rds",
+                   use_log = "TRUE")
+  args_dots <- list(files = c("data/a.csv", "out/combined.rds"),
+                    use_log = TRUE)
+  ans_obtained <- align_cmd_dots(args_cmd = args_cmd,
+                                 args_dots = args_dots)
+  ans_expected <- list(files = c("data/a.csv", "data/c.csv", "out/combined.rds"),
+                       use_log = "TRUE")
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'align_cmd_dots' uses an empty character vector when nothing is unnamed", {
+  args_cmd <- list(use_log = "FALSE")
+  args_dots <- list(files = c("data/a.csv", "out/combined.rds"),
+                    use_log = TRUE)
+  ans_obtained <- align_cmd_dots(args_cmd = args_cmd,
+                                 args_dots = args_dots)
+  ans_expected <- list(files = character(),
+                       use_log = "FALSE")
+  expect_identical(ans_obtained, ans_expected)
+})
+
+
 ## 'assign_args' --------------------------------------------------------------
 
 test_that("'assign_args' creates correct objects in the parent frame, and returns as list", {
@@ -493,7 +519,7 @@ test_that("'extract_args' gives warning when no call to cmd_assign() found", {
                "y <- 2"),
              con = "script.R")
   expect_message(ans <- extract_args("script.R"),
-                 "No call to `cmd_assign\\(\\)` found.")
+                 "No call to `cmd_assign\\(\\)` or `cmd_assign_dots\\(\\)` found.")
   expect_identical(ans, NULL)
   setwd(dir_curr)
   unlink(dir_tmp, recursive = TRUE)
@@ -551,6 +577,26 @@ test_that("'format_args_make throws error when no file arguments", {
                "Can't find any file arguments.")
 })
 
+test_that("'format_args_make' expands a character vector of paths", {
+  file <- "src/combine.R"
+  args <- list(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+               use_log = TRUE)
+  ans_obtained <- format_args_make(file = file, args = args)
+  ans_expected <- paste(c("out/combined.rds: src/combine.R \\",
+                          "  data/a.csv \\",
+                          "  data/b.csv",
+                          "\tRscript $^ $@ --use_log=TRUE\n"),
+                        collapse = "\n")
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'format_args_make' errors when a vector has no target path", {
+  file <- "src/combine.R"
+  args <- list(.files = character())
+  expect_error(format_args_make(file = file, args = args),
+               "Can't find any file arguments.")
+})
+
 
 ## 'format_args_shell' --------------------------------------------------------
 
@@ -581,6 +627,20 @@ test_that("'format_args_shell works with non-file arg only", {
   ans_obtained <- format_args_shell(file = file, args = args)
   ans_expected <- paste(c("Rscript src/myfile.R \\",
                           "  --a=1\n"),
+                        collapse = "\n")
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'format_args_shell' expands a character vector of paths", {
+  file <- "src/combine.R"
+  args <- list(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+               use_log = TRUE)
+  ans_obtained <- format_args_shell(file = file, args = args)
+  ans_expected <- paste(c("Rscript src/combine.R \\",
+                          "  data/a.csv \\",
+                          "  data/b.csv \\",
+                          "  out/combined.rds \\",
+                          "  --use_log=TRUE\n"),
                         collapse = "\n")
   expect_identical(ans_obtained, ans_expected)
 })
@@ -728,6 +788,22 @@ test_that("'is_file_arg' works with non-dot arguments", {
   args <- list(a = 1, b = "x.r", c = FALSE, d = "x.c")
   ans_obtained <- is_file_arg(args)
   ans_expected <- c(FALSE, TRUE, FALSE, TRUE)
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'is_file_arg' treats a path vector as one file argument", {
+  args <- list(files = c("data/a.csv", "out/combined.rds"),
+               use_log = TRUE)
+  ans_obtained <- is_file_arg(args)
+  ans_expected <- c(TRUE, FALSE)
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'is_file_arg' lets a dotted name override a path-like string", {
+  args <- list(.files = c("data/a.csv", "out/combined.rds"),
+               label = "notes.csv")
+  ans_obtained <- is_file_arg(args)
+  ans_expected <- c(TRUE, FALSE)
   expect_identical(ans_obtained, ans_expected)
 })
 

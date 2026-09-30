@@ -2,7 +2,7 @@
 ## HAS_TESTS
 #' Turn a 'cmd_assign' Call Into a Shell Command
 #'
-#' Extract a call to [cmd_assign()] from an
+#' Extract a call to [cmd_assign()] or [cmd_assign_dots()] from an
 #' R script, and turn it into a shell command.
 #'
 #' # The components of a shell command
@@ -63,6 +63,12 @@
 #'   actually are file names
 #'   (as determined by [file.exists()]) or that look
 #'   like they could be.
+#'
+#' A character vector supplied to [cmd_assign_dots()]
+#' is a file argument when its name starts with a dot,
+#' or, when no argument name starts with a dot, when
+#' each element looks like a path. Each element is
+#' written as its own positional argument.
 #' 
 #' @param path_file Path to the R script containing
 #' the call to [cmd_assign()]. The path

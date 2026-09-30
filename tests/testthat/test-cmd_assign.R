@@ -262,6 +262,64 @@ test_that("'cmd_assign' with --v= (empty Make variable) and integer default", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
+## 'cmd_assign_dots' ----------------------------------------------------------
+
+test_that("'cmd_assign_dots' collects unnamed arguments on the command line", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("command::cmd_assign_dots(files = c('data/a.csv', 'out/combined.rds'), use_log = TRUE)",
+               "saveRDS(files, file = 'files.rds')",
+               "saveRDS(use_log, file = 'use_log.rds')"),
+             con = "script.R")
+  cmd <- sprintf("%s/bin/Rscript script.R data/a.csv data/c.csv out/combined.rds --use_log=FALSE",
+                 R.home())
+  system(cmd, ignore.stderr = TRUE)
+  expect_identical(readRDS("files.rds"),
+                   c("data/a.csv", "data/c.csv", "out/combined.rds"))
+  expect_identical(readRDS("use_log.rds"), FALSE)
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'cmd_assign_dots' accepts zero unnamed arguments", {
+  dir_curr <- getwd()
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  setwd(dir_tmp)
+  writeLines(c("command::cmd_assign_dots(files = c('data/a.csv', 'out/combined.rds'), use_log = TRUE)",
+               "saveRDS(files, file = 'files.rds')",
+               "saveRDS(use_log, file = 'use_log.rds')"),
+             con = "script.R")
+  cmd <- sprintf("%s/bin/Rscript script.R --use_log=TRUE",
+                 R.home())
+  status <- system(cmd, ignore.stderr = TRUE)
+  expect_identical(status, 0L)
+  expect_identical(readRDS("files.rds"), character())
+  expect_identical(readRDS("use_log.rds"), TRUE)
+  setwd(dir_curr)
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'cmd_assign_dots' works with valid arguments - interactively", {
+  if (interactive()) {
+    suppressMessages(
+      cmd_assign_dots(files = c("data/a.csv", "out/combined.rds"),
+                      use_log = TRUE)
+    )
+    expect_identical(files, c("data/a.csv", "out/combined.rds"))
+    expect_identical(use_log, TRUE)
+  } else {
+    expect_true(TRUE)
+  }
+})
+
+
 test_that("'cmd_assign' with --v= (empty Make variable) and logical default", {
   dir_curr <- getwd()
   dir_tmp <- tempfile(tmpdir = getwd())

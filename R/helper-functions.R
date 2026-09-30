@@ -123,6 +123,51 @@ align_cmd_to_dots <- function(args_cmd, args_dots) {
 
 
 ## HAS_TESTS
+#' Put Unnamed Command Line Arguments Into the One Leftover Argument
+#'
+#' Named elements of `args_cmd` are matched to `args_dots`
+#' by name. The single argument in `args_dots` that was
+#' not named on the command line receives every unnamed
+#' value, as a character vector.
+#'
+#' Assume that `check_args_cmd_dots()` has already succeeded.
+#'
+#' @param args_cmd A list, possibly with names.
+#' @param args_dots A named list.
+#'
+#' @return A named list with the same names as `args_dots`.
+#'
+#' @noRd
+align_cmd_dots <- function(args_cmd, args_dots) {
+  n_cmd <- length(args_cmd)
+  nms_cmd <- names(args_cmd)
+  if (is.null(nms_cmd))
+    nms_cmd <- rep("", times = n_cmd)
+  is_named <- nzchar(nms_cmd)
+  nms_dots <- names(args_dots)
+  nms_cmd_named <- nms_cmd[is_named]
+  args_cmd_named <- args_cmd[is_named]
+  unmatched <- !(nms_dots %in% nms_cmd_named)
+  nm_vec <- nms_dots[unmatched][[1L]]
+  unnamed <- unlist(args_cmd[!is_named], use.names = FALSE)
+  if (is.null(unnamed))
+    unnamed <- character()
+  else
+    unnamed <- as.character(unnamed)
+  ans <- vector(mode = "list", length = length(args_dots))
+  for (i in seq_along(nms_dots)) {
+    nm <- nms_dots[[i]]
+    if (identical(nm, nm_vec))
+      ans[[i]] <- unnamed
+    else
+      ans[[i]] <- args_cmd_named[[match(nm, nms_cmd_named)]]
+  }
+  names(ans) <- nms_dots
+  ans
+}
+
+
+## HAS_TESTS
 #' Create Objects in the Specified Environment
 #'
 #' Use the names and values in 'args' to create
@@ -178,29 +223,23 @@ extract_shell_if_possible <- function(file, dir_shell, quiet) {
   ext <- tools::file_ext(path_file)
   if (!ext %in% c("r", "R"))
     return(NULL)
-  text <- paste(readLines(path_file), collapse = "\n")
-  exprs <- parse(text = text)
-  nm_cmd <- as.name("cmd_assign")
-  for (expr in exprs) {
-    nm_expr <- expr[[1L]]
-    if (is.call(expr) && identical(nm_expr, nm_cmd)) {
-      args <- as.list(expr)[-1L]
-      args <- lapply(args, eval)
-      tryCatch(
-        check_args_dots(args),
-        error = function(e)
-          cli::cli_abort(c(paste("Problem extracting call to {.fun cmd_assign}",
-                                 "in file {.file {file}}."),
-                           i = "Call to {.fun cmd_assign} malformed?",
-                           i = e$message))
-      )
-      ans <- format_args_shell(file = file, args = args)
-      if (!quiet)
-        cli::cli_alert_success("Extracted call to {.fun cmd_assign} in {.file {file}}.")
-      return(ans)
-    }
-  }
-  NULL
+  call <- extract_cmd_call(path_file)
+  if (is.null(call))
+    return(NULL)
+  nm_fun <- call$name
+  variadic <- identical(nm_fun, "cmd_assign_dots")
+  tryCatch(
+    check_args_dots(call$args, variadic = variadic),
+    error = function(e)
+      cli::cli_abort(c(paste("Problem extracting call to {.fun {nm_fun}}",
+                             "in file {.file {file}}."),
+                       i = "Call to {.fun {nm_fun}} malformed?",
+                       i = e$message))
+  )
+  ans <- format_args_shell(file = file, args = call$args)
+  if (!quiet)
+    cli::cli_alert_success("Extracted call to {.fun {nm_fun}} in {.file {file}}.")
+  ans
 }
 
 
@@ -222,29 +261,23 @@ extract_make_if_possible <- function(file, dir_make, quiet) {
   ext <- tools::file_ext(path_file)
   if (!ext %in% c("r", "R"))
     return(NULL)
-  text <- paste(readLines(path_file), collapse = "\n")
-  exprs <- parse(text = text)
-  nm_cmd <- as.name("cmd_assign")
-  for (expr in exprs) {
-    nm_expr <- expr[[1L]]
-    if (is.call(expr) && identical(nm_expr, nm_cmd)) {
-      args <- as.list(expr)[-1L]
-      args <- lapply(args, eval)
-      tryCatch(
-        check_args_dots(args),
-        error = function(e)
-          cli::cli_abort(c(paste("Problem extracting call to {.fun cmd_assign}",
-                                 "in file {.file {file}}."),
-                           i = "Call to {.fun cmd_assign} malformed?",
-                           i = e$message))
-      )
-      ans <- format_args_make(file = file, args = args)
-      if (!quiet)
-        cli::cli_alert_success("Extracted call to {.fun cmd_assign} in {.file {file}}.")
-      return(ans)
-    }
-  }
-  NULL
+  call <- extract_cmd_call(path_file)
+  if (is.null(call))
+    return(NULL)
+  nm_fun <- call$name
+  variadic <- identical(nm_fun, "cmd_assign_dots")
+  tryCatch(
+    check_args_dots(call$args, variadic = variadic),
+    error = function(e)
+      cli::cli_abort(c(paste("Problem extracting call to {.fun {nm_fun}}",
+                             "in file {.file {file}}."),
+                       i = "Call to {.fun {nm_fun}} malformed?",
+                       i = e$message))
+  )
+  ans <- format_args_make(file = file, args = call$args)
+  if (!quiet)
+    cli::cli_alert_success("Extracted call to {.fun {nm_fun}} in {.file {file}}.")
+  ans
 }
 
 
@@ -360,18 +393,44 @@ coerce_to_dots_class <- function(args_cmd, args_dots) {
 #'
 #' @noRd
 extract_args <- function(file) {
+  call <- extract_cmd_call(file)
+  if (is.null(call)) {
+    cli::cli_alert_warning(paste("No call to {.fn cmd_assign} or",
+                                 "{.fn cmd_assign_dots} found."))
+    return(NULL)
+  }
+  call$args
+}
+
+
+## HAS_TESTS
+#' Extract a cmd_assign or cmd_assign_dots Call From a File
+#'
+#' @param file Path to an R script.
+#'
+#' @returns A list with elements `name` and `args`, or NULL
+#' when the file contains neither call.
+#'
+#' @noRd
+extract_cmd_call <- function(file) {
   code <- paste(readLines(file), collapse = "\n")
   exprs <- parse(text = code)
-  nm_cmd <- as.name("cmd_assign")
+  nm_assign <- as.name("cmd_assign")
+  nm_dots <- as.name("cmd_assign_dots")
   for (expr in exprs) {
+    if (!is.call(expr))
+      next
     nm_expr <- expr[[1L]]
-    if (is.call(expr) && identical(nm_expr, nm_cmd)) {
-      ans <- as.list(expr)[-1L]
-      ans <- lapply(ans, eval)
-      return(ans)
-    }
+    if (identical(nm_expr, nm_assign))
+      nm_fun <- "cmd_assign"
+    else if (identical(nm_expr, nm_dots))
+      nm_fun <- "cmd_assign_dots"
+    else
+      next
+    args <- as.list(expr)[-1L]
+    args <- lapply(args, eval)
+    return(list(name = nm_fun, args = args))
   }
-  cli::cli_alert_warning("No call to {.fn cmd_assign} found.")
   NULL
 }
 
@@ -388,27 +447,26 @@ extract_args <- function(file) {
 format_args_make <- function(file, args) {
   n_space <- 2L
   n_tab <- 8L
-  is_file_arg <- is_file_arg(args)
-  args <- lapply(args, as.character)
-  n_file_arg <- sum(is_file_arg)
-  if (identical(n_file_arg, 0L))
+  is_file <- is_file_arg(args)
+  file_paths <- file_arg_paths(args = args, is_file = is_file)
+  n_file_path <- length(file_paths)
+  if (identical(n_file_path, 0L))
     cli::cli_abort(c("Can't find any file arguments.",
                      i = "Nothing to use as a target in Makefile rule."))
-  args_is_file <- args[is_file_arg]
-  target <- args_is_file[[n_file_arg]]
+  target <- file_paths[[n_file_path]]
   ans <- sprintf("%s: %s", target, file)
-  if (sum(is_file_arg) > 1L) {
-    args_is_file <- args_is_file[-n_file_arg]
+  if (n_file_path > 1L) {
+    prereqs <- file_paths[-n_file_path]
     space_left <- strrep(" ", times = n_space)
-    args_is_file <- paste0(space_left, args_is_file)
-    args_is_file <- paste0(" \\\n", args_is_file)
-    ans_is_file <- paste(args_is_file, collapse = "")
+    prereqs <- paste0(space_left, prereqs)
+    prereqs <- paste0(" \\\n", prereqs)
+    ans_is_file <- paste(prereqs, collapse = "")
     ans <- paste0(ans, ans_is_file)
   }
   ans_recipe <- "\n\tRscript $^ $@"
   ans <- paste0(ans, ans_recipe)
-  if (any(!is_file_arg)) {
-    args_not_file <- args[!is_file_arg]
+  if (any(!is_file)) {
+    args_not_file <- lapply(args[!is_file], as.character)
     nms_not_file <- names(args_not_file)
     args_not_file <- paste0("--", nms_not_file, "=", args_not_file)
     space_not_file <- strrep(" ", times = n_tab + nchar(ans_recipe) - 1L)
@@ -434,19 +492,19 @@ format_args_shell <- function(file, args) {
   n_space <- 2L
   ans <- paste("Rscript", file)
   if (length(args) > 0L) {
-    nms <- names(args)
     space_left <- strrep(" ", times = n_space)
-    is_file_arg <- is_file_arg(args)
-    args <- lapply(args, as.character)
-    if (any(is_file_arg)) {
-      args_is_file <- args[is_file_arg]
-      args_is_file <- paste0(space_left, args_is_file)
-      args_is_file <- paste0(" \\\n", args_is_file)
-      ans_is_file <- paste(args_is_file, collapse = "")
-      ans <- paste0(ans, ans_is_file)
+    is_file <- is_file_arg(args)
+    if (any(is_file)) {
+      file_paths <- file_arg_paths(args = args, is_file = is_file)
+      if (length(file_paths) > 0L) {
+        args_is_file <- paste0(space_left, file_paths)
+        args_is_file <- paste0(" \\\n", args_is_file)
+        ans_is_file <- paste(args_is_file, collapse = "")
+        ans <- paste0(ans, ans_is_file)
+      }
     }
-    if (any(!is_file_arg)) {
-      args_not_file <- args[!is_file_arg]
+    if (any(!is_file)) {
+      args_not_file <- lapply(args[!is_file], as.character)
       nms_not_file <- names(args_not_file)
       args_not_file <- paste0(space_left, "--", nms_not_file, "=", args_not_file)
       args_not_file <- paste0(" \\\n", args_not_file)
@@ -456,6 +514,23 @@ format_args_shell <- function(file, args) {
   }
   ans <- paste0(ans, "\n")
   ans
+}
+
+
+## HAS_TESTS
+#' Character Paths From Arguments Marked as Files
+#'
+#' A file argument that is a character vector contributes
+#' one path per element, in order.
+#'
+#' @param args Named list of arguments.
+#' @param is_file Logical vector, the same length as `args`.
+#'
+#' @returns A character vector, possibly of length 0.
+#'
+#' @noRd
+file_arg_paths <- function(args, is_file) {
+  unlist(lapply(args[is_file], as.character), use.names = FALSE)
 }
 
 
@@ -535,10 +610,35 @@ is_file_arg <- function(args) {
     ans <- is_dot_arg
   else
     ans <- vapply(args,
-                  FUN = is_actual_or_potential_file_path,
+                  FUN = is_file_value,
                   FUN.VALUE = TRUE,
                   USE.NAMES = FALSE)
   ans
+}
+
+
+## HAS_TESTS
+#' Guess Whether One Argument Value is a File Path
+#'
+#' A character vector with length other than 1 is a file
+#' when every element is. An empty character vector is not.
+#'
+#' @param arg One element of the list passed to `is_file_arg()`.
+#'
+#' @returns TRUE or FALSE
+#'
+#' @noRd
+is_file_value <- function(arg) {
+  if (is.character(arg) && !identical(length(arg), 1L)) {
+    if (length(arg) == 0L)
+      return(FALSE)
+    all(vapply(arg,
+               FUN = is_actual_or_potential_file_path,
+               FUN.VALUE = TRUE,
+               USE.NAMES = FALSE))
+  } else {
+    is_actual_or_potential_file_path(arg)
+  }
 }
 
 

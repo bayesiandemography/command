@@ -7,6 +7,8 @@
 #' and therefore more transparent, flexible, and reliable.
 #'
 #' - [cmd_assign()] Process command line arguments
+#' - [cmd_assign_dots()] Collect unnamed command line arguments
+#'   into one character vector
 #' - [use_renv()] Activate a renv project before loading packages
 #' - [extract_shell()] Turn a `cmd_assign()` call into a shell command
 #' - [extract_make()] Turn a `cmd_assign()` call into a Makefile rule

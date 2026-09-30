@@ -14,6 +14,8 @@ and therefore more transparent, flexible, and reliable.
 \details{
 \itemize{
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
+\item \code{\link[=cmd_assign_dots]{cmd_assign_dots()}} Collect unnamed command line arguments
+into one character vector
 \item \code{\link[=use_renv]{use_renv()}} Activate a renv project before loading packages
 \item \code{\link[=extract_shell]{extract_shell()}} Turn a \code{cmd_assign()} call into a shell command
 \item \code{\link[=extract_make]{extract_make()}} Turn a \code{cmd_assign()} call into a Makefile rule

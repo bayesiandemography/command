@@ -22,7 +22,7 @@ Makefile rule. However, \code{extract_make()}
 invisibly returns a text string with the rule.
 }
 \description{
-Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} from an
+Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_dots]{cmd_assign_dots()}} from an
 R script, and turn it into a Makefile rule.
 }
 \section{The components of a Makefile rule}{
@@ -100,6 +100,13 @@ actually are file names
 (as determined by \code{\link[=file.exists]{file.exists()}}), or that look
 like they could be.
 }
+
+A character vector supplied to \code{\link[=cmd_assign_dots]{cmd_assign_dots()}}
+is a file argument when its name starts with a dot,
+or, when no argument name starts with a dot, when
+each element looks like a path. Each element becomes
+its own file name. The last of those file names is
+the target.
 }
 
 \examples{

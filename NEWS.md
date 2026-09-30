@@ -1,4 +1,18 @@
 
+# command (development version)
+
+## Variable-length file arguments
+
+* Added `cmd_assign_dots()`, which assigns every unnamed
+  command-line argument to the one argument that was not
+  passed by name.
+* `extract_make()`, `extract_shell()`, `makefile()`, and
+  `shell_script()` read calls to `cmd_assign_dots()`. A
+  character vector of paths becomes one file name per element,
+  and in a Makefile the last element is the target.
+* Documented the dotted-name convention for file arguments
+  in the help for `cmd_assign()` and `cmd_assign_dots()`.
+
 # command 0.2.0
 
 ## Dependence on 'fs' package (#8)

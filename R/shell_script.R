@@ -24,7 +24,7 @@
 #'
 #' @param path_files A path from `dir_shell` to a
 #' directory with R scripts containing
-#' calls to [cmd_assign()].
+#' calls to [cmd_assign()] or [cmd_assign_dots()].
 #' @param dir_shell The directory where
 #' `shell_script()` will create the shell script.
 #' If no value is supplied, then `shell_script()`

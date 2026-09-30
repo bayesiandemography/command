@@ -248,6 +248,23 @@ data <- read_csv(.data)
 
 Function `cmd_assign()` itself makes no distinction between names that start with dots and names that do not. However, functions `extract_shell()`, `shell()`, discussed in [Creating a Shell Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html), and `extract_make()` and `makefile()`, discussed in [Creating a Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.html), do make a distinction. Moreover, the convention is useful anyway, to separate values from references.
 
+# A variable number of file names
+
+`cmd_assign()` expects one command-line value for each argument. When the number of paths is known only at the moment the script runs, use `cmd_assign_dots()`. Named arguments are still matched by name. Exactly one argument is left unnamed on the command line, and that argument receives every unnamed value as a character vector.
+
+```{r, eval = FALSE}
+cmd_assign_dots(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+                use_log = TRUE)
+inputs <- head(files, -1)
+out <- tail(files, 1)
+```
+
+```{bash, eval = FALSE}
+Rscript combine.R data/a.csv data/c.csv out/combined.rds --use_log=TRUE
+```
+
+`files` does not need to start with a dot for this to work. The dot convention above is used only when `extract_make()` or `extract_shell()` turns the call into a rule or a command. Those functions copy the paths written in the call. Each element of the vector becomes its own file name, and in a Makefile the last element is the target. The command line is expected to supply the strings already expanded: `cmd_assign_dots()` does not expand globs.
+
 # Giving code files and outputs the same base name
 
 Another feature of the examples so far is that R files have the same base name as the files that they generate. File `fig_smoothed.R`, for instance, generates `fig_smooth.png`, `fig_smooth_5.png`, `fig_smooth_8.png`, and `fig_smooth_10.png`, and file `model.R` generates `model.rds` and `model2.rds`. We rely on file extensions (eg `.R` vs `.png`, or `.R` vs `.rds`) to distinguish code from outputs, and we use suffixes (eg `_5`, `_8` and `_10`) to distinguish different versions of the same output.

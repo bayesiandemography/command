@@ -76,6 +76,59 @@ test_that("'check_args_dots' throws error when values have wrong length", {
                  "Argument `b` in call to `cmd_assign\\(\\)` has length 0.")
 })
 
+test_that("'check_args_dots' allows a character vector for cmd_assign_dots", {
+  args_dots <- list(files = c("data/a.csv", "out/combined.rds"),
+                    use_log = TRUE)
+  expect_true(check_args_dots(args_dots = args_dots, variadic = TRUE))
+  expect_true(check_args_dots(args_dots = list(files = character()),
+                              variadic = TRUE))
+  expect_error(check_args_dots(args_dots = list(files = c("a.csv", "out.rds"),
+                                                n = 1:2),
+                               variadic = TRUE),
+               "Argument `n` in call to `cmd_assign_dots\\(\\)` has length 2.")
+})
+
+
+## 'check_args_cmd_dots' ------------------------------------------------------
+
+test_that("'check_args_cmd_dots' returns TRUE when one character argument is left over", {
+  args_cmd <- list("data/a.csv", "out.rds", use_log = "TRUE")
+  args_dots <- list(files = c("data/a.csv", "out.rds"), use_log = TRUE)
+  expect_true(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots))
+  args_cmd <- list(use_log = "TRUE")
+  expect_true(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots))
+})
+
+test_that("'check_args_cmd_dots' errors when a named command line argument is unknown", {
+  args_cmd <- list(label = "run")
+  args_dots <- list(files = "out.rds", use_log = TRUE)
+  expect_error(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots),
+               "not specified with `cmd_assign_dots\\(\\)`")
+})
+
+test_that("'check_args_cmd_dots' errors when the vector argument is passed by name", {
+  args_cmd <- list("data/a.csv", files = "out.rds", use_log = "TRUE")
+  args_dots <- list(files = c("data/a.csv", "out.rds"), use_log = TRUE)
+  expect_error(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots),
+               "Every argument was passed by name")
+})
+
+test_that("'check_args_cmd_dots' errors when two arguments are left unnamed", {
+  args_cmd <- list("data/a.csv", "out.rds")
+  args_dots <- list(files = c("data/a.csv", "out.rds"),
+                    label = "run",
+                    use_log = TRUE)
+  expect_error(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots),
+               "More than one argument was left")
+})
+
+test_that("'check_args_cmd_dots' errors when the leftover argument is not character", {
+  args_cmd <- list("data/a.csv", files = "out.rds")
+  args_dots <- list(files = c("data/a.csv", "out.rds"), use_log = TRUE)
+  expect_error(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots),
+               "must be <character>")
+})
+
 
 ## 'check_dir' ----------------------------------------------------------------
 

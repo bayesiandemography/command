@@ -37,4 +37,4 @@ Roxygen: list(markdown = TRUE)
 URL: https://bayesiandemography.github.io/command/, https://github.com/bayesiandemography/command
 Config/Needs/website: quarto, rmarkdown, fs
 BugReports: https://github.com/bayesiandemography/command/issues
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

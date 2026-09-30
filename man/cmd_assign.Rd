@@ -111,6 +111,25 @@ then \code{cmd_assign()} will create
 }
 }
 
+\section{File names}{
+\code{cmd_assign()} does not require the names of arguments
+that hold file paths to start with a dot.
+The leading dot is a convention used by
+\code{\link[=extract_make]{extract_make()}}, \code{\link[=extract_shell]{extract_shell()}}, \code{\link[=makefile]{makefile()}},
+and \code{\link[=shell_script]{shell_script()}} when they decide which
+arguments are file names:
+\itemize{
+\item If any argument name starts with a dot, those
+arguments are the file names.
+\item Otherwise an argument is a file name when the
+file exists, or when the value looks like a path.
+}
+
+Dotted names such as \code{.data} and \code{.out} make that
+choice explicit. They are not required when the
+script is run.
+}
+
 \examples{
 if (interactive()) {
   cmd_assign(.data = "mydata.csv",
@@ -126,6 +145,8 @@ Introduction to Rscript
 }
 \seealso{
 \itemize{
+\item \code{\link[=cmd_assign_dots]{cmd_assign_dots()}} Collect unnamed command line arguments
+into one character vector
 \item \code{\link[=extract_shell]{extract_shell()}} Turn a \code{cmd_assign()} call into a shell command
 \item \code{\link[=extract_make]{extract_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
 \item \code{\link[=shell_script]{shell_script()}} Create a shell script

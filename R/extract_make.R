@@ -2,7 +2,7 @@
 ## HAS_TESTS
 #' Turn a 'cmd_assign' Call Into a Makefile Rule
 #'
-#' Extract a call to [cmd_assign()] from an
+#' Extract a call to [cmd_assign()] or [cmd_assign_dots()] from an
 #' R script, and turn it into a Makefile rule.
 #'
 #' # The components of a Makefile rule
@@ -76,6 +76,13 @@
 #'   actually are file names
 #'   (as determined by [file.exists()]), or that look
 #'   like they could be.
+#'
+#' A character vector supplied to [cmd_assign_dots()]
+#' is a file argument when its name starts with a dot,
+#' or, when no argument name starts with a dot, when
+#' each element looks like a path. Each element becomes
+#' its own file name. The last of those file names is
+#' the target.
 #' 
 #' @param path_file A path from
 #' `dir_make` to the R scripe containing

@@ -24,7 +24,7 @@
 #'
 #' @param path_files A path from `dir_make` to a
 #' directory with R scripts containing
-#' calls to [cmd_assign()].
+#' calls to [cmd_assign()] or [cmd_assign_dots()].
 #' Optional.
 #' @param dir_make The directory where
 #' `makefile()` will create the Makefile.

@@ -15,7 +15,7 @@ shell_script(
 \arguments{
 \item{path_files}{A path from \code{dir_shell} to a
 directory with R scripts containing
-calls to \code{\link[=cmd_assign]{cmd_assign()}}.}
+calls to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_dots]{cmd_assign_dots()}}.}
 
 \item{dir_shell}{The directory where
 \code{shell_script()} will create the shell script.
