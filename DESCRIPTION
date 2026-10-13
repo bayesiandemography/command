@@ -9,10 +9,13 @@ Authors@R: c(
 	   role = c("aut", "cre")),
     person("Bayesian Demography Limited",
             role = "cph"))
-Description: Process command line arguments, allowing scripts to
-    behave like functions, with well-defined inputs and outputs.
-    Helps make data analysis workflows more modular,
-    and therefore more transparent, flexible, and reliable.
+Description: Process command line arguments. Processing includes
+    checking arguments, matching arguments to names,
+    and automatically converting strings to numbers, logical values,
+    or dates. The main function, `cmd_assign()`, is designed to be
+    used a part of an automated workflow, but can also be used interactively
+    for development and testing. The aim is give files well-defined interfaces,
+    with clear inputs and outputs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 3.5.0)

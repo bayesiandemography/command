@@ -7,8 +7,7 @@
 #' but can be supplied interactively.
 #'
 #' Specifying the inputs and outputs of scripts through the
-#' command line can contribute to safter, more modular
-#' workflows.
+#' command line can make workflows safer and more modular.
 #'
 #' `cmd_assign_quiet()` is identical to `cmd_assign()`,
 #' but does not print progress messages to the console.
