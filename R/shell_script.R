@@ -24,7 +24,7 @@
 #'
 #' @param path_files A path from `dir_shell` to a
 #' directory with R scripts containing
-#' calls to [cmd_assign()] or [cmd_assign_dots()].
+#' calls to [cmd_assign()] or [cmd_assign_collect()].
 #' @param dir_shell The directory where
 #' `shell_script()` will create the shell script.
 #' If no value is supplied, then `shell_script()`
@@ -47,7 +47,7 @@
 #' - [extract_shell()] Turn a [cmd_assign()] call into a shell command
 #' - [makefile()] Makefile equivalent of `shell_script()`
 #' - [cmd_assign()] Process command line arguments
-#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
 #'   Safe, flexible data analysis workflows
 #' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript
 #'

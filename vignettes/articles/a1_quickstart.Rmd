@@ -1,4 +1,4 @@
----
+x]---
 title: "Quick Start"
 ---
 
@@ -248,23 +248,6 @@ data <- read_csv(.data)
 
 Function `cmd_assign()` itself makes no distinction between names that start with dots and names that do not. However, functions `extract_shell()`, `shell()`, discussed in [Creating a Shell Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html), and `extract_make()` and `makefile()`, discussed in [Creating a Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.html), do make a distinction. Moreover, the convention is useful anyway, to separate values from references.
 
-# A variable number of file names
-
-`cmd_assign()` expects one command-line value for each argument. When the number of paths is known only at the moment the script runs, use `cmd_assign_dots()`. Named arguments are still matched by name. Exactly one argument is left unnamed on the command line, and that argument receives every unnamed value as a character vector.
-
-```{r, eval = FALSE}
-cmd_assign_dots(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
-                use_log = TRUE)
-inputs <- head(files, -1)
-out <- tail(files, 1)
-```
-
-```{bash, eval = FALSE}
-Rscript combine.R data/a.csv data/c.csv out/combined.rds --use_log=TRUE
-```
-
-`files` does not need to start with a dot for this to work. The dot convention above is used only when `extract_make()` or `extract_shell()` turns the call into a rule or a command. Those functions copy the paths written in the call. Each element of the vector becomes its own file name, and in a Makefile the last element is the target. The command line is expected to supply the strings already expanded: `cmd_assign_dots()` does not expand globs.
-
 # Giving code files and outputs the same base name
 
 Another feature of the examples so far is that R files have the same base name as the files that they generate. File `fig_smoothed.R`, for instance, generates `fig_smooth.png`, `fig_smooth_5.png`, `fig_smooth_8.png`, and `fig_smooth_10.png`, and file `model.R` generates `model.rds` and `model2.rds`. We rely on file extensions (eg `.R` vs `.png`, or `.R` vs `.rds`) to distinguish code from outputs, and we use suffixes (eg `_5`, `_8` and `_10`) to distinguish different versions of the same output.
@@ -312,7 +295,7 @@ Here is the Makefile equivalent of the shell script above:
 cat(readLines("Makefile"), sep = "\n")
 ```
 
-The line `all: report.html` says that our ultimate aim is to create a file called `report.html`. The remaining lines describe the steps to get there, including the output (eg `fig_smoothed_5.png`), the inputs (eg `fig_smoothed.R` and `airmiles.csv`), and the action needed to produce the output from the inputs (eg `Rscript $^ $@ --n_knot=5`). [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html) contains more information on Makefiles, including an explanation of the mysterious `$^` and `$@` symbols.
+The line `all: report.html` says that our ultimate aim is to create a file called `report.html`. The remaining lines describe the steps to get there, including the output (eg `fig_smoothed_5.png`), the inputs (eg `fig_smoothed.R` and `airmiles.csv`), and the action needed to produce the output from the inputs (eg `Rscript $^ $@ --n_knot=5`). [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html) contains more information on Makefiles, including an explanation of the mysterious `$^` and `$@` symbols.
 
 Makefiles are run using the `make` application. `make` is present on all Linux and MacOS systems, but may need installing on Windows.
 
@@ -325,7 +308,45 @@ make
 ```
 `make` runs the code for creating `fig_smoothed_5.png`, and then, because it knows that `report.html` depends on `fig_smoothed_5.png`, it runs the code for that too. It does, not, however, run the code for `fig_smoothed_10.png`, because it knows that `fig_smoothed_10.png` does not depend on `fig_smoothed_5.png`.
 
-# Alternatives to `cmd_assign()` {#sec:alt}
+# What to do when the number of arguments is not known in advance
+
+Sometimes the number of values that a script must deal with is not known in advance. For instance, a script that combines input files might receive two files on one run and twenty on the next. To handle such cases, use `cmd_assign_collect()`.
+
+`cmd_assign_collect()` matches and coerces *named* arguments just like `cmd_assign()`. Its behavior with *unnamed* arguments is, however, different. Rather than requiring that every unnamed argument be specified in advance, it collects all values from unnamed arguments into a single character vector. The character vector can have any length, including zero (implying that no unnamed arguments were passed from the command line). The call to `cmd_assign_collect()` must have exactly one name-value pair left over after processing named command line arguments. The character vector is assigned to the name from the left-over name-value pair.
+
+Suppose the script `combine.R` contains
+
+```{r, eval = FALSE}
+cmd_assign_collect(
+  .files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+  use_log = TRUE
+)
+```
+
+and we run the script with
+
+```{bash, eval = FALSE}
+Rscript combine.R \
+  data/a.csv \
+  data/c.csv \
+  out/combined.rds \
+  --use_log=TRUE
+```
+
+An object called `use_log` with value `TRUE` and an object called `.files` with value `c("data/a.csv", "data/c.csv", "out/combined.rds")` will be added to the global environment.
+
+The R script containing the call to `cmd_assign_collect()` is responsible for unpacking and using the values in the character vector. For instance, the script above is likely to include lines such as
+
+```
+.inputs <- head(.files, -1)
+.out <- tail(.files, 1)
+inputs <- lapply(.inputs, read.csv)
+```
+
+If you do know how many values will be passed through the command line at run time, you should not use `cmd_assign_collect()`. In such cases, function `cmd_assign()` is a better choice, as it is stricter and clearer.
+
+
+# Alternatives to the `command` package {#sec:alt}
 
 Function `commandArgs()` in package [R.utils](https://cran.r-project.org/package=R.utils) is a user-friendly version of the base R function. Packages providing tools for parsing command line include [argparse](https://cran.r-project.org/package=argparse), [docopt](https://cran.r-project.org/package=docopt), [getopt](https://cran.r-project.org/package=getopt), and [optparse](https://CRAN.R-project.org/package=optparse). `command` is, however, the only package which focuses specifically on processing inputs and outputs within a data analysis workflows.
 

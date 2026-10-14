@@ -31,7 +31,7 @@ nms_articles <- "a1_quickstart.Rmd|a2_shell_script.Rmd|a3_makefile.Rmd|a4_workfl
 
 Code for a data analysis should be accurate, transparent, and flexible. It should do what the report on the analysis say it does, and it should be written in a way that makes it easy to understand and modify. In software engineering, and in the design of systems more generally, one of the key ways of achieving accuracy, transparency, and flexibility is through modularity [@simon2019sciences]. A modular system is built out of many small, self-contained units. Each of these units has a single purpose, has well-defined inputs and outputs, and has only limited knowledge about other units.
 
-Ideas about modularity underlie much standard R advice about writing code for data analysis. RStudio-style projects, for instance, are an example of modular design [@wilson2017good; @wickham2023r; @projecttemplate2025project]. However, many actual data analyses written in R are the opposite of modular. For instance, the entire workflow is often contained in a single, huge script that is responsible for everything from importing data to fitting to creating plots. Even when code for an analysis is divided into smaller scripts, these smaller scripts often have diffuse aims and complex inputs and outputs. Heavy use of `source()` commands mean that many scripts contribute objects to the current working environment, and no script can be understood in isolation. Changes to one part of a workflow have large, unexpected implications for other parts of the workflow.
+Ideas about modularity underlie much standard R advice about writing code for data analysis. RStudio-style projects, for instance, are an example of modular design [@wilson2017good; @wickham2023r; @projecttemplate2025project]. However, many actual data analyses written in R are the opposite of modular. For instance, the entire workflow is often contained in a single, huge script that is responsible for everything from importing data to fitting to creating plots. Even when code for an analysis is divided into smaller scripts, these smaller scripts often have diffuse aims and complex inputs and outputs. Heavy use of `source()` commands mean that many scripts contribute objects to the global environment, and no script can be understood in isolation. Changes to one part of a workflow have large, unexpected implications for other parts of the workflow.
 
 This article presents a strategy for making data analysis workflows more strictly modular. The basic unit in this strategy is a script. Each script is responsible for one small task, with inputs and outputs tightly controlled. Each script runs in its own environment, and data and intermediate outputs are passed around by reading from and writing to disk. Information about the project as a whole is held in a single orchestration file, which serves as an executable description of the analysis. 
 
@@ -94,7 +94,7 @@ n_digits <- as.integer(strsplit(args[[3]], split = "=")[[1]][[2]])
 ```
 As this example illustrates, using base R function `commandArgs()` to parse command line arguments can be fiddly. Packages `argparse`, `docopt`, `getopt`, `optparse`, and `R.utils` all implement high-level alternatives to base R `commandArgs()` [@dejonge2018docopt; @david2023optparse; @pav2023argparse; @david2020getopt; @bengtsson2023rutils].
 
-The `command` package is one further alternative, designed specifically for data analysis workflows. Function `cmd_assign()` in `command` automatically checks and reformats arguments, and assigns values within the working environment. For an introduction to `command`, see [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
+The `command` package is one further alternative, designed specifically for data analysis workflows. Function `cmd_assign()` in `command` automatically checks and reformats arguments, and assigns values within the global environment. For an introduction to `command`, see [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
 
 The ability to pass arguments to scripts essentially turns the scripts into functions. If, for instance, we want to run the code in `my-script.R` on `my-other-data.csv`, rather than `my-data.csv`, then we use something like
 ```{bash, eval = FALSE}
@@ -289,7 +289,7 @@ Computer code should ideally by 'self-documenting': it should make the programme
 
 ## Debugging
 
-Keeping scripts short, running each script in its own session, and explicitly defining the inputs to each session mean that, if something goes wrong, there should only be a few objects in the working environment, and the origins of these objects should be clear. Debugging is a lot less painful than it might otherwise be.
+Keeping scripts short, running each script in its own session, and explicitly defining the inputs to each session mean that, if something goes wrong, there should only be a few objects in the global environment, and the origins of these objects should be clear. Debugging is a lot less painful than it might otherwise be.
 
 
 ## Flexibility

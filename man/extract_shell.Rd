@@ -22,7 +22,7 @@ shell command. However, \code{extract_shell()}
 invisibly returns a text string with the command.
 }
 \description{
-Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_dots]{cmd_assign_dots()}} from an
+Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} from an
 R script, and turn it into a shell command.
 }
 \section{The components of a shell command}{
@@ -89,7 +89,7 @@ actually are file names
 like they could be.
 }
 
-A character vector supplied to \code{\link[=cmd_assign_dots]{cmd_assign_dots()}}
+A character vector supplied to \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}
 is a file argument when its name starts with a dot,
 or, when no argument name starts with a dot, when
 each element looks like a path. Each element is
@@ -131,9 +131,9 @@ Introduction to Rscript
 \item \code{\link[=shell_script]{shell_script()}} Create a shell script
 from calls to \code{\link[=cmd_assign]{cmd_assign()}}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
-\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start}
+\item \href{https://bayesiandemography.github.io/command/articles/a1_quickstart.html}{Quick Start}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
+\item \href{https://bayesiandemography.github.io/command/articles/a4_workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 }
 }

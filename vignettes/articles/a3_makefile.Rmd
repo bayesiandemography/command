@@ -164,7 +164,7 @@ When
 # Other resources
 
 - [shell_script()](https://bayesiandemography.github.io/command/reference/makefile.html) The shell script equivalent of `makefile()`
-- [Modeular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+- [Modeular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible workflows for data analysis
 - [Project Management with Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)
   Makefiles in data analysis workflows

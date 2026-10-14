@@ -76,7 +76,7 @@ test_that("'check_args_dots' throws error when values have wrong length", {
                  "Argument `b` in call to `cmd_assign\\(\\)` has length 0.")
 })
 
-test_that("'check_args_dots' allows a character vector for cmd_assign_dots", {
+test_that("'check_args_dots' allows a character vector for cmd_assign_collect", {
   args_dots <- list(files = c("data/a.csv", "out/combined.rds"),
                     use_log = TRUE)
   expect_true(check_args_dots(args_dots = args_dots, variadic = TRUE))
@@ -85,7 +85,7 @@ test_that("'check_args_dots' allows a character vector for cmd_assign_dots", {
   expect_error(check_args_dots(args_dots = list(files = c("a.csv", "out.rds"),
                                                 n = 1:2),
                                variadic = TRUE),
-               "Argument `n` in call to `cmd_assign_dots\\(\\)` has length 2.")
+               "Argument `n` in call to `cmd_assign_collect\\(\\)` has length 2.")
 })
 
 
@@ -103,7 +103,7 @@ test_that("'check_args_cmd_dots' errors when a named command line argument is un
   args_cmd <- list(label = "run")
   args_dots <- list(files = "out.rds", use_log = TRUE)
   expect_error(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots),
-               "not specified with `cmd_assign_dots\\(\\)`")
+               "not specified with `cmd_assign_collect\\(\\)`")
 })
 
 test_that("'check_args_cmd_dots' errors when the vector argument is passed by name", {

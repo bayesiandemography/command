@@ -2,21 +2,27 @@
 #' Assign Values Passed at the Command Line or Interactively
 #'
 #' @description
-#' Assign values to names in the working environment.
+#' Assign names to values in the global environment.
 #' The values are typically supplied through the command line,
 #' but can be supplied interactively.
 #'
-#' Specifying the inputs and outputs of scripts through the
-#' command line can make workflows safer and more modular.
-#'
-#' `cmd_assign_quiet()` is identical to `cmd_assign()`,
-#' but does not print progress messages to the console.
+#' `cmd_assign_quiet()` is identical to
+#' `cmd_assign()` except that it does not print
+#' progress messages to the console.
 #'
 #' @details
+#' `cmd_assign()` is a user-friendly alternative to [commandArgs()],
+#' designed specifically for data analysis workflows.
+#' 
+#' `cmd_assign()` can be used to record
+#' and enforce assumptions about inputs and outputs.
+#' This provides scripts with better-defined
+#' interfaces, making them clearer and safer.
+#'
 #' # Types of session
 #'
 #' `cmd_assign()` behaves differently depending
-#'  on how it whether it is called
+#'  on whether it is called
 #'
 #' 1. interactively, or
 #' 2. inside an R script that is run from the command line.
@@ -39,7 +45,7 @@
 #' `cmd_assign()` is typically called interactively
 #' when a workflow is being developed,
 #' and through the command line when the
-#' workflow has matured.
+#' workflow is in production.
 #'
 #' # Matching names and values
 #'
@@ -53,71 +59,123 @@
 #' the lines
 #'
 #' ```
-#' cmd_assign(.data = "raw_data.csv",
-#'            max_age = 85,
-#'            .out = "person.rds")
+#' cmd_assign(
+#'   .data = "raw_data.csv",
+#'    max_age = 85,
+#'    .out = "person.rds"
+#' )
 #' ```
 #'
 #' and if `person.R` is run from the command line using
 #'
 #' ```
-#' Rscript person.R raw_data.csv person.rds --max_age=100
+#' Rscript person.R \
+#'   raw_data.csv \
+#'   person.rds \
+#'   --max_age=100
 #' ```
 #' 
-#' then `cmd_assign()` first matches named
-#' command line argument `--max_age=100` to `cmd_assign()
-#' argument `max_age`, and then matches
-#' unnamed command line arguments
-#' `raw_data.csv` and `person.rds` to `cmd_assign()`
-#' arugments `.data` and `.out`.
+#' then `cmd_assign()`
+#'
+#' - matches named command line argument `--max_age=100`
+#'   to `cmd_assign()` argument `max_age`;
+#' - matches unnamed command line argument `raw_data.csv` to
+#'   `cmd_assign()` argument `.data`; and
+#' - matches unnamed command line argument `person.rds`
+#'   to `cmd_assign()` argument `.out`.
+#'
+#' 
+#' # The values specified in the call to cmd_assign() are not defaults
+#'
+#' The values specified in the call to `cmd_assign()` are
+#' not defaults in the sense of values to fall back to
+#' when no value is supplied. For instance, if we run a script
+#' containing the call
+#'
+#' ```
+#' cmd_assign(
+#'   n_draw = 10,
+#'   .out = "simulation.rds"
+#' )
+#' ```
+#'
+#' from the command line without passing a value
+#' for `n_draw`, then `cmd_assign()` will throw an error.
+#' It will *not* set `n_draw` to `10`.
+#'
+#' The reason for not allowing defaults is that
+#' it is clearer and safer to explicitly
+#' supply all inputs to a script.
 #'
 #' # Coercing values passed at the command line
 #' 
 #' Values passed at the command line start out as
-#' text strings. `cmd_assign()` coerces these text strings
+#' text strings. `cmd_assign()` coerces these strings
 #' to have the same class as the corresponding values
 #' in the call to `cmd_assign()`. For instance,
-#' if a script called `fit.R` contains
-#' the lines
+#' if script `fit.R` contains the lines
 #' 
 #' ```
-#' cmd_assign(.data = "cleaned.rds",
-#'            impute = TRUE,
-#'            date = as.Date("2026-01-01"),
-#'            .out = "fit.rds")
+#' cmd_assign(
+#'   .data = "data/individuals.rds",
+#'   impute = TRUE,
+#'   date = as.Date("2025-01-01"),
+#'   .out = "output/fitted.rds"
+#' )
 #' ```
 #'
-#' and if `fitted.R` is run from the command line using
+#' and if `fit.R` is run from the command line using
 #'
 #' ```
-#' Rscript fitted.R cleaned.rds fit.rds --impute=TRUE --date=2025-01-01
+#' Rscript src/fit.R \
+#'   data/individuals.rds \
+#'   output/fitted.rds \
+#'   --impute=TRUE \
+#'   --date=2025-01-01
 #' ```
 #'
 #' then `cmd_assign()` will create
 #'
-#' - a character vector called `.data` with value "cleaned.rds",
-#' - a logical vector called `impute` with value `TRUE`,
-#' - a date vector called `date` with value `"2025-01-01"`, and
-#' - a character vector called `.out` with value `"fit.rds".
+#' - a length-1 character vector called `.data` with value `"data/individuals.rds"`,
+#' - a length-1 logical vector called `impute` with value `TRUE`,
+#' - a length-1 date vector called `date` with value `"2025-01-01"`, and
+#' - a length-1 character vector called `.out` with value `"output/fitted.rds"`.
 #'
-#' # File names
+#' # The dot-name convention
 #'
-#' `cmd_assign()` does not require the names of arguments
-#' that hold file paths to start with a dot.
-#' The leading dot is a convention used by
-#' [extract_make()], [extract_shell()], [makefile()],
-#' and [shell_script()] when they decide which
-#' arguments are file names:
+#' When naming arguments to `cmd_assign()`, it is typically
+#' good practice to use names starting with dots for file paths,
+#' and names without dots for ordinary objects, as in
+#' ```
+#' cmd_assign(
+#'   .households = "data/households.csv",
+#'   n_record = 500,
+#'   sex = "Female",
+#'   .out = "out/subsample_female.rds"
+#' )
+#' ```
 #'
-#' - If any argument name starts with a dot, those
-#'   arguments are the file names.
-#' - Otherwise an argument is a file name when the
-#'   file exists, or when the value looks like a path.
+#' Function `cmd_assign()` does not in fact distinguish between
+#' names with dots and names without dots. But the dot-name convention
+#' is still useful because of the way it calls attention
+#' to the distinction between file paths and
+#' ordinary objects. For instance, a dot-name reminds the
+#' reader that they are dealing with a reference to
+#' an input, rather than the input itself,
+#' and that the input needs to be read into memory through
+#' some statement of the form
+#' ```
+#' households <- read.csv(.households)
+#' ```
 #'
-#' Dotted names such as `.data` and `.out` make that
-#' choice explicit. They are not required when the
-#' script is run.
-#'
+#' In addition, functions [extract_make()],
+#' [extract_shell()], [makefile()], and [shell_script()]
+#' *do* treat names with dots differently from
+#' names without dots. See the help for
+#' [extract_make()], [extract_shell()],
+#' [makefile()], and [shell_script()]
+#' for details.
+#' 
 #' @param ... Name-value pairs.
 #' 
 #' @returns `cmd_assign()` is called
@@ -126,16 +184,16 @@
 #' also invisibly returns a named list of objects.
 #'
 #' @seealso
-#' - [cmd_assign_dots()] Collect unnamed command line arguments
+#' - [cmd_assign_collect()] Collect unnamed command line arguments
 #'   into one character vector
 #' - [extract_shell()] Turn a `cmd_assign()` call into a shell command
 #' - [extract_make()] Turn a `cmd_assign()` call into a Makefile rule
 #' - [shell_script()] Create a shell script
 #' - [makefile()] Create a Makefile
 #' - [use_renv()] Activate a renv project before loading packages
-#' - [Quick Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#' - [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
 #'   Safe, flexible data analysis workflows.
 #' - [Using command with renv](https://bayesiandemography.github.io/command/articles/a5_renv.html)
 #'   Running pipeline scripts with renv
@@ -200,113 +258,107 @@ cmd_assign_quiet <- function(...) {
 }
 
 
-#' Assign a Variable Number of Command Line Arguments
+#' Assign Varying Set of Values Passed at the Command Line or Interactively
 #'
 #' @description
-#' Assign values to names in the working environment,
-#' like [cmd_assign()], but collect every unnamed
-#' command line argument into one character vector.
+#' Assign names to values in the global environment,
+#' like [cmd_assign()], but without specifying the number
+#' of values in advance. Values for unnamed command
+#' line arguments are collected into a single character vector.
 #'
-#' Use `cmd_assign_dots()` when a script must accept
-#' a number of file paths that is known only when the
-#' script is run. The script can then decide whether
-#' the first element, the last element, or neither
-#' is special.
+#' `cmd_assign_collect_quiet()` is identical to
+#' `cmd_assign_collect()` except that it does not print
+#' progress messages to the console.
 #'
 #' @details
 #' # Matching names and values
 #'
-#' Named command line arguments are matched by name,
-#' as in [cmd_assign()]. Exactly one argument must
-#' be left over. That argument is assigned every
-#' unnamed command line value, in order, as a character
-#' vector. The vector can have any length, including zero,
-#' and its length need not match the default.
+#' `cmd_assign_collect()`, like [cmd_assign()],
+#' starts by processing named command line arguments
+#' (i.e. arguments of the form `--n_draw=100`).
+#' Unlike `cmd_assign()`, however, `cmd_assign_collect()`
+#' puts all the values that are left over into a single
+#' character vector. This vector can be any length,
+#' including zero. There must, however, be a single
+#' name in the call to `cmd_assign_collect()`
+#' that has not been used for named command
+#' line arguments. `cmd_assign_collect()`
+#' assigns the character vector to this name.
 #'
 #' If, for instance, the script `combine.R` contains
 #'
 #' ```
-#' cmd_assign_dots(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
-#'                 use_log = TRUE)
-#' inputs <- head(files, -1)
-#' out <- tail(files, 1)
+#' cmd_assign_collect(
+#'   .files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+#'   use_log = TRUE
+#' )
 #' ```
 #'
 #' and if `combine.R` is run from the command line using
 #'
 #' ```
-#' Rscript combine.R data/a.csv data/c.csv out/combined.rds --use_log=TRUE
+#' Rscript combine.R \
+#'   data/a.csv \
+#'   data/c.csv \
+#'   out/combined.rds \
+#'   --use_log=TRUE
 #' ```
 #'
-#' then `files` is `c("data/a.csv", "data/c.csv", "out/combined.rds")`
-#' and `use_log` is `TRUE`. `files` was not passed as
-#' `--files=...`. Leaving more than one argument unnamed
-#' on the command line is an error, as is passing every
-#' argument by name. The argument that remains must be
-#' character.
+#' then `use_log` will be assigned the value `TRUE`
+#' and `.files` will be assigned the value
+#' `c("data/a.csv", "data/c.csv", "out/combined.rds")`.
 #'
-#' Values passed at the command line are not expanded.
-#' A shell or Makefile that uses a glob expands it
-#' before `Rscript` runs, and `cmd_assign_dots()`
-#' receives one string per path.
+#' # Processing the vector of unnamed arguments
 #'
-#' Interactive use assigns the values written in the call.
+#' The R script in which `cmd_assign_collect()` is
+#' called has responsibility for processing the
+#' character vector of values from unnamed command
+#' line arguments. The call to `cmd_assign_collect()` above,
+#' for instance, might be followed by statements such as
+#' ```
+#' .inputs <- head(.files, -1)
+#' .out <- tail(.files, 1)
+#' inputs <- lapply(.inputs, read.csv)
+#' ```
 #'
-#' # File names
+#' # Use cmd_assign() where possible
 #'
-#' `cmd_assign_dots()` does not require the name of the
-#' character vector to start with a dot.
-#' The leading dot is a convention used by
-#' [extract_make()], [extract_shell()], [makefile()],
-#' and [shell_script()] when they decide which
-#' arguments are file names:
+#' `cmd_assign_collect()` is more flexible than `cmd_assign()`,
+#' in that it does not require the number, name, or type of values
+#' to be specified in advance. But if the number, name, and type
+#' of incoming values are in fact known in advance,
+#' then locking those in is good practice. More precise code
+#' is more self-documenting and more likely to throw an
+#' error if something unexpected happens.
 #'
-#' - If any argument name starts with a dot, those
-#'   arguments are the file names.
-#' - Otherwise an argument is a file name when the
-#'   file exists, or when the value looks like a path.
+#' @param ... Name-value pairs.
 #'
-#' Dotted names such as `.data` and `.out` make that
-#' choice explicit. They are not required when the
-#' script is run.
-#'
-#' For `cmd_assign_dots()`, a character vector is handled
-#' in the same way. If its name starts with a dot, or if
-#' no argument name starts with a dot and each element
-#' looks like a path, every element is a file name.
-#' In a Makefile rule, the last element is the target
-#' and the earlier elements are prerequisites.
-#'
-#' @param ... Name-value pairs. Exactly one argument
-#' receives the unnamed command line values. That
-#' argument must be character, and can have any length.
-#' Every other argument must have length 1, and on the
-#' command line must be passed by name.
-#'
-#' @returns `cmd_assign_dots()` is called
+#' @returns `cmd_assign_collect()` is called
 #' for its side effect, which is to create objects
-#' in the global environment. However, `cmd_assign_dots()`
+#' in the global environment. However, `cmd_assign_collect()`
 #' also invisibly returns a named list of objects.
 #'
 #' @seealso
 #' - [cmd_assign()] Process command line arguments
 #'   with one value per argument
 #' - [extract_shell()] Turn a `cmd_assign()` or
-#'   `cmd_assign_dots()` call into a shell command
+#'   `cmd_assign_collect()` call into a shell command
 #' - [extract_make()] Turn a `cmd_assign()` or
-#'   `cmd_assign_dots()` call into a Makefile rule
+#'   `cmd_assign_collect()` call into a Makefile rule
 #' - [shell_script()] Create a shell script
 #' - [makefile()] Create a Makefile
-#' - [Quick Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#' - [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
 #'   How to use `cmd_assign()`
 #'
 #' @examples
 #' if (interactive()) {
-#'   cmd_assign_dots(files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
-#'                   use_log = TRUE)
+#'   cmd_assign_collect(
+#'     files = c("data/x.csv", "data/y.csv"),
+#'     use_log = TRUE
+#'   )
 #' }
 #' @export
-cmd_assign_dots <- function(...) {
+cmd_assign_collect <- function(...) {
   envir <- parent.frame()
   args_dots <- list(...)
   check_args_dots(args_dots, variadic = TRUE)
@@ -325,5 +377,28 @@ cmd_assign_dots <- function(...) {
   assign_args(args = args,
               envir = envir,
               quiet = FALSE)
+}
+
+#' @export
+#' @rdname cmd_assign_collect
+cmd_assign_collect_quiet <- function(...) {
+  envir <- parent.frame()
+  args_dots <- list(...)
+  check_args_dots(args_dots, variadic = TRUE)
+  if (interactive())
+    args <- args_dots # nocov
+  else {
+    args_cmd <- get_args_cmd()
+    check_args_cmd_dots(args_cmd = args_cmd,
+                        args_dots = args_dots)
+    args_cmd <- align_cmd_dots(args_cmd = args_cmd,
+                               args_dots = args_dots)
+    args_cmd <- coerce_to_dots_class(args_cmd = args_cmd,
+                                     args_dots = args_dots)
+    args <- args_cmd
+  }
+  assign_args(args = args,
+              envir = envir,
+              quiet = TRUE)
 }
 

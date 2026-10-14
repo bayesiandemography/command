@@ -2,7 +2,7 @@
 ## HAS_TESTS
 #' Turn a 'cmd_assign' Call Into a Shell Command
 #'
-#' Extract a call to [cmd_assign()] or [cmd_assign_dots()] from an
+#' Extract a call to [cmd_assign()] or [cmd_assign_collect()] from an
 #' R script, and turn it into a shell command.
 #'
 #' # The components of a shell command
@@ -64,7 +64,7 @@
 #'   (as determined by [file.exists()]) or that look
 #'   like they could be.
 #'
-#' A character vector supplied to [cmd_assign_dots()]
+#' A character vector supplied to [cmd_assign_collect()]
 #' is a file argument when its name starts with a dot,
 #' or, when no argument name starts with a dot, when
 #' each element looks like a path. Each element is
@@ -87,9 +87,9 @@
 #' - [shell_script()] Create a shell script
 #'   from calls to [cmd_assign()]
 #' - [cmd_assign()] Process command line arguments
-#' - [Quick Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+#' - [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
 #'   How to use `cmd_assign()`
-#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+#' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
 #'   Safe, flexible data analysis workflows
 #'
 #' @references

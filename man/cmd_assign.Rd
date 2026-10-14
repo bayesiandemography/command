@@ -19,20 +19,26 @@ in the global environment. However, \code{cmd_assign()}
 also invisibly returns a named list of objects.
 }
 \description{
-Assign values to names in the working environment.
+Assign names to values in the global environment.
 The values are typically supplied through the command line,
 but can be supplied interactively.
 
-Specifying the inputs and outputs of scripts through the
-command line can contribute to safter, more modular
-workflows.
+\code{cmd_assign_quiet()} is identical to
+\code{cmd_assign()} except that it does not print
+progress messages to the console.
+}
+\details{
+\code{cmd_assign()} is a user-friendly alternative to \code{\link[=commandArgs]{commandArgs()}},
+designed specifically for data analysis workflows.
 
-\code{cmd_assign_quiet()} is identical to \code{cmd_assign()},
-but does not print progress messages to the console.
+\code{cmd_assign()} can be used to record
+and enforce assumptions about inputs and outputs.
+This provides scripts with better-defined
+interfaces, making them clearer and safer.
 }
 \section{Types of session}{
 \code{cmd_assign()} behaves differently depending
-on how it whether it is called
+on whether it is called
 \enumerate{
 \item interactively, or
 \item inside an R script that is run from the command line.
@@ -56,7 +62,7 @@ with value \code{FALSE}.
 \code{cmd_assign()} is typically called interactively
 when a workflow is being developed,
 and through the command line when the
-workflow has matured.
+workflow is in production.
 }
 
 \section{Matching names and values}{
@@ -69,65 +75,119 @@ in the order in which they are supplied.
 If, for instance, the script \code{person.R} contains
 the lines
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(.data = "raw_data.csv",
-           max_age = 85,
-           .out = "person.rds")
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(
+  .data = "raw_data.csv",
+   max_age = 85,
+   .out = "person.rds"
+)
 }\if{html}{\out{</div>}}
 
 and if \code{person.R} is run from the command line using
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Rscript person.R raw_data.csv person.rds --max_age=100
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Rscript person.R \\
+  raw_data.csv \\
+  person.rds \\
+  --max_age=100
 }\if{html}{\out{</div>}}
 
-then \code{cmd_assign()} first matches named
-command line argument \code{--max_age=100} to \verb{cmd_assign() argument }max_age\verb{, and then matches unnamed command line arguments }raw_data.csv\code{and}person.rds\code{to}cmd_assign()\code{arugments}.data\code{and}.out`.
+then \code{cmd_assign()}
+\itemize{
+\item matches named command line argument \code{--max_age=100}
+to \code{cmd_assign()} argument \code{max_age};
+\item matches unnamed command line argument \code{raw_data.csv} to
+\code{cmd_assign()} argument \code{.data}; and
+\item matches unnamed command line argument \code{person.rds}
+to \code{cmd_assign()} argument \code{.out}.
+}
+}
+
+\section{The values specified in the call to cmd_assign() are not defaults}{
+The values specified in the call to \code{cmd_assign()} are
+not defaults in the sense of values to fall back to
+when no value is supplied. For instance, if we run a script
+containing the call
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(
+  n_draw = 10,
+  .out = "simulation.rds"
+)
+}\if{html}{\out{</div>}}
+
+from the command line without passing a value
+for \code{n_draw}, then \code{cmd_assign()} will throw an error.
+It will \emph{not} set \code{n_draw} to \code{10}.
+
+The reason for not allowing defaults is that
+it is clearer and safer to explicitly
+supply all inputs to a script.
 }
 
 \section{Coercing values passed at the command line}{
 Values passed at the command line start out as
-text strings. \code{cmd_assign()} coerces these text strings
+text strings. \code{cmd_assign()} coerces these strings
 to have the same class as the corresponding values
 in the call to \code{cmd_assign()}. For instance,
-if a script called \code{fit.R} contains
-the lines
+if script \code{fit.R} contains the lines
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(.data = "cleaned.rds",
-           impute = TRUE,
-           date = as.Date("2026-01-01"),
-           .out = "fit.rds")
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(
+  .data = "data/individuals.rds",
+  impute = TRUE,
+  date = as.Date("2025-01-01"),
+  .out = "output/fitted.rds"
+)
 }\if{html}{\out{</div>}}
 
-and if \code{fitted.R} is run from the command line using
+and if \code{fit.R} is run from the command line using
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Rscript fitted.R cleaned.rds fit.rds --impute=TRUE --date=2025-01-01
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Rscript src/fit.R \\
+  data/individuals.rds \\
+  output/fitted.rds \\
+  --impute=TRUE \\
+  --date=2025-01-01
 }\if{html}{\out{</div>}}
 
 then \code{cmd_assign()} will create
 \itemize{
-\item a character vector called \code{.data} with value "cleaned.rds",
-\item a logical vector called \code{impute} with value \code{TRUE},
-\item a date vector called \code{date} with value \code{"2025-01-01"}, and
-\item a character vector called \code{.out} with value `"fit.rds".
+\item a length-1 character vector called \code{.data} with value \code{"data/individuals.rds"},
+\item a length-1 logical vector called \code{impute} with value \code{TRUE},
+\item a length-1 date vector called \code{date} with value \code{"2025-01-01"}, and
+\item a length-1 character vector called \code{.out} with value \code{"output/fitted.rds"}.
 }
 }
 
-\section{File names}{
-\code{cmd_assign()} does not require the names of arguments
-that hold file paths to start with a dot.
-The leading dot is a convention used by
-\code{\link[=extract_make]{extract_make()}}, \code{\link[=extract_shell]{extract_shell()}}, \code{\link[=makefile]{makefile()}},
-and \code{\link[=shell_script]{shell_script()}} when they decide which
-arguments are file names:
-\itemize{
-\item If any argument name starts with a dot, those
-arguments are the file names.
-\item Otherwise an argument is a file name when the
-file exists, or when the value looks like a path.
-}
+\section{The dot-name convention}{
+When naming arguments to \code{cmd_assign()}, it is typically
+good practice to use names starting with dots for file paths,
+and names without dots for ordinary objects, as in
 
-Dotted names such as \code{.data} and \code{.out} make that
-choice explicit. They are not required when the
-script is run.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(
+  .households = "data/households.csv",
+  n_record = 500,
+  sex = "Female",
+  .out = "out/subsample_female.rds"
+)
+}\if{html}{\out{</div>}}
+
+Function \code{cmd_assign()} does not in fact distinguish between
+names with dots and names without dots. But the dot-name convention
+is still useful because of the way it calls attention
+to the distinction between file paths and
+ordinary objects. For instance, a dot-name reminds the
+reader that they are dealing with a reference to
+an input, rather than the input itself,
+and that the input needs to be read into memory through
+some statement of the form
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{households <- read.csv(.households)
+}\if{html}{\out{</div>}}
+
+In addition, functions \code{\link[=extract_make]{extract_make()}},
+\code{\link[=extract_shell]{extract_shell()}}, \code{\link[=makefile]{makefile()}}, and \code{\link[=shell_script]{shell_script()}}
+\emph{do} treat names with dots differently from
+names without dots. See the help for
+\code{\link[=extract_make]{extract_make()}}, \code{\link[=extract_shell]{extract_shell()}},
+\code{\link[=makefile]{makefile()}}, and \code{\link[=shell_script]{shell_script()}}
+for details.
 }
 
 \examples{
@@ -145,16 +205,16 @@ Introduction to Rscript
 }
 \seealso{
 \itemize{
-\item \code{\link[=cmd_assign_dots]{cmd_assign_dots()}} Collect unnamed command line arguments
+\item \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} Collect unnamed command line arguments
 into one character vector
 \item \code{\link[=extract_shell]{extract_shell()}} Turn a \code{cmd_assign()} call into a shell command
 \item \code{\link[=extract_make]{extract_make()}} Turn a \code{cmd_assign()} call into a Makefile rule
 \item \code{\link[=shell_script]{shell_script()}} Create a shell script
 \item \code{\link[=makefile]{makefile()}} Create a Makefile
 \item \code{\link[=use_renv]{use_renv()}} Activate a renv project before loading packages
-\item \href{https://bayesiandemography.github.io/command/articles/quickstart.html}{Quick Start}
+\item \href{https://bayesiandemography.github.io/command/articles/a1_quickstart.html}{Quick Start}
 How to use \code{cmd_assign()}
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
+\item \href{https://bayesiandemography.github.io/command/articles/a4_workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows.
 \item \href{https://bayesiandemography.github.io/command/articles/a5_renv.html}{Using command with renv}
 Running pipeline scripts with renv

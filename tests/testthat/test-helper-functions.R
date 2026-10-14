@@ -519,7 +519,7 @@ test_that("'extract_args' gives warning when no call to cmd_assign() found", {
                "y <- 2"),
              con = "script.R")
   expect_message(ans <- extract_args("script.R"),
-                 "No call to `cmd_assign\\(\\)` or `cmd_assign_dots\\(\\)` found.")
+                 "No call to `cmd_assign\\(\\)` or `cmd_assign_collect\\(\\)` found.")
   expect_identical(ans, NULL)
   setwd(dir_curr)
   unlink(dir_tmp, recursive = TRUE)

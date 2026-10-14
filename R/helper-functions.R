@@ -227,7 +227,7 @@ extract_shell_if_possible <- function(file, dir_shell, quiet) {
   if (is.null(call))
     return(NULL)
   nm_fun <- call$name
-  variadic <- identical(nm_fun, "cmd_assign_dots")
+  variadic <- identical(nm_fun, "cmd_assign_collect")
   tryCatch(
     check_args_dots(call$args, variadic = variadic),
     error = function(e)
@@ -265,7 +265,7 @@ extract_make_if_possible <- function(file, dir_make, quiet) {
   if (is.null(call))
     return(NULL)
   nm_fun <- call$name
-  variadic <- identical(nm_fun, "cmd_assign_dots")
+  variadic <- identical(nm_fun, "cmd_assign_collect")
   tryCatch(
     check_args_dots(call$args, variadic = variadic),
     error = function(e)
@@ -396,7 +396,7 @@ extract_args <- function(file) {
   call <- extract_cmd_call(file)
   if (is.null(call)) {
     cli::cli_alert_warning(paste("No call to {.fn cmd_assign} or",
-                                 "{.fn cmd_assign_dots} found."))
+                                 "{.fn cmd_assign_collect} found."))
     return(NULL)
   }
   call$args
@@ -404,7 +404,7 @@ extract_args <- function(file) {
 
 
 ## HAS_TESTS
-#' Extract a cmd_assign or cmd_assign_dots Call From a File
+#' Extract a cmd_assign or cmd_assign_collect Call From a File
 #'
 #' @param file Path to an R script.
 #'
@@ -416,7 +416,7 @@ extract_cmd_call <- function(file) {
   code <- paste(readLines(file), collapse = "\n")
   exprs <- parse(text = code)
   nm_assign <- as.name("cmd_assign")
-  nm_dots <- as.name("cmd_assign_dots")
+  nm_dots <- as.name("cmd_assign_collect")
   for (expr in exprs) {
     if (!is.call(expr))
       next
@@ -424,7 +424,7 @@ extract_cmd_call <- function(file) {
     if (identical(nm_expr, nm_assign))
       nm_fun <- "cmd_assign"
     else if (identical(nm_expr, nm_dots))
-      nm_fun <- "cmd_assign_dots"
+      nm_fun <- "cmd_assign_collect"
     else
       next
     args <- as.list(expr)[-1L]

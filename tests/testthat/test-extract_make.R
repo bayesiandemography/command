@@ -19,13 +19,13 @@ test_that("'extract_make' works with no dir_make", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
-test_that("'extract_make' reads a cmd_assign_dots call", {
+test_that("'extract_make' reads a cmd_assign_collect call", {
   dir_tmp <- tempfile(tmpdir = getwd())
   if (file.exists(dir_tmp))
     unlink(dir_tmp, recursive = TRUE)
   dir.create(dir_tmp)
   path_file <- "script.R"
-  writeLines(paste("cmd_assign_dots(files = c('data/a.csv', 'data/b.csv',",
+  writeLines(paste("cmd_assign_collect(files = c('data/a.csv', 'data/b.csv',",
                    "'out/combined.rds'), use_log = TRUE)"),
              con = path_join(dir_tmp, path_file))
   capture.output(ans_obtained <- extract_make(path_file = path_file,

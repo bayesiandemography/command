@@ -65,8 +65,8 @@ check_args_cmd <- function(args_cmd, args_dots) {
 #'                Date, POSIXct, POSIXlt
 #'
 #' @param args_dots Dots argument from
-#' [cmd_assign()] or `cmd_assign_dots()`.
-#' @param variadic Whether the caller is `cmd_assign_dots()`.
+#' [cmd_assign()] or `cmd_assign_collect()`.
+#' @param variadic Whether the caller is `cmd_assign_collect()`.
 #' When `TRUE`, character arguments may have any length.
 #'
 #' @return TRUE, invisibly
@@ -75,7 +75,7 @@ check_args_cmd <- function(args_cmd, args_dots) {
 check_args_dots <- function(args_dots, variadic = FALSE) {
   n <- length(args_dots)
   nms <- names(args_dots)
-  nm_fun <- if (variadic) "cmd_assign_dots" else "cmd_assign"
+  nm_fun <- if (variadic) "cmd_assign_collect" else "cmd_assign"
   check_names_args(nms)
   is_character <- vapply(args_dots, is.character, NA, USE.NAMES = FALSE)
   is_integer <- vapply(args_dots, is.integer, NA, USE.NAMES = FALSE)
@@ -118,10 +118,10 @@ check_args_dots <- function(args_dots, variadic = FALSE) {
 
 
 ## HAS_TESTS
-#' Check Command Line Arguments for 'cmd_assign_dots'
+#' Check Command Line Arguments for 'cmd_assign_collect'
 #'
 #' Named command line arguments must match arguments
-#' of `cmd_assign_dots()` by name. Exactly one argument
+#' of `cmd_assign_collect()` by name. Exactly one argument
 #' must be left over, and that argument must be character.
 #' It receives every unnamed command line value.
 #'
@@ -143,8 +143,8 @@ check_args_cmd_dots <- function(args_cmd, args_dots) {
     if (!(nm %in% nms_dots)) {
       cli::cli_abort(c("Problem with argument {.arg {nm}}.",
                        i = paste("Named argument {.arg {nm}} passed at command line",
-                                 "but not specified with {.fun cmd_assign_dots}."),
-                       i = paste("Argument{?s} specified with {.fun cmd_assign_dots}:",
+                                 "but not specified with {.fun cmd_assign_collect}."),
+                       i = paste("Argument{?s} specified with {.fun cmd_assign_collect}:",
                                  "{.arg {nms_dots}}.")))
     }
   }
@@ -154,7 +154,7 @@ check_args_cmd_dots <- function(args_cmd, args_dots) {
   if (n_unmatched == 0L) {
     n_unnamed <- sum(!is_named)
     msg <- c("Every argument was passed by name at the command line.",
-             i = paste("Exactly one argument of {.fun cmd_assign_dots} must be left unnamed,",
+             i = paste("Exactly one argument of {.fun cmd_assign_collect} must be left unnamed,",
                        "so that it can receive the unnamed command-line arguments."))
     if (n_unnamed > 0L)
       msg <- c(msg,
@@ -163,7 +163,7 @@ check_args_cmd_dots <- function(args_cmd, args_dots) {
       msg <- c(msg,
                i = "Named argument{?s} passed at command line: {.arg {nms_cmd_named}}.")
     msg <- c(msg,
-             i = paste("Argument{?s} specified with {.fun cmd_assign_dots}:",
+             i = paste("Argument{?s} specified with {.fun cmd_assign_collect}:",
                        "{.arg {nms_dots}}."))
     cli::cli_abort(msg)
   }
@@ -171,7 +171,7 @@ check_args_cmd_dots <- function(args_cmd, args_dots) {
     cli::cli_abort(c("More than one argument was left to receive unnamed command-line arguments.",
                      i = "Exactly one argument must be left unnamed.",
                      i = "Argument{?s} not passed by name: {.arg {nms_unmatched}}.",
-                     i = paste("Argument{?s} specified with {.fun cmd_assign_dots}:",
+                     i = paste("Argument{?s} specified with {.fun cmd_assign_collect}:",
                                "{.arg {nms_dots}}.")))
   }
   nm_vec <- nms_unmatched[[1L]]
@@ -180,7 +180,7 @@ check_args_cmd_dots <- function(args_cmd, args_dots) {
     cli::cli_abort(c(paste("Argument {.arg {nm_vec}} must receive the unnamed",
                            "command-line arguments, but it is not {.cls character}."),
                      i = "The argument left unnamed must be {.cls character}.",
-                     i = paste("Class specified by {.fun cmd_assign_dots}:",
+                     i = paste("Class specified by {.fun cmd_assign_collect}:",
                                "{.cls {class(arg_default)}}.")))
   }
   invisible(TRUE)

@@ -1,7 +1,7 @@
 Package: command
 Type: Package
 Title: Process Command Line Arguments
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person(given = "John",
            family = "Bryant",
@@ -11,11 +11,10 @@ Authors@R: c(
             role = "cph"))
 Description: Process command line arguments. Processing includes
     checking arguments, matching arguments to names,
-    and automatically converting strings to numbers, logical values,
-    or dates. The main function, `cmd_assign()`, is designed to be
-    used a part of an automated workflow, but can also be used interactively
-    for development and testing. The aim is give files well-defined interfaces,
-    with clear inputs and outputs.
+    and converting strings to numbers, booleans, or dates.
+    The main function, cmd_assign(), allows the inputs and outputs
+    of a file to be clearly defined, leading to
+    safer, more modular data analysis pipelines.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 3.5.0)

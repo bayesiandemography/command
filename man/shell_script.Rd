@@ -15,7 +15,7 @@ shell_script(
 \arguments{
 \item{path_files}{A path from \code{dir_shell} to a
 directory with R scripts containing
-calls to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_dots]{cmd_assign_dots()}}.}
+calls to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}.}
 
 \item{dir_shell}{The directory where
 \code{shell_script()} will create the shell script.
@@ -106,7 +106,7 @@ Introduction to Rscript
 \item \code{\link[=extract_shell]{extract_shell()}} Turn a \code{\link[=cmd_assign]{cmd_assign()}} call into a shell command
 \item \code{\link[=makefile]{makefile()}} Makefile equivalent of \code{shell_script()}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
-\item \href{https://bayesiandemography.github.io/command/articles/workflow.html}{Modular Workflows for Data Analysis}
+\item \href{https://bayesiandemography.github.io/command/articles/a4_workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
 }
