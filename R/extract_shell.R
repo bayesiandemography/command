@@ -5,6 +5,12 @@
 #' Extract a call to [cmd_assign()] or [cmd_assign_collect()] from an
 #' R script, and turn it into a shell command.
 #'
+#' Values in the call must be literals: constants, `c(...)`,
+#' or `as.integer()`, `as.numeric()`, `as.logical()`,
+#' `as.Date()`, `as.POSIXct()`, or `as.POSIXlt()`.
+#' A name or another function call, such as `file.path()`
+#' or `paste()`, is an error.
+#'
 #' # The components of a shell command
 #'
 #' The shell command produced by `extract_shell()`

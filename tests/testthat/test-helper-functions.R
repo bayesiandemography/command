@@ -217,6 +217,60 @@ test_that("'extract_cmd_call' finds a collect call inside a function", {
   expect_identical(ans$args$use_log, TRUE)
 })
 
+test_that("'extract_cmd_call' does not evaluate names or other calls", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  i <- 99
+  path_name <- file.path(dir_tmp, "name.R")
+  writeLines(c("n <- 7",
+               "cmd_assign(i = i)"),
+             path_name)
+  expect_error(extract_cmd_call(path_name),
+               "Can't read argument `i`")
+  surprise <- file.path(dir_tmp, "surprise.txt")
+  path_side <- file.path(dir_tmp, "side.R")
+  writeLines(sprintf("cmd_assign(.out = {writeLines('created', '%s'); 'out/x.rds'})",
+                     surprise),
+             path_side)
+  expect_error(extract_cmd_call(path_side),
+               "Can't read argument")
+  expect_false(file.exists(surprise))
+})
+
+
+## 'read_cmd_arg' -------------------------------------------------------------
+
+test_that("'read_cmd_arg' reads constants, c(), and class constructors", {
+  expect_identical(read_cmd_arg(quote(1L), "n", "script.R"), 1L)
+  expect_identical(read_cmd_arg(quote(-1), "n", "script.R"), -1)
+  expect_identical(read_cmd_arg(quote((-1L)), "n", "script.R"),
+                   base::`-`(1L))
+  expect_identical(read_cmd_arg(quote(NULL), "k", "script.R"), NULL)
+  expect_identical(read_cmd_arg(quote(c("data/a.csv", "out/b.rds")), "files", "script.R"),
+                   c("data/a.csv", "out/b.rds"))
+  expect_identical(read_cmd_arg(quote(as.integer("3")), "n", "script.R"), 3L)
+  expect_identical(read_cmd_arg(quote(as.numeric(1L)), "n", "script.R"), 1)
+  expect_identical(read_cmd_arg(quote(as.logical("TRUE")), "flag", "script.R"), TRUE)
+  expect_identical(read_cmd_arg(quote(as.Date("01-01-2025", format = "%d-%m-%Y")),
+                                "date", "script.R"),
+                   as.Date("2025-01-01"))
+  expect_identical(read_cmd_arg(quote(as.POSIXct("2025-01-01", tz = "UTC")),
+                                "date", "script.R"),
+                   as.POSIXct("2025-01-01", tz = "UTC"))
+})
+
+test_that("'read_cmd_arg' rejects a name, file.path(), and paste()", {
+  expect_error(read_cmd_arg(quote(n), "n", "script.R"),
+               "Can't read argument `n`")
+  expect_error(read_cmd_arg(quote(file.path("data", "x.csv")), ".data", "script.R"),
+               "file.path")
+  expect_error(read_cmd_arg(quote(paste0("out/", "x.rds")), ".out", "script.R"),
+               "paste0")
+  expect_error(read_cmd_arg(quote(file.path("data", "x.csv")), "", "script.R"),
+               "unnamed argument")
+})
+
 test_that("'extract_shell_if_possible' accepts a quiet collect call", {
   dir_tmp <- tempfile(tmpdir = getwd())
   on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)

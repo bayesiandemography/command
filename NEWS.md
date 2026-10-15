@@ -17,6 +17,10 @@
   may still need editing.
 * `cmd_assign()` and `cmd_assign_collect()` reject a named
   command-line argument that is passed more than once.
+* `makefile()`, `shell_script()`, `extract_make()`, and
+  `extract_shell()` read literal values from calls.
+  A name or a function call such as `file.path()` or
+  `paste()` is an error.
 
 # command 0.2.0
 

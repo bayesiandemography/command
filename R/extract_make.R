@@ -9,6 +9,12 @@
 #' A file path that contains a space or a character special
 #' to Make must be corrected in the dependency line.
 #'
+#' Values in the call must be literals: constants, `c(...)`,
+#' or `as.integer()`, `as.numeric()`, `as.logical()`,
+#' `as.Date()`, `as.POSIXct()`, or `as.POSIXlt()`.
+#' A name or another function call, such as `file.path()`
+#' or `paste()`, is an error.
+#'
 #' # The components of a Makefile rule
 #'
 #' A Makefile rule produced by `extract_make()`

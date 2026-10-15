@@ -28,6 +28,12 @@ R script, and turn it into a Makefile rule.
 The rule may need editing before it is added to a Makefile.
 A file path that contains a space or a character special
 to Make must be corrected in the dependency line.
+
+Values in the call must be literals: constants, \code{c(...)},
+or \code{as.integer()}, \code{as.numeric()}, \code{as.logical()},
+\code{as.Date()}, \code{as.POSIXct()}, or \code{as.POSIXlt()}.
+A name or another function call, such as \code{file.path()}
+or \code{paste()}, is an error.
 }
 \section{The components of a Makefile rule}{
 A Makefile rule produced by \code{extract_make()}

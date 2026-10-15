@@ -24,6 +24,12 @@ invisibly returns a text string with the command.
 \description{
 Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} from an
 R script, and turn it into a shell command.
+
+Values in the call must be literals: constants, \code{c(...)},
+or \code{as.integer()}, \code{as.numeric()}, \code{as.logical()},
+\code{as.Date()}, \code{as.POSIXct()}, or \code{as.POSIXlt()}.
+A name or another function call, such as \code{file.path()}
+or \code{paste()}, is an error.
 }
 \section{The components of a shell command}{
 The shell command produced by \code{extract_shell()}

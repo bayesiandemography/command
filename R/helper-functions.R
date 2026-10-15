@@ -504,12 +504,124 @@ find_cmd_call <- function(expr) {
 
 
 ## HAS_TESTS
+#' Read One Literal Argument From a cmd_assign Call
+#'
+#' Accepts constants, `c(...)` of those values, and the class
+#' constructors [as.integer()], [as.numeric()], [as.logical()],
+#' [as.Date()], [as.POSIXct()], and [as.POSIXlt()]. A name or
+#' any other call is an error. The constructors are taken from
+#' [baseenv()], so a masked function in the global environment
+#' is ignored.
+#'
+#' @param expr One argument from the parsed call.
+#' @param nm Argument name, or `""` when the argument is unnamed.
+#' @param file Path to the script, used in the error message.
+#'
+#' @returns The value of the literal.
+#'
+#' @noRd
+read_cmd_arg <- function(expr, nm, file) {
+  reject <- function() {
+    text <- paste(deparse(expr, width.cutoff = 500L), collapse = " ")
+    header <- if (nzchar(nm))
+      "Can't read argument {.arg {nm}} in {.file {file}}."
+    else
+      "Can't read an unnamed argument in {.file {file}}."
+    cli::cli_abort(c(header,
+                     i = "Expression: {.code {text}}.",
+                     i = paste("Use a constant, {.fun c}, {.fun as.integer},",
+                               "{.fun as.numeric}, {.fun as.logical}, {.fun as.Date},",
+                               "{.fun as.POSIXct}, or {.fun as.POSIXlt}.")))
+  }
+  read_literal <- function(x) {
+    if (is.null(x))
+      return(NULL)
+    if (is.atomic(x) && identical(length(x), 1L))
+      return(x)
+    if (is.symbol(x)) {
+      nm_sym <- as.character(x)
+      if (!nzchar(nm_sym))
+        reject()
+      if (nm_sym %in% c("TRUE", "T"))
+        return(TRUE)
+      if (nm_sym %in% c("FALSE", "F"))
+        return(FALSE)
+      if (nm_sym == "NULL")
+        return(NULL)
+      if (nm_sym == "NA")
+        return(NA)
+      if (nm_sym == "NA_integer_")
+        return(NA_integer_)
+      if (nm_sym == "NA_real_")
+        return(NA_real_)
+      if (nm_sym == "NA_character_")
+        return(NA_character_)
+      if (nm_sym == "Inf")
+        return(Inf)
+      if (nm_sym == "NaN")
+        return(NaN)
+      reject()
+    }
+    if (!is.call(x))
+      reject()
+    head <- x[[1L]]
+    if (!is.symbol(head))
+      reject()
+    fn <- as.character(head)
+    args <- as.list(x)[-1L]
+    if (fn == "(" && identical(length(args), 1L))
+      return(read_literal(args[[1L]]))
+    if (fn == "-" && identical(length(args), 1L)) {
+      val <- read_literal(args[[1L]])
+      if (is.numeric(val) && !is.logical(val) && identical(length(val), 1L))
+        return(base::`-`(val))
+      reject()
+    }
+    vals <- lapply(args, read_literal)
+    if (fn == "c")
+      return(do.call(base::c, vals))
+    constructors <- c("as.integer", "as.numeric", "as.logical",
+                      "as.Date", "as.POSIXct", "as.POSIXlt")
+    if (!(fn %in% constructors))
+      reject()
+    nms <- names(vals)
+    if (is.null(nms))
+      nms <- rep("", length(vals))
+    named <- nzchar(nms)
+    if (sum(!named) != 1L)
+      reject()
+    value <- vals[!named][[1L]]
+    optional <- vals[named]
+    allowed <- switch(fn,
+                      as.Date = "format",
+                      as.POSIXct = c("format", "tz"),
+                      as.POSIXlt = c("format", "tz"),
+                      character())
+    opt_nms <- names(optional)
+    if (is.null(opt_nms))
+      opt_nms <- character()
+    if (any(!(opt_nms %in% allowed)))
+      reject()
+    ok_opt <- vapply(optional,
+                     function(val) is.character(val) && identical(length(val), 1L),
+                     TRUE)
+    if (length(ok_opt) > 0L && !all(ok_opt))
+      reject()
+    fun <- get(fn, envir = baseenv(), mode = "function")
+    do.call(fun, c(list(value), optional))
+  }
+  read_literal(expr)
+}
+
+
+## HAS_TESTS
 #' Extract a cmd_assign or cmd_assign_collect Call From a File
 #'
 #' Finds the first call to [cmd_assign()], [cmd_assign_quiet()],
 #' [cmd_assign_collect()], or [cmd_assign_collect_quiet()],
 #' including a call nested inside another expression and a call
-#' written as `command::cmd_assign()`.
+#' written as `command::cmd_assign()`. Argument values are read
+#' by [read_cmd_arg()] and are not evaluated.
 #'
 #' @param file Path to an R script.
 #'
@@ -525,8 +637,15 @@ extract_cmd_call <- function(file) {
     if (is.null(found))
       next
     args <- as.list(found$expr)[-1L]
-    args <- lapply(args, eval)
-    return(list(name = found$name, args = args))
+    nms <- names(args)
+    if (is.null(nms))
+      nms <- rep("", length(args))
+    read <- lapply(seq_along(args), function(i) {
+      read_cmd_arg(expr = args[[i]], nm = nms[[i]], file = file)
+    })
+    if (!is.null(names(args)))
+      names(read) <- names(args)
+    return(list(name = found$name, args = read))
   }
   NULL
 }
