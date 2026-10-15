@@ -42,6 +42,19 @@ test_that("'check_args_cmd' throws expected error lengths of 'args_cmd' 'args_do
                      "specified with `cmd_assign\\(\\)`."))
 })
 
+test_that("'check_args_cmd' rejects a named argument passed more than once", {
+  args_cmd <- list(n_iter = "1", n_iter = "2")
+  args_dots <- list(n_iter = 10L, .out = "out.rds")
+  expect_error(check_args_cmd(args_cmd = args_cmd,
+                              args_dots = args_dots),
+               "Named argument `n_iter` was passed more than once")
+  args_cmd <- list("out.rds", use_log = "TRUE", use_log = "FALSE")
+  args_dots <- list(.out = "out.rds", use_log = TRUE)
+  expect_error(check_args_cmd(args_cmd = args_cmd,
+                              args_dots = args_dots),
+               "Named argument `use_log` was passed more than once")
+})
+
 test_that("'check_args_cmd' throws expected error lengths of 'args_cmd' 'args_dots' differ - no named args", {
   args_cmd <- list("file1", "file2")
   args_dots  <- list(f1 = "f1")
@@ -97,6 +110,13 @@ test_that("'check_args_cmd_dots' returns TRUE when one character argument is lef
   expect_true(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots))
   args_cmd <- list(use_log = "TRUE")
   expect_true(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots))
+})
+
+test_that("'check_args_cmd_dots' rejects a named argument passed more than once", {
+  args_cmd <- list("data/a.csv", use_log = "TRUE", use_log = "FALSE")
+  args_dots <- list(files = "out.rds", use_log = TRUE)
+  expect_error(check_args_cmd_dots(args_cmd = args_cmd, args_dots = args_dots),
+               "Named argument `use_log` was passed more than once")
 })
 
 test_that("'check_args_cmd_dots' errors when a named command line argument is unknown", {

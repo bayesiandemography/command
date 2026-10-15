@@ -15,6 +15,8 @@
 * `shell_script()` orders commands by matching output paths
   with input paths. The order can be wrong, and the script
   may still need editing.
+* `cmd_assign()` and `cmd_assign_collect()` reject a named
+  command-line argument that is passed more than once.
 
 # command 0.2.0
 
