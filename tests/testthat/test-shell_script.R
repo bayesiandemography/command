@@ -43,6 +43,19 @@ test_that("'shell_script' works with no dir_shell, has name_shell", {
   setwd(dir_curr)
 })
 
+test_that("'shell_script' rejects quiet that is not TRUE or FALSE", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  writeLines("cmd_assign(.out = 'out/cleaned.rds')",
+             con = file.path(dir_tmp, "src", "script.R"))
+  expect_error(shell_script(path_files = "src",
+                            dir_shell = dir_tmp,
+                            quiet = NA),
+               "`quiet` is NA")
+})
+
 test_that("'shell_script' throws error with no path_files", {
   expect_error(shell_script(),
                "argument \"path_files\" is missing, with no default")

@@ -108,6 +108,8 @@ shell_script <- function(path_files,
                          nm = "name_shell")
   check_flag(x = overwrite,
              nm = "overwrite")
+  check_flag(x = quiet,
+             nm = "quiet")
   lines <- ""
   commands <- make_commands(path_files = path_files,
                             dir_shell = dir_shell,
