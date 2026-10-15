@@ -79,7 +79,7 @@ The easiest way to use `extract_shell()` is to call it from the R console, and t
 
 # shell_script()
 
-`shell_script()` creates a draft of the whole shell script. `shell_script()` loops through all the R files in a directory, extracting `cmd_assign()` calls and converting them into shell commands. It then puts the shell commands into a script.
+`shell_script()` creates a draft of the whole shell script. `shell_script()` loops through all the R files in a directory, extracting `cmd_assign()` calls and converting them into shell commands. It tries to put the commands in the order they need to run, by matching output paths with input paths, and then puts the commands into a script.
 
 For instance, the call
 <!-- Messages don't display properly, so don't print real output -->
@@ -95,11 +95,13 @@ lines <- readLines("workflow.sh")
 cat(paste(lines, collapse = "\n"))
 ```
 
-Here, as in most cases, the output from `shell_script()` needs some editing before it is ready for use. The ordering of the commands in `workflow.sh` reflects the ordering of the files in the `src` directory. We need to rearrange the commands to instead reflect the order in which they need to be executed. We also add instructions on rendering the file `report.qmd`.
+`shell_script()` tries to put the commands in the order they need to run, by matching the path strings written in the calls. In this example the order is already right. It can get the order wrong, so the draft may still need editing. `shell_script()` also cannot see steps that are not R scripts. We add an instruction to render `report.qmd`.
 
 ```{r, echo = FALSE}
-lines <- lines[c(2:5, 10:18, 1, 6:9)]
+while (!nzchar(lines[[length(lines)]]))
+  lines <- lines[-length(lines)]
 lines <- c(lines,
+	   "",
 	   "quarto render report.qmd",
 	   "")
 cat(paste(lines, collapse = "\n"))

@@ -5,6 +5,12 @@
 #' consisting of commands
 #' extracted from existing R files.
 #'
+#' `shell_script()` tries to put the commands in the order
+#' they need to run, by matching each script's output path
+#' with the input paths of the other scripts.
+#' It can get this order wrong, so the shell script may
+#' still need editing.
+#'
 #' To create a shell script in the `files`
 #' directory, set `files` to `"."`.
 #'
@@ -71,10 +77,14 @@
 #'                "results <- x + 1",
 #'                "saveRDS(results, file = .out)"),
 #'              con = "src/results.R")
-#'   writeLines(c("cmd_assign(x = 1, .out = 'out/more_results.rds')",
-#'                "more_results <- x + 2",
+#'   writeLines(c("cmd_assign(.results = 'out/results.rds', .out = 'out/more_results.rds')",
+#'                "results <- readRDS(.results)",
+#'                "more_results <- results + 2",
 #'                "saveRDS(more_results, file = .out)"),
 #'              con = "src/more_results.R")
+#'
+#'   ## the shell script runs 'results.R' first, because
+#'   ## 'more_results.R' reads the file that 'results.R' writes
 #'
 #'   ## call 'shell_script()'
 #'   shell_script(path_files = "src",

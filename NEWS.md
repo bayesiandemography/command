@@ -12,6 +12,9 @@
   and in a Makefile the last element is the target.
 * Documented the dotted-name convention for file arguments
   in the help for `cmd_assign()` and `cmd_assign_collect()`.
+* `shell_script()` orders commands by matching output paths
+  with input paths. The order can be wrong, and the script
+  may still need editing.
 
 # command 0.2.0
 

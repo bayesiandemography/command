@@ -206,8 +206,7 @@ assign_args <- function(args, envir, quiet) {
 
 
 ## HAS_TESTS
-#' Internal Version of 'extract_shell' that Returns
-#' Text Where Possible and NULL Otherwise
+#' Extract One Shell Command and Its File Paths
 #'
 #' @param file Path to R file from 'dir_shell'
 #' @param dir_shell Directory where the
@@ -215,10 +214,11 @@ assign_args <- function(args, envir, quiet) {
 #' @param quiet Flag. Success message
 #' only printed if 'quiet' is FALSE
 #'
-#' @returns A text string or NULL
+#' @returns A list with `file`, `inputs`, `output`, and `command`,
+#' or NULL when the file has no call to extract.
 #'
 #' @noRd
-extract_shell_if_possible <- function(file, dir_shell, quiet) {
+extract_shell_step <- function(file, dir_shell, quiet) {
   path_file <- path_join(dir_shell, file)
   ext <- tools::file_ext(path_file)
   if (!ext %in% c("r", "R"))
@@ -236,10 +236,38 @@ extract_shell_if_possible <- function(file, dir_shell, quiet) {
                        i = "Call to {.fun {nm_fun}} malformed?",
                        i = e$message))
   )
-  ans <- format_args_shell(file = file, args = call$args)
+  io <- file_arg_io(call$args)
+  command <- format_args_shell(file = file, args = call$args)
   if (!quiet)
     cli::cli_alert_success("Extracted call to {.fun {nm_fun}} in {.file {file}}.")
-  ans
+  list(file = file,
+       inputs = io$inputs,
+       output = io$output,
+       command = command)
+}
+
+
+## HAS_TESTS
+#' Internal Version of 'extract_shell' that Returns
+#' Text Where Possible and NULL Otherwise
+#'
+#' @param file Path to R file from 'dir_shell'
+#' @param dir_shell Directory where the
+#' shell script is
+#' @param quiet Flag. Success message
+#' only printed if 'quiet' is FALSE
+#'
+#' @returns A text string or NULL
+#'
+#' @noRd
+extract_shell_if_possible <- function(file, dir_shell, quiet) {
+  step <- extract_shell_step(file = file,
+                             dir_shell = dir_shell,
+                             quiet = quiet)
+  if (is.null(step))
+    NULL
+  else
+    step$command
 }
 
 
@@ -660,6 +688,34 @@ file_arg_paths <- function(args, is_file) {
 
 
 ## HAS_TESTS
+#' Inputs and Output From File Arguments
+#'
+#' The last file path is the output, matching a Makefile rule.
+#' Earlier file paths are inputs. A call with no file paths
+#' has no output.
+#'
+#' @param args Named list of arguments from a call to
+#' `cmd_assign()` or `cmd_assign_collect()`.
+#'
+#' @returns A list with elements `inputs` and `output`.
+#' `output` is `NULL` when there are no file paths.
+#'
+#' @noRd
+file_arg_io <- function(args) {
+  is_file <- is_file_arg(args)
+  paths <- if (any(is_file))
+    file_arg_paths(args = args, is_file = is_file)
+  else
+    character()
+  n_path <- length(paths)
+  if (identical(n_path, 0L))
+    list(inputs = character(), output = NULL)
+  else
+    list(inputs = paths[-n_path], output = paths[[n_path]])
+}
+
+
+## HAS_TESTS
 #' Get command line arguments
 #'
 #' Use function 'commandArgs' to get
@@ -795,18 +851,20 @@ is_varname_valid <- function(nm) {
 #'
 #' Loop through files, making
 #' commands for ones that contain calls to
-#' `cmd_assign()`.
+#' `cmd_assign()`. Order the commands so that
+#' a script runs after the scripts that create
+#' its inputs.
 #'
 #' Assume that path constructed from 'dir_shell'
 #' and 'path_files' exists and is valid
 #'
 #' @param path_files Path from 'dir_shell' to
 #' directory where R code files exists
-#' @param dir_make Location of Makefile
+#' @param dir_shell Location of the shell script
 #' @param quiet Whether to suppress
 #' progress messages. 
 #'
-#' @returns A list of strings
+#' @returns A character vector of shell commands
 #'
 #' @noRd
 make_commands <- function(path_files,
@@ -815,13 +873,148 @@ make_commands <- function(path_files,
   path_files_comb <- path_join(dir_shell, path_files)
   file <- list.files(path_files_comb, full.names = TRUE)
   file <- path_rel(file, start = dir_shell)
-  ans <- .mapply(extract_shell_if_possible,
-                 dots = list(file = file),
-                 MoreArgs = list(dir_shell = dir_shell,
-                                 quiet = quiet))
-  ans <- Filter(Negate(is.null), ans)
-  ans <- unlist(ans)
-  ans
+  steps <- lapply(file, extract_shell_step,
+                  dir_shell = dir_shell,
+                  quiet = quiet)
+  steps <- Filter(Negate(is.null), steps)
+  steps <- order_commands(steps)
+  vapply(steps, function(step) step$command, FUN.VALUE = "")
+}
+
+
+## HAS_TESTS
+#' Order Shell Commands by File Dependencies
+#'
+#' A script runs after every other script whose output
+#' path is one of its inputs. The match is on the path
+#' strings as written. Scripts that are free to run are
+#' taken in path order.
+#'
+#' @param steps A list of records, each with `file`,
+#' `inputs`, `output`, and `command`.
+#'
+#' @returns `steps` in execution order.
+#'
+#' @noRd
+order_commands <- function(steps) {
+  n_step <- length(steps)
+  if (n_step == 0L)
+    return(steps)
+  files <- vapply(steps, function(step) step$file, FUN.VALUE = "")
+  out_vals <- vapply(steps, function(step) {
+    if (is.null(step$output))
+      NA_character_
+    else
+      step$output
+  }, FUN.VALUE = "")
+  has_out <- !is.na(out_vals)
+  dup_vals <- unique(out_vals[has_out][duplicated(out_vals[has_out])])
+  if (length(dup_vals) > 0L) {
+    bullets <- vapply(dup_vals, function(val) {
+      who <- files[has_out & out_vals == val]
+      as.character(cli::format_inline("{.file {who}} write {.file {val}}."))
+    }, FUN.VALUE = "")
+    names(bullets) <- rep("*", length(bullets))
+    cli::cli_abort(c("Can't order the shell commands.",
+                     i = "Two or more scripts write the same file.",
+                     bullets))
+  }
+  preds <- lapply(seq_len(n_step), function(i) {
+    inputs <- steps[[i]]$inputs
+    if (length(inputs) == 0L)
+      return(integer())
+    producers <- match(inputs, out_vals)
+    unique(producers[!is.na(producers)])
+  })
+  dependents <- rep(list(integer()), n_step)
+  for (i in seq_len(n_step)) {
+    for (p in preds[[i]]) {
+      if (p != i)
+        dependents[[p]] <- c(dependents[[p]], i)
+    }
+  }
+  indeg <- lengths(preds)
+  ready <- which(indeg == 0L)
+  ready <- ready[order(files[ready])]
+  ordered <- integer()
+  while (length(ready) > 0L) {
+    i <- ready[[1L]]
+    ready <- ready[-1L]
+    ordered <- c(ordered, i)
+    for (j in dependents[[i]]) {
+      indeg[[j]] <- indeg[[j]] - 1L
+      if (indeg[[j]] == 0L) {
+        ready <- c(ready, j)
+        ready <- ready[order(files[ready])]
+      }
+    }
+  }
+  if (length(ordered) < n_step) {
+    cycle <- find_command_cycle(nodes = setdiff(seq_len(n_step), ordered),
+                                preds = preds)
+    bullets <- vapply(seq_len(length(cycle) - 1L), function(k) {
+      consumer <- steps[[cycle[[k]]]]
+      producer <- steps[[cycle[[k + 1L]]]]
+      as.character(cli::format_inline(paste("{.file {producer$file}} writes {.file {producer$output}},",
+                                            "which {.file {consumer$file}} reads.")))
+    }, FUN.VALUE = "")
+    names(bullets) <- rep("*", length(bullets))
+    cli::cli_abort(c("Can't order the shell commands.",
+                     i = "These scripts depend on each other.",
+                     bullets))
+  }
+  steps[ordered]
+}
+
+
+## HAS_TESTS
+#' Find One Cycle in a Shell-Command Dependency Graph
+#'
+#' `preds[[i]]` lists the scripts that script `i` must follow.
+#' The search follows those edges and returns the first cycle
+#' it finds, with the first script repeated at the end.
+#'
+#' @param nodes Indices still unordered.
+#' @param preds List of integer vectors, one per script.
+#'
+#' @returns An integer vector.
+#'
+#' @noRd
+find_command_cycle <- function(nodes, preds) {
+  n_pred <- length(preds)
+  state <- rep(0L, n_pred)
+  in_set <- rep(FALSE, n_pred)
+  in_set[nodes] <- TRUE
+  path <- integer()
+  cycle <- NULL
+  dfs <- function(i) {
+    if (!is.null(cycle))
+      return()
+    state[[i]] <<- 1L
+    path <<- c(path, i)
+    for (p in preds[[i]]) {
+      if (!isTRUE(in_set[[p]]))
+        next
+      if (identical(state[[p]], 1L)) {
+        at <- match(p, path)
+        cycle <<- c(path[at:length(path)], p)
+        return()
+      }
+      if (identical(state[[p]], 0L))
+        dfs(p)
+      if (!is.null(cycle))
+        return()
+    }
+    path <<- path[-length(path)]
+    state[[i]] <<- 2L
+  }
+  for (i in nodes) {
+    if (identical(state[[i]], 0L))
+      dfs(i)
+    if (!is.null(cycle))
+      break
+  }
+  cycle
 }
 
 

@@ -1006,6 +1006,104 @@ test_that("'make_commands' works with valid input - path_files in lower director
   unlink(dir_tmp, recursive = TRUE)
 })
 
+test_that("'make_commands' runs a script after the script that creates its input", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  if (file.exists(dir_tmp))
+    unlink(dir_tmp, recursive = TRUE)
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  writeLines("cmd_assign_collect(.files = c('data/a.csv', 'data/b.csv', 'out/combined.rds'))",
+             con = file.path(dir_tmp, "src/z_combine.R"))
+  writeLines("cmd_assign(.combined = 'out/combined.rds', .out = 'out/next.rds')",
+             con = file.path(dir_tmp, "src/a_next.R"))
+  ans_obtained <- make_commands(path_files = "src",
+                                dir_shell = dir_tmp,
+                                quiet = TRUE)
+  ans_expected <- c(paste0("Rscript src/z_combine.R \\\n",
+                           "  data/a.csv \\\n",
+                           "  data/b.csv \\\n",
+                           "  out/combined.rds\n"),
+                    paste0("Rscript src/a_next.R \\\n",
+                           "  out/combined.rds \\\n",
+                           "  out/next.rds\n"))
+  expect_identical(ans_obtained, ans_expected)
+  unlink(dir_tmp, recursive = TRUE)
+})
+
+test_that("'make_commands' rejects two scripts that write the same file", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  writeLines("cmd_assign(.out = 'out/same.rds')",
+             con = file.path(dir_tmp, "src/a.R"))
+  writeLines("cmd_assign(.out = 'out/same.rds')",
+             con = file.path(dir_tmp, "src/b.R"))
+  expect_error(make_commands(path_files = "src",
+                             dir_shell = dir_tmp,
+                             quiet = TRUE),
+               "write")
+})
+
+test_that("'make_commands' rejects scripts that depend on each other", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  dir.create(file.path(dir_tmp, "src"))
+  writeLines("cmd_assign(.in = 'out/b.rds', .out = 'out/a.rds')",
+             con = file.path(dir_tmp, "src/a.R"))
+  writeLines("cmd_assign(.in = 'out/a.rds', .out = 'out/b.rds')",
+             con = file.path(dir_tmp, "src/b.R"))
+  expect_error(make_commands(path_files = "src",
+                             dir_shell = dir_tmp,
+                             quiet = TRUE),
+               "depend on each other")
+})
+
+
+## 'order_commands' -----------------------------------------------------------
+
+test_that("'order_commands' keeps independent scripts in path order", {
+  steps <- list(list(file = "src/b.R",
+                     inputs = "data/b.csv",
+                     output = "out/b.rds",
+                     command = "b"),
+                list(file = "src/a.R",
+                     inputs = "data/a.csv",
+                     output = "out/a.rds",
+                     command = "a"))
+  ans <- order_commands(steps)
+  expect_identical(vapply(ans, function(step) step$command, ""),
+                   c("a", "b"))
+})
+
+test_that("'order_commands' waits for every input", {
+  steps <- list(list(file = "src/a_model.R",
+                     inputs = "out/clean.rds",
+                     output = "out/model.rds",
+                     command = "model"),
+                list(file = "src/m_vals.R",
+                     inputs = c("out/clean.rds", "out/model.rds"),
+                     output = "out/vals.rds",
+                     command = "vals"),
+                list(file = "src/z_clean.R",
+                     inputs = "data/raw.csv",
+                     output = "out/clean.rds",
+                     command = "clean"))
+  ans <- order_commands(steps)
+  expect_identical(vapply(ans, function(step) step$command, ""),
+                   c("clean", "model", "vals"))
+})
+
+test_that("'order_commands' rejects a script that reads its own output", {
+  steps <- list(list(file = "src/a.R",
+                     inputs = "out/a.rds",
+                     output = "out/a.rds",
+                     command = "a"))
+  expect_error(order_commands(steps),
+               "src/a.R")
+})
+
 
 ## 'make_rules' ---------------------------------------------------------------
 
