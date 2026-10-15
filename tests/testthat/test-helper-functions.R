@@ -129,6 +129,15 @@ test_that("'align_cmd_dots' uses an empty character vector when nothing is unnam
   expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'align_cmd_dots' treats a nameless command-line list as unnamed", {
+  args_cmd <- list("data/a.csv", "out/combined.rds")
+  args_dots <- list(files = "out/combined.rds")
+  ans_obtained <- align_cmd_dots(args_cmd = args_cmd,
+                                 args_dots = args_dots)
+  ans_expected <- list(files = c("data/a.csv", "out/combined.rds"))
+  expect_identical(ans_obtained, ans_expected)
+})
+
 
 ## 'assign_args' --------------------------------------------------------------
 
@@ -796,6 +805,14 @@ test_that("'is_file_arg' treats a path vector as one file argument", {
                use_log = TRUE)
   ans_obtained <- is_file_arg(args)
   ans_expected <- c(TRUE, FALSE)
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'is_file_arg' does not treat an empty character vector as a file", {
+  args <- list(files = character(),
+               label = "notes.csv")
+  ans_obtained <- is_file_arg(args)
+  ans_expected <- c(FALSE, TRUE)
   expect_identical(ans_obtained, ans_expected)
 })
 
