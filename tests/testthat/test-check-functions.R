@@ -149,7 +149,7 @@ test_that("'check_dir' throws error when dir length != 1", {
 test_that("'check_dir' throws error when dir does not exist", {
   if (!file.exists("wrong/wrong_again")) {
     expect_error(check_dir("wrong/wrong_again", nm = "x"),
-                 "Problem with `x`.")
+                 "does not exist")
   }
 })
 

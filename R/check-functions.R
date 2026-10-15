@@ -200,7 +200,7 @@ check_dir <- function(dir, nm) {
     cli::cli_abort("{.arg {nm}} does not have length 1.")
   if (!dir.exists(dir))
     cli::cli_abort(c("Problem with {.arg {nm}}.",
-                     i = "Directory {.file {dir}} does exist."))
+                     i = "Directory {.file {dir}} does not exist."))
   invisible(TRUE)
 }
 
