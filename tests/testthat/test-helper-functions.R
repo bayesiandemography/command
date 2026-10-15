@@ -654,6 +654,21 @@ test_that("'format_args_make' expands a character vector of paths", {
   expect_identical(ans_obtained, ans_expected)
 })
 
+test_that("'format_args_make' quotes a named value that is not a plain token", {
+  file <- "src/fit.R"
+  args <- list(.data = "my data.csv",
+               title = "a b",
+               keep = NULL,
+               .out = "out/fit.rds")
+  ans_obtained <- format_args_make(file = file, args = args)
+  ans_expected <- paste(c("out/fit.rds: src/fit.R \\",
+                          "  my data.csv",
+                          "\tRscript $^ $@ --title='a b' \\",
+                          "                      --keep=NULL\n"),
+                        collapse = "\n")
+  expect_identical(ans_obtained, ans_expected)
+})
+
 test_that("'format_args_make' errors when a vector has no target path", {
   file <- "src/combine.R"
   args <- list(.files = character())
@@ -707,6 +722,30 @@ test_that("'format_args_shell' expands a character vector of paths", {
                           "  --use_log=TRUE\n"),
                         collapse = "\n")
   expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'format_args_shell' quotes values that are not plain tokens", {
+  file <- "src/my file.R"
+  args <- list(.data = "my data.csv",
+               title = "a b",
+               keep = NULL,
+               .out = "out/fit.rds")
+  ans_obtained <- format_args_shell(file = file, args = args)
+  ans_expected <- paste(c("Rscript 'src/my file.R' \\",
+                          "  'my data.csv' \\",
+                          "  out/fit.rds \\",
+                          "  --title='a b' \\",
+                          "  --keep=NULL\n"),
+                        collapse = "\n")
+  expect_identical(ans_obtained, ans_expected)
+})
+
+test_that("'format_args_shell' rejects a named value whose length is not 1", {
+  file <- "src/fit.R"
+  args <- list(labels = c("a", "b"),
+               .out = "out/fit.rds")
+  expect_error(format_args_shell(file = file, args = args),
+               "has length 2")
 })
 
 test_that("'format_args_shell works no args", {

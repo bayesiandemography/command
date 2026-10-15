@@ -505,6 +505,66 @@ extract_cmd_call <- function(file) {
 
 
 ## HAS_TESTS
+#' Quote a Shell Word When It Is Not a Plain Token
+#'
+#' A plain token, such as `data/mydata.csv`, is left unchanged.
+#' A value that contains a space or a character that is special
+#' to the shell is wrapped with [shQuote()] using `type = "sh"`.
+#'
+#' @param x A length-1 character string.
+#'
+#' @returns A length-1 character string.
+#'
+#' @noRd
+shell_quote <- function(x) {
+  plain <- grepl("^[[:alnum:]_@%+=:,./][[:alnum:]_@%+=:,./-]*$", x)
+  if (isTRUE(plain))
+    x
+  else
+    shQuote(x, type = "sh")
+}
+
+
+## HAS_TESTS
+#' Format One Named Command-Line Argument
+#'
+#' `NULL` is written as `--name=NULL`, which [cmd_assign()]
+#' turns back into `NULL`. Other values must have length 1.
+#'
+#' @param nm Argument name.
+#' @param value Argument value.
+#'
+#' @returns A length-1 character string.
+#'
+#' @noRd
+format_named_arg <- function(nm, value) {
+  if (is.null(value))
+    return(paste0("--", nm, "=NULL"))
+  if (!identical(length(value), 1L))
+    cli::cli_abort(c("Can't format argument {.arg {nm}} for the command line.",
+                     i = "{.arg {nm}} has length {.val {length(value)}}.",
+                     i = "A named value must have length 1, or be {.val NULL}."))
+  paste0("--", nm, "=", shell_quote(as.character(value)))
+}
+
+
+## HAS_TESTS
+#' Format Named Command-Line Arguments
+#'
+#' @param args A named list of values that are not file paths.
+#'
+#' @returns A character vector, one `--name=value` string per argument.
+#'
+#' @noRd
+format_named_args <- function(args) {
+  nms <- names(args)
+  vapply(seq_along(args),
+         function(i) format_named_arg(nms[[i]], args[[i]]),
+         FUN.VALUE = "")
+}
+
+
+## HAS_TESTS
 #' Turn List of Arguments into a Makefile Rule
 #'
 #' @param file File path from Makefile to script with R code
@@ -535,9 +595,7 @@ format_args_make <- function(file, args) {
   ans_recipe <- "\n\tRscript $^ $@"
   ans <- paste0(ans, ans_recipe)
   if (any(!is_file)) {
-    args_not_file <- lapply(args[!is_file], as.character)
-    nms_not_file <- names(args_not_file)
-    args_not_file <- paste0("--", nms_not_file, "=", args_not_file)
+    args_not_file <- format_named_args(args[!is_file])
     space_not_file <- strrep(" ", times = n_tab + nchar(ans_recipe) - 1L)
     collapse <- paste0(" \\\n", space_not_file)
     ans_not_file <- paste0(args_not_file, collapse = collapse)
@@ -559,23 +617,21 @@ format_args_make <- function(file, args) {
 #' @noRd
 format_args_shell <- function(file, args) {
   n_space <- 2L
-  ans <- paste("Rscript", file)
+  ans <- paste("Rscript", shell_quote(file))
   if (length(args) > 0L) {
     space_left <- strrep(" ", times = n_space)
     is_file <- is_file_arg(args)
     if (any(is_file)) {
       file_paths <- file_arg_paths(args = args, is_file = is_file)
       if (length(file_paths) > 0L) {
-        args_is_file <- paste0(space_left, file_paths)
+        args_is_file <- paste0(space_left, vapply(file_paths, shell_quote, ""))
         args_is_file <- paste0(" \\\n", args_is_file)
         ans_is_file <- paste(args_is_file, collapse = "")
         ans <- paste0(ans, ans_is_file)
       }
     }
     if (any(!is_file)) {
-      args_not_file <- lapply(args[!is_file], as.character)
-      nms_not_file <- names(args_not_file)
-      args_not_file <- paste0(space_left, "--", nms_not_file, "=", args_not_file)
+      args_not_file <- paste0(space_left, format_named_args(args[!is_file]))
       args_not_file <- paste0(" \\\n", args_not_file)
       ans_not_file <- paste(args_not_file, collapse = "")
       ans <- paste0(ans, ans_not_file)

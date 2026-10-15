@@ -5,6 +5,10 @@
 #' Extract a call to [cmd_assign()] or [cmd_assign_collect()] from an
 #' R script, and turn it into a Makefile rule.
 #'
+#' The rule may need editing before it is added to a Makefile.
+#' A file path that contains a space or a character special
+#' to Make must be corrected in the dependency line.
+#'
 #' # The components of a Makefile rule
 #'
 #' A Makefile rule produced by `extract_make()`
