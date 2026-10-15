@@ -614,7 +614,8 @@ file_arg_paths <- function(args, is_file) {
 #'
 #' @noRd
 get_args_cmd <- function() {
-  p <- "^-{1,2}(.*)=(.*)$"
+  ## Split on the first '=', so a value may itself contain '='.
+  p <- "^-{1,2}([^=]*)=(.*)$"
   is_littler <- (exists("argv", inherits = FALSE)
     || identical(commandArgs()[[1L]], "littler"))
   if (is_littler)
@@ -627,6 +628,10 @@ get_args_cmd <- function() {
   args_named <- args[is_named]
   nms_named <- sub(p, "\\1", args_named)
   vals_named <- sub(p, "\\2", args_named)
+  i_blank <- match(TRUE, !nzchar(nms_named), nomatch = 0L)
+  if (i_blank > 0L)
+    cli::cli_abort(c("Named command-line argument is missing a name.",
+                     i = "Argument: {.val {args_named[[i_blank]]}}."))
   ans <- as.list(args)
   nms_ans <- rep("", times = length(ans))
   nms_ans[is_named] <- nms_named

@@ -757,6 +757,26 @@ test_that("'get_args_cmd' works when no arguments passed", {
   unlink(dir_tmp, recursive = TRUE)
 })
 
+test_that("'get_args_cmd' keeps equals signs that are part of the value", {
+  local_mocked_bindings(
+    commandArgs = function(trailingOnly = FALSE) {
+      if (isTRUE(trailingOnly)) "--path=a=b" else "Rscript"
+    },
+    .package = "base"
+  )
+  expect_identical(get_args_cmd(), list(path = "a=b"))
+})
+
+test_that("'get_args_cmd' rejects a named argument with an empty name", {
+  local_mocked_bindings(
+    commandArgs = function(trailingOnly = FALSE) {
+      if (isTRUE(trailingOnly)) "--=value" else "Rscript"
+    },
+    .package = "base"
+  )
+  expect_error(get_args_cmd(), "missing a name")
+})
+
 ## Empty value after '=' (e.g. Make expands --v=$(V) when V is undefined)
 test_that("'get_args_cmd' treats --v= as named argument with empty string", {
   dir_curr <- getwd()
