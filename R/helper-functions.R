@@ -227,7 +227,7 @@ extract_shell_if_possible <- function(file, dir_shell, quiet) {
   if (is.null(call))
     return(NULL)
   nm_fun <- call$name
-  variadic <- identical(nm_fun, "cmd_assign_collect")
+  variadic <- is_collect_call(nm_fun)
   tryCatch(
     check_args_dots(call$args, variadic = variadic),
     error = function(e)
@@ -265,7 +265,7 @@ extract_make_if_possible <- function(file, dir_make, quiet) {
   if (is.null(call))
     return(NULL)
   nm_fun <- call$name
-  variadic <- identical(nm_fun, "cmd_assign_collect")
+  variadic <- is_collect_call(nm_fun)
   tryCatch(
     check_args_dots(call$args, variadic = variadic),
     error = function(e)
@@ -404,7 +404,84 @@ extract_args <- function(file) {
 
 
 ## HAS_TESTS
+#' Whether a Call Name Collects Unnamed Arguments
+#'
+#' @param nm_fun Name of the function in the extracted call.
+#'
+#' @returns `TRUE` or `FALSE`
+#'
+#' @noRd
+is_collect_call <- function(nm_fun) {
+  nm_fun %in% c("cmd_assign_collect", "cmd_assign_collect_quiet")
+}
+
+
+## HAS_TESTS
+#' Name of a cmd_assign Call, or NULL
+#'
+#' Accepts [cmd_assign()], [cmd_assign_quiet()],
+#' [cmd_assign_collect()], and [cmd_assign_collect_quiet()],
+#' with or without a `command::` or `command:::` prefix.
+#'
+#' @param expr A language object.
+#'
+#' @returns A string, or `NULL`.
+#'
+#' @noRd
+cmd_call_name <- function(expr) {
+  if (!is.call(expr))
+    return(NULL)
+  head <- expr[[1L]]
+  nm <- NULL
+  if (is.name(head)) {
+    nm <- as.character(head)
+  } else if (is.call(head) &&
+             length(head) == 3L &&
+             (identical(head[[1L]], as.name("::")) ||
+              identical(head[[1L]], as.name(":::"))) &&
+             identical(head[[2L]], as.name("command")) &&
+             is.name(head[[3L]])) {
+    nm <- as.character(head[[3L]])
+  }
+  allowed <- c("cmd_assign", "cmd_assign_quiet",
+               "cmd_assign_collect", "cmd_assign_collect_quiet")
+  if (!is.null(nm) && nm %in% allowed)
+    nm
+  else
+    NULL
+}
+
+
+## HAS_TESTS
+#' First cmd_assign Call in an Expression
+#'
+#' @param expr A language object, symbol, or constant.
+#'
+#' @returns A list with elements `name` and `expr`, or `NULL`.
+#'
+#' @noRd
+find_cmd_call <- function(expr) {
+  nm <- cmd_call_name(expr)
+  if (!is.null(nm))
+    return(list(name = nm, expr = expr))
+  if (!is.call(expr))
+    return(NULL)
+  for (i in seq_along(expr)[-1L]) {
+    found <- find_cmd_call(expr[[i]])
+    if (!is.null(found))
+      return(found)
+  }
+  NULL
+}
+
+
+## HAS_TESTS
 #' Extract a cmd_assign or cmd_assign_collect Call From a File
+#'
+#' Finds the first call to [cmd_assign()], [cmd_assign_quiet()],
+#' [cmd_assign_collect()], or [cmd_assign_collect_quiet()],
+#' including a call nested inside another expression and a call
+#' written as `command::cmd_assign()`.
 #'
 #' @param file Path to an R script.
 #'
@@ -415,21 +492,13 @@ extract_args <- function(file) {
 extract_cmd_call <- function(file) {
   code <- paste(readLines(file), collapse = "\n")
   exprs <- parse(text = code)
-  nm_assign <- as.name("cmd_assign")
-  nm_dots <- as.name("cmd_assign_collect")
   for (expr in exprs) {
-    if (!is.call(expr))
+    found <- find_cmd_call(expr)
+    if (is.null(found))
       next
-    nm_expr <- expr[[1L]]
-    if (identical(nm_expr, nm_assign))
-      nm_fun <- "cmd_assign"
-    else if (identical(nm_expr, nm_dots))
-      nm_fun <- "cmd_assign_collect"
-    else
-      next
-    args <- as.list(expr)[-1L]
+    args <- as.list(found$expr)[-1L]
     args <- lapply(args, eval)
-    return(list(name = nm_fun, args = args))
+    return(list(name = found$name, args = args))
   }
   NULL
 }

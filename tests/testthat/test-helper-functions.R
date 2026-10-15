@@ -182,6 +182,61 @@ test_that("'assign_args' works with empty args", {
 })
     
 
+## 'extract_cmd_call' ---------------------------------------------------------
+
+test_that("'extract_cmd_call' finds a qualified quiet call inside if", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  path <- file.path(dir_tmp, "script.R")
+  writeLines(c("if (interactive()) {",
+               "  command::cmd_assign_quiet(.out = 'out/a.rds', n = 1L)",
+               "}",
+               "cmd_assign(.out = 'out/b.rds', n = 2L)"),
+             path)
+  ans <- extract_cmd_call(path)
+  expect_identical(ans$name, "cmd_assign_quiet")
+  expect_identical(ans$args$.out, "out/a.rds")
+  expect_identical(ans$args$n, 1L)
+})
+
+test_that("'extract_cmd_call' finds a collect call inside a function", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  path <- file.path(dir_tmp, "script.R")
+  writeLines(c("f <- function() {",
+               "  command:::cmd_assign_collect_quiet(",
+               "    files = c('data/a.csv', 'out/combined.rds'),",
+               "    use_log = TRUE)",
+               "}"),
+             path)
+  ans <- extract_cmd_call(path)
+  expect_identical(ans$name, "cmd_assign_collect_quiet")
+  expect_identical(ans$args$files, c("data/a.csv", "out/combined.rds"))
+  expect_identical(ans$args$use_log, TRUE)
+})
+
+test_that("'extract_shell_if_possible' accepts a quiet collect call", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  file <- "script.R"
+  writeLines(paste("command::cmd_assign_collect_quiet(",
+                   "files = c('data/a.csv', 'out/combined.rds'),",
+                   "use_log = TRUE)"),
+             con = file.path(dir_tmp, file))
+  ans_obtained <- extract_shell_if_possible(file = file,
+                                           dir_shell = dir_tmp,
+                                           quiet = TRUE)
+  ans_expected <- paste0("Rscript script.R \\\n",
+                         "  data/a.csv \\\n",
+                         "  out/combined.rds \\\n",
+                         "  --use_log=TRUE\n")
+  expect_identical(ans_obtained, ans_expected)
+})
+
+
 ## 'extract_shell_if_possible' ------------------------------------------------
 
 test_that("'extract_shell_if_possible' works with R file with cmd_assign", {
