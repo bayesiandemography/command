@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -157,8 +157,9 @@ script.</p>
 <p><code><a href="../reference/shell_script.html">shell_script()</a></code> creates a draft of the whole shell
 script. <code><a href="../reference/shell_script.html">shell_script()</a></code> loops through all the R files in a
 directory, extracting <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> calls and converting
-them into shell commands. It then puts the shell commands into a
-script.</p>
+them into shell commands. It tries to put the commands in the order they
+need to run, by matching output paths with input paths, and then puts
+the commands into a script.</p>
 <p>For instance, the call
 <!-- Messages don't display properly, so don't print real output --></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -169,10 +170,6 @@ Rscript src/cleaned_data.R \
   data/raw_data.csv \
   out/cleaned_data.rds
 
-Rscript src/fig_fitted.R \
-  out/vals_fitted.rds \
-  out/fig_fitted.png
-
 Rscript src/model.R \
   out/cleaned_data.rds \
   out/model.rds \
@@ -181,14 +178,19 @@ Rscript src/model.R \
 Rscript src/vals_fitted.R \
   out/cleaned_data.rds \
   out/model.rds \
-  out/vals_fitted.rds</code></pre>
-<p>Here, as in most cases, the output from <code><a href="../reference/shell_script.html">shell_script()</a></code>
-needs some editing before it is ready for use. The ordering of the
-commands in <code>workflow.sh</code> reflects the ordering of the files
-in the <code>src</code> directory. We need to rearrange the commands to
-instead reflect the order in which they need to be executed. We also add
-instructions on rendering the file <code>report.qmd</code>.</p>
-<pre><code>Rscript src/cleaned_data.R \
+  out/vals_fitted.rds
+
+Rscript src/fig_fitted.R \
+  out/vals_fitted.rds \
+  out/fig_fitted.png</code></pre>
+<p><code><a href="../reference/shell_script.html">shell_script()</a></code> tries to put the commands in the order
+they need to run, by matching the path strings written in the calls. In
+this example the order is already right. It can get the order wrong, so
+the draft may still need editing. <code><a href="../reference/shell_script.html">shell_script()</a></code> also
+cannot see steps that are not R scripts. We add an instruction to render
+<code>report.qmd</code>.</p>
+<pre><code>
+Rscript src/cleaned_data.R \
   data/raw_data.csv \
   out/cleaned_data.rds
 
@@ -254,15 +256,12 @@ processing file: report.qmd
   html-math-method: mathjax
   wrap: none
   default-image-extension: png
-  variables: {}
   
 <span style="font-weight: bold;">metadata</span>
   document-css: false
   link-citations: true
   date-format: long
   lang: en
-  engines:
-    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Swiss Fertility
   
 Output created: report.html
@@ -302,7 +301,7 @@ Output created: report.html
 The Makefile equivalent of <code><a href="../reference/shell_script.html">shell_script()</a></code>
 </li>
 <li>
-<a href="https://bayesiandemography.github.io/command/articles/workflow.html">Modular
+<a href="https://bayesiandemography.github.io/command/articles/a4_workflow.html">Modular
 Workflows for Data Analysis</a> Safe, flexible workflows</li>
 <li>
 <a href="https://swcarpentry.github.io/shell-novice/index.html" class="external-link">The

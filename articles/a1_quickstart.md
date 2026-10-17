@@ -1,4 +1,6 @@
-# Quick Start
+# 
+
+x\]— title: “Quick Start” —
 
 ## Introduction
 
@@ -488,15 +490,12 @@ pandoc
   html-math-method: mathjax
   wrap: none
   default-image-extension: png
-  variables: {}
   
 metadata
   document-css: false
   link-citations: true
   date-format: long
   lang: en
-  engines:
-    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Smoothed Passenger Miles
   
 Output created: report.html
@@ -546,7 +545,7 @@ there, including the output (eg `fig_smoothed_5.png`), the inputs (eg
 `fig_smoothed.R` and `airmiles.csv`), and the action needed to produce
 the output from the inputs (eg `Rscript $^ $@ --n_knot=5`). [Modular
 Workflows for Data
-Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
 contains more information on Makefiles, including an explanation of the
 mysterious `$^` and `$@` symbols.
 
@@ -592,15 +591,12 @@ pandoc
   html-math-method: mathjax
   wrap: none
   default-image-extension: png
-  variables: {}
   
 metadata
   document-css: false
   link-citations: true
   date-format: long
   lang: en
-  engines:
-    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Smoothed Passenger Miles
   
 Output created: report.html
@@ -612,7 +608,70 @@ runs the code for that too. It does, not, however, run the code for
 `fig_smoothed_10.png`, because it knows that `fig_smoothed_10.png` does
 not depend on `fig_smoothed_5.png`.
 
-## Alternatives to `cmd_assign()`
+## What to do when the number of arguments is not known in advance
+
+Sometimes the number of values that a script must deal with is not known
+in advance. For instance, a script that combines input files might
+receive two files on one run and twenty on the next. To handle such
+cases, use
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
+
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+matches and coerces *named* arguments just like
+[`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md).
+Its behavior with *unnamed* arguments is, however, different. Rather
+than requiring that every unnamed argument be specified in advance, it
+collects all values from unnamed arguments into a single character
+vector. The character vector can have any length, including zero
+(implying that no unnamed arguments were passed from the command line).
+The call to
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+must have exactly one name-value pair left over after processing named
+command line arguments. The character vector is assigned to the name
+from the left-over name-value pair.
+
+Suppose the script `combine.R` contains
+
+``` r
+
+cmd_assign_collect(
+  .files = c("data/a.csv", "data/b.csv", "out/combined.rds"),
+  use_log = TRUE
+)
+```
+
+and we run the script with
+
+``` bash
+Rscript combine.R \
+  data/a.csv \
+  data/c.csv \
+  out/combined.rds \
+  --use_log=TRUE
+```
+
+An object called `use_log` with value `TRUE` and an object called
+`.files` with value `c("data/a.csv", "data/c.csv", "out/combined.rds")`
+will be added to the global environment.
+
+The R script containing the call to
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+is responsible for unpacking and using the values in the character
+vector. For instance, the script above is likely to include lines such
+as
+
+    .inputs <- head(.files, -1)
+    .out <- tail(.files, 1)
+    inputs <- lapply(.inputs, read.csv)
+
+If you do know how many values will be passed through the command line
+at run time, you should not use
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
+In such cases, function
+[`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+is a better choice, as it is stricter and clearer.
+
+## Alternatives to the `command` package
 
 Function [`commandArgs()`](https://rdrr.io/r/base/commandArgs.html) in
 package [R.utils](https://cran.r-project.org/package=R.utils) is a

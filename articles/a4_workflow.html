@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -102,10 +102,10 @@ script that is responsible for everything from importing data to fitting
 to creating plots. Even when code for an analysis is divided into
 smaller scripts, these smaller scripts often have diffuse aims and
 complex inputs and outputs. Heavy use of <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> commands
-mean that many scripts contribute objects to the current working
-environment, and no script can be understood in isolation. Changes to
-one part of a workflow have large, unexpected implications for other
-parts of the workflow.</p>
+mean that many scripts contribute objects to the global environment, and
+no script can be understood in isolation. Changes to one part of a
+workflow have large, unexpected implications for other parts of the
+workflow.</p>
 <p>This article presents a strategy for making data analysis workflows
 more strictly modular. The basic unit in this strategy is a script. Each
 script is responsible for one small task, with inputs and outputs
@@ -250,7 +250,7 @@ and Day 2020; Bengtsson 2023)</span>.</p>
 <p>The <code>command</code> package is one further alternative, designed
 specifically for data analysis workflows. Function
 <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> in <code>command</code> automatically checks
-and reformats arguments, and assigns values within the working
+and reformats arguments, and assigns values within the global
 environment. For an introduction to <code>command</code>, see <a href="https://bayesiandemography.github.io/command/articles/a1_quickstart.html">Quick
 Start</a>.</p>
 <p>The ability to pass arguments to scripts essentially turns the
@@ -621,7 +621,7 @@ a description of the inputs and outputs.</p>
 </h3>
 <p>Keeping scripts short, running each script in its own session, and
 explicitly defining the inputs to each session mean that, if something
-goes wrong, there should only be a few objects in the working
+goes wrong, there should only be a few objects in the global
 environment, and the origins of these objects should be clear. Debugging
 is a lot less painful than it might otherwise be.</p>
 </div>

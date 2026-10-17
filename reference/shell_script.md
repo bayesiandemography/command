@@ -21,7 +21,9 @@ shell_script(
 
   A path from `dir_shell` to a directory with R scripts containing calls
   to
-  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md).
+  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  or
+  [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
 
 - dir_shell:
 
@@ -48,6 +50,11 @@ file. However, `shell_script()` also returns a string with the contents
 of the shell script.
 
 ## Details
+
+`shell_script()` tries to put the commands in the order they need to
+run, by matching each script's output path with the input paths of the
+other scripts. It can get this order wrong, so the shell script may
+still need editing.
 
 To create a shell script in the `files` directory, set `files` to `"."`.
 
@@ -90,7 +97,7 @@ also includes some general-purpose Makefile commands.
   Process command line arguments
 
 - [Modular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible data analysis workflows
 
 - [littler](https://CRAN.R-project.org/package=littler) Alternative to
@@ -112,10 +119,14 @@ with_tempdir({
                "results <- x + 1",
                "saveRDS(results, file = .out)"),
              con = "src/results.R")
-  writeLines(c("cmd_assign(x = 1, .out = 'out/more_results.rds')",
-               "more_results <- x + 2",
+  writeLines(c("cmd_assign(.results = 'out/results.rds', .out = 'out/more_results.rds')",
+               "results <- readRDS(.results)",
+               "more_results <- results + 2",
                "saveRDS(more_results, file = .out)"),
              con = "src/more_results.R")
+
+  ## the shell script runs 'results.R' first, because
+  ## 'more_results.R' reads the file that 'results.R' writes
 
   ## call 'shell_script()'
   shell_script(path_files = "src",
@@ -131,13 +142,13 @@ with_tempdir({
 #> ✔ Extracted call to `cmd_assign()` in src/more_results.R.
 #> ✔ Extracted call to `cmd_assign()` in src/results.R.
 #> 
-#> Rscript src/more_results.R \
-#>   out/more_results.rds \
-#>   --x=1
-#> 
 #> Rscript src/results.R \
 #>   out/results.rds \
 #>   --x=1
+#> 
+#> Rscript src/more_results.R \
+#>   out/results.rds \
+#>   out/more_results.rds
 #> 
 #> 
 ```

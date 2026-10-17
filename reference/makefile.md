@@ -21,7 +21,9 @@ makefile(
 
   A path from `dir_make` to a directory with R scripts containing calls
   to
-  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md).
+  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  or
+  [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
   Optional.
 
 - dir_make:
@@ -49,6 +51,10 @@ However, `makefile()` also returns a string with the contents of the
 Makefile.
 
 ## Details
+
+The Makefile is a draft and needs editing before use. `makefile()`
+cannot infer every rule, and a file path that contains a space or a
+character special to Make must be corrected in the dependency line.
 
 To create a Makefile in the `files` directory, set `files` to `"."`.
 
@@ -95,7 +101,7 @@ is generated entirely from `files`.
   Process command line arguments
 
 - [Modular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible data analysis workflows
 
 - [littler](https://CRAN.R-project.org/package=littler) Alternative to

@@ -2,6 +2,8 @@
 
 Extract a call to
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+or
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
 from an R script, and turn it into a shell command.
 
 ## Usage
@@ -15,7 +17,9 @@ extract_shell(path_file, dir_shell = NULL)
 - path_file:
 
   Path to the R script containing the call to
-  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md).
+  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  or
+  [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
   The path starts at `dir_shell`.
 
 - dir_shell:
@@ -57,10 +61,14 @@ In this command
 - Step 1. Write an R script that carries out a step in analysis (eg
   tidying data, fitting a model, making a graph.) This script will
   contain a call to
-  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md),
+  [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  or
+  [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md),
   and will be the first argument passed to Rscript in the shell command.
   When writing and testing the script, use
   [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  or
+  [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
   interactively.
 
 - Step 2. Once the R script is working correctly, call
@@ -79,16 +87,15 @@ the project folder looks something like this:
 
 ## Identifying file arguments
 
-To construct the rule, `extract_shell()` needs to be able to identify
-arguments that refer to a file name. To do so, it uses the following
-heuristic:
+To identify arguments that refer to file names, `extract_shell()` uses
+the following rules:
 
 - if the call includes arguments whose names start with a dot, then
   these arguments are assumed to refer to file names;
 
 - otherwise, find arguments whose values actually are file names (as
-  determined by [`file.exists()`](https://rdrr.io/r/base/files.html)) or
-  that look like they could be.
+  determined by [`file.exists()`](https://rdrr.io/r/base/files.html)),
+  or that look like they could be.
 
 ## References
 
@@ -115,13 +122,19 @@ heuristic:
 - [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
   Process command line arguments
 
+- [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+  Process command line arguments when the number of arguments is not
+  known in advance
+
 - [Quick
-  Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+  Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
   How to use
   [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+  and
+  [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
 
 - [Modular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible data analysis workflows
 
 ## Examples

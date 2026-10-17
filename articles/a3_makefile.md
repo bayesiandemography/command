@@ -272,15 +272,12 @@ pandoc
   html-math-method: mathjax
   wrap: none
   default-image-extension: png
-  variables: {}
   
 metadata
   document-css: false
   link-citations: true
   date-format: long
   lang: en
-  engines:
-    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Swiss Fertility
   
 Output created: report.html
@@ -342,7 +339,7 @@ When
   The shell script equivalent of
   [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
 - [Modeular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible workflows for data analysis
 - [Project Management with
   Make](https://jeroenjanssens.com/dsatcl/chapter-6-project-management-with-make)

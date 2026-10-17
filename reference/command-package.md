@@ -10,6 +10,9 @@ flexible, and reliable.
 - [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
   Process command line arguments
 
+- [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+  Collect unnamed command line arguments into one character vector
+
 - [`use_renv()`](https://bayesiandemography.github.io/command/reference/use_renv.md)
   Activate a renv project before loading packages
 
@@ -30,12 +33,12 @@ flexible, and reliable.
   Create a Makefile
 
 - [Quick
-  Start](https://bayesiandemography.github.io/command/articles/quickstart.html)
+  Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
   How to use
   [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
 
 - [Modular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible data analysis workflows
 
 - [Using command with

@@ -32,10 +32,9 @@ for everything from importing data to fitting to creating plots. Even
 when code for an analysis is divided into smaller scripts, these smaller
 scripts often have diffuse aims and complex inputs and outputs. Heavy
 use of [`source()`](https://rdrr.io/r/base/source.html) commands mean
-that many scripts contribute objects to the current working environment,
-and no script can be understood in isolation. Changes to one part of a
-workflow have large, unexpected implications for other parts of the
-workflow.
+that many scripts contribute objects to the global environment, and no
+script can be understood in isolation. Changes to one part of a workflow
+have large, unexpected implications for other parts of the workflow.
 
 This article presents a strategy for making data analysis workflows more
 strictly modular. The basic unit in this strategy is a script. Each
@@ -157,7 +156,7 @@ The `command` package is one further alternative, designed specifically
 for data analysis workflows. Function
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
 in `command` automatically checks and reformats arguments, and assigns
-values within the working environment. For an introduction to `command`,
+values within the global environment. For an introduction to `command`,
 see [Quick
 Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html).
 
@@ -556,7 +555,7 @@ arguments serve as a description of the inputs and outputs.
 
 Keeping scripts short, running each script in its own session, and
 explicitly defining the inputs to each session mean that, if something
-goes wrong, there should only be a few objects in the working
+goes wrong, there should only be a few objects in the global
 environment, and the origins of these objects should be clear. Debugging
 is a lot less painful than it might otherwise be.
 

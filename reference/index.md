@@ -5,6 +5,10 @@
 - [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
   [`cmd_assign_quiet()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
   : Assign Values Passed at the Command Line or Interactively
+- [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+  [`cmd_assign_collect_quiet()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+  : Assign Varying Set of Values Passed at the Command Line or
+  Interactively
 - [`command-package`](https://bayesiandemography.github.io/command/reference/command-package.md)
   [`command`](https://bayesiandemography.github.io/command/reference/command-package.md)
   : command: Process command line arguments

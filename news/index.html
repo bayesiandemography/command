@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">command</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,7 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a1_quickstart.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -40,6 +40,42 @@
       <small>Source: <a href="https://github.com/bayesiandemography/command/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="command-030">command 0.3.0<a class="anchor" aria-label="anchor" href="#command-030"></a></h2>
+<div class="section level3">
+<h3 id="variable-length-file-arguments-0-3-0">Variable-length file arguments<a class="anchor" aria-label="anchor" href="#variable-length-file-arguments-0-3-0"></a></h3>
+<ul><li>Added <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code> and <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect_quiet()</a></code>, which assign every unnamed command-line argument to the one argument that was not passed by name.</li>
+<li>
+<code><a href="../reference/extract_make.html">extract_make()</a></code>, <code><a href="../reference/extract_shell.html">extract_shell()</a></code>, <code><a href="../reference/makefile.html">makefile()</a></code>, and <code><a href="../reference/shell_script.html">shell_script()</a></code> read calls to <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>. A character vector of paths becomes one file name per element, and in a Makefile the last element is the target.</li>
+<li>These functions also now recognize the <code><a href="../reference/cmd_assign.html">cmd_assign_quiet()</a></code>, <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect_quiet()</a></code>, and a call written with a <code>command::</code> or <code>command:::</code> prefix.</li>
+<li>Documented the dot-name convention for file arguments in the help for <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> and <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>.</li>
+<li>
+<code><a href="../reference/shell_script.html">shell_script()</a></code> orders commands by matching output paths with input paths.</li>
+<li>
+<code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> and <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code> reject a named command-line argument that is passed more than once.</li>
+<li>
+<code><a href="../reference/makefile.html">makefile()</a></code>, <code><a href="../reference/shell_script.html">shell_script()</a></code>, <code><a href="../reference/extract_make.html">extract_make()</a></code>, and <code><a href="../reference/extract_shell.html">extract_shell()</a></code> read literal values from calls. A name or a function call such as <code><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path()</a></code> or <code><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste()</a></code> is an error.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="command-line-values-0-3-0">Command-line values<a class="anchor" aria-label="anchor" href="#command-line-values-0-3-0"></a></h3>
+<ul><li>A named argument is split on the first <code>=</code>, so the value may itself contain <code>=</code>. An argument with an empty name, such as <code>--=value</code>, is an error.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="shell-commands-0-3-0">Shell commands<a class="anchor" aria-label="anchor" href="#shell-commands-0-3-0"></a></h3>
+<ul><li>
+<code><a href="../reference/extract_shell.html">extract_shell()</a></code> and <code><a href="../reference/shell_script.html">shell_script()</a></code> leave a plain token unchanged, and quote a path or value only when it contains a space or a character that is special to the shell. <code>NULL</code> is written as <code>--name=NULL</code>.</li>
+<li>
+<code><a href="../reference/shell_script.html">shell_script()</a></code> rejects a <code>quiet</code> value that is not <code>TRUE</code> or <code>FALSE</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-3-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-0"></a></h3>
+<ul><li>The message for a missing directory now says that the directory does not exist.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-3-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-3-0"></a></h3>
+<ul><li>Revised the package description and the help pages.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="command-020">command 0.2.0<a class="anchor" aria-label="anchor" href="#command-020"></a></h2><p class="text-muted">CRAN release: 2026-07-23</p>
 <div class="section level3">

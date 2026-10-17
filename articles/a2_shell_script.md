@@ -96,8 +96,9 @@ creates a draft of the whole shell script.
 [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
 loops through all the R files in a directory, extracting
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
-calls and converting them into shell commands. It then puts the shell
-commands into a script.
+calls and converting them into shell commands. It tries to put the
+commands in the order they need to run, by matching output paths with
+input paths, and then puts the commands into a script.
 
 For instance, the call
 
@@ -113,10 +114,6 @@ creates a new file called `workflow.sh` with the lines
       data/raw_data.csv \
       out/cleaned_data.rds
 
-    Rscript src/fig_fitted.R \
-      out/vals_fitted.rds \
-      out/fig_fitted.png
-
     Rscript src/model.R \
       out/cleaned_data.rds \
       out/model.rds \
@@ -127,13 +124,18 @@ creates a new file called `workflow.sh` with the lines
       out/model.rds \
       out/vals_fitted.rds
 
-Here, as in most cases, the output from
+    Rscript src/fig_fitted.R \
+      out/vals_fitted.rds \
+      out/fig_fitted.png
+
 [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
-needs some editing before it is ready for use. The ordering of the
-commands in `workflow.sh` reflects the ordering of the files in the
-`src` directory. We need to rearrange the commands to instead reflect
-the order in which they need to be executed. We also add instructions on
-rendering the file `report.qmd`.
+tries to put the commands in the order they need to run, by matching the
+path strings written in the calls. In this example the order is already
+right. It can get the order wrong, so the draft may still need editing.
+[`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
+also cannot see steps that are not R scripts. We add an instruction to
+render `report.qmd`.
+
 
     Rscript src/cleaned_data.R \
       data/raw_data.csv \
@@ -208,15 +210,12 @@ pandoc
   html-math-method: mathjax
   wrap: none
   default-image-extension: png
-  variables: {}
   
 metadata
   document-css: false
   link-citations: true
   date-format: long
   lang: en
-  engines:
-    - path: /opt/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   title: Swiss Fertility
   
 Output created: report.html
@@ -255,7 +254,7 @@ main directory. The `report_files` directory was created by quarto.
   The Makefile equivalent of
   [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
 - [Modular Workflows for Data
-  Analysis](https://bayesiandemography.github.io/command/articles/workflow.html)
+  Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible workflows
 - [The Unix
   Shell](https://swcarpentry.github.io/shell-novice/index.html) Episodes

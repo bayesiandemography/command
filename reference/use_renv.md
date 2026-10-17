@@ -47,6 +47,10 @@ renv](https://bayesiandemography.github.io/command/articles/a5_renv.html).
 - [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
   Process command line arguments
 
+- [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
+  Process command line arguments when the number of arguments is not
+  known in advance
+
 - [Using command with
   renv](https://bayesiandemography.github.io/command/articles/a5_renv.html)
 
