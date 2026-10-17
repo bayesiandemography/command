@@ -1,4 +1,23 @@
 
+# Submission of version 0.3.0, 17 October 2026
+
+## Changes since version 0.2.0
+
+* Added function `cmd_assign_collect()`, which
+  accepts an unspecified number of unnamed arguments.
+* Changed internal processing of arguments
+  by functions `extract_make()` and `extract_shell()`
+  to make them more robust.
+* Tidying docmentation, including correcting typos
+  and inaccurate descriptions of functions.
+
+## Test environments:
+
+* local macOS, R 4.6.1
+* win-builder (R-devel)
+* GitHub Actions (ubuntu/macOS/Windows; release, devel, oldrel-1)
+
+
 # Submission of version 0.2.0, 23 July 2026
 
 ## Changes since version 0.1.3:
