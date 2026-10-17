@@ -35,11 +35,11 @@ starts by processing named command line arguments
 Unlike \code{cmd_assign()}, however, \code{cmd_assign_collect()}
 puts all the values that are left over into a single
 character vector. This vector can be any length,
-including zero. There must, however, be a single
-name in the call to \code{cmd_assign_collect()}
-that has not been used for named command
-line arguments. \code{cmd_assign_collect()}
-assigns the character vector to this name.
+including zero. \code{cmd_assign_collect()} must
+contain a single name-value pair that is not
+used for named command line arguments.
+\code{cmd_assign_collect()} assigns the name from
+this name-value to the character vector.
 
 If, for instance, the script \code{combine.R} contains
 
@@ -79,11 +79,10 @@ inputs <- lapply(.inputs, read.csv)
 \section{Use cmd_assign() where possible}{
 \code{cmd_assign_collect()} is more flexible than \code{cmd_assign()},
 in that it does not require the number, name, or type of values
-to be specified in advance. But if the number, name, and type
-of incoming values are in fact known in advance,
-then locking those in is good practice. More precise code
-is more self-documenting and more likely to throw an
-error if something unexpected happens.
+to be specified in advance. But if these things
+are in fact known in advance, then it is
+good practice to document and test for them,
+which is what \code{cmd_assign()} does.
 }
 
 \examples{

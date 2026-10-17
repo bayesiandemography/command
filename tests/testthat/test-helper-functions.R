@@ -217,6 +217,18 @@ test_that("'extract_cmd_call' finds a collect call inside a function", {
   expect_identical(ans$args$use_log, TRUE)
 })
 
+test_that("'extract_cmd_call' reads a call with no argument names", {
+  dir_tmp <- tempfile(tmpdir = getwd())
+  on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
+  dir.create(dir_tmp)
+  path <- file.path(dir_tmp, "script.R")
+  writeLines("cmd_assign('data/a.csv', 'out/b.rds')", path)
+  ans <- extract_cmd_call(path)
+  expect_identical(ans$name, "cmd_assign")
+  expect_null(names(ans$args))
+  expect_identical(ans$args, list("data/a.csv", "out/b.rds"))
+})
+
 test_that("'extract_cmd_call' does not evaluate names or other calls", {
   dir_tmp <- tempfile(tmpdir = getwd())
   on.exit(unlink(dir_tmp, recursive = TRUE), add = TRUE)
@@ -260,6 +272,23 @@ test_that("'read_cmd_arg' reads constants, c(), and class constructors", {
                    as.POSIXct("2025-01-01", tz = "UTC"))
 })
 
+test_that("'read_cmd_arg' reads logical symbols and missing-value symbols", {
+  expect_identical(read_cmd_arg(quote(T), "flag", "script.R"), TRUE)
+  expect_identical(read_cmd_arg(quote(F), "flag", "script.R"), FALSE)
+  expect_identical(read_cmd_arg(as.symbol("TRUE"), "flag", "script.R"), TRUE)
+  expect_identical(read_cmd_arg(as.symbol("FALSE"), "flag", "script.R"), FALSE)
+  expect_identical(read_cmd_arg(as.symbol("NULL"), "k", "script.R"), NULL)
+  expect_identical(read_cmd_arg(as.symbol("NA"), "k", "script.R"), NA)
+  expect_identical(read_cmd_arg(as.symbol("NA_integer_"), "k", "script.R"),
+                   NA_integer_)
+  expect_identical(read_cmd_arg(as.symbol("NA_real_"), "k", "script.R"),
+                   NA_real_)
+  expect_identical(read_cmd_arg(as.symbol("NA_character_"), "k", "script.R"),
+                   NA_character_)
+  expect_identical(read_cmd_arg(as.symbol("Inf"), "k", "script.R"), Inf)
+  expect_identical(read_cmd_arg(as.symbol("NaN"), "k", "script.R"), NaN)
+})
+
 test_that("'read_cmd_arg' rejects a name, file.path(), and paste()", {
   expect_error(read_cmd_arg(quote(n), "n", "script.R"),
                "Can't read argument `n`")
@@ -269,6 +298,31 @@ test_that("'read_cmd_arg' rejects a name, file.path(), and paste()", {
                "paste0")
   expect_error(read_cmd_arg(quote(file.path("data", "x.csv")), "", "script.R"),
                "unnamed argument")
+})
+
+test_that("'read_cmd_arg' rejects a non-call, a qualified call, and a bad minus", {
+  expect_error(read_cmd_arg(list(1), "n", "script.R"),
+               "Can't read argument `n`")
+  expect_error(read_cmd_arg(quote(base::as.integer(1)), "n", "script.R"),
+               "Can't read argument `n`")
+  expect_error(read_cmd_arg(quote(-"a"), "n", "script.R"),
+               "Can't read argument `n`")
+})
+
+test_that("'read_cmd_arg' rejects a constructor with the wrong arguments", {
+  expect_error(read_cmd_arg(quote(as.integer()), "n", "script.R"),
+               "Can't read argument `n`")
+  expect_error(read_cmd_arg(quote(as.integer(1, 2)), "n", "script.R"),
+               "Can't read argument `n`")
+  expect_error(read_cmd_arg(quote(as.Date("2020-01-01", origin = "1970-01-01")),
+                            "date", "script.R"),
+               "Can't read argument `date`")
+  expect_error(read_cmd_arg(quote(as.POSIXct("2020-01-01", tz = c("UTC", "GMT"))),
+                            "date", "script.R"),
+               "Can't read argument `date`")
+  expect_error(read_cmd_arg(quote(as.POSIXlt("2020-01-01", format = 1)),
+                            "date", "script.R"),
+               "Can't read argument `date`")
 })
 
 test_that("'extract_shell_if_possible' accepts a quiet collect call", {
@@ -993,6 +1047,14 @@ test_that("'is_file_arg' lets a dotted name override a path-like string", {
 })
 
 
+## 'file_arg_io' --------------------------------------------------------------
+
+test_that("'file_arg_io' has no output when nothing is a file", {
+  ans <- file_arg_io(list(n = 1, label = "notes"))
+  expect_identical(ans, list(inputs = character(), output = NULL))
+})
+
+
 ## 'is_varname_valid' ---------------------------------------------------------
 
 test_that("'is_varname_valid' returns TRUE with valid names", {
@@ -1147,6 +1209,41 @@ test_that("'order_commands' waits for every input", {
   ans <- order_commands(steps)
   expect_identical(vapply(ans, function(step) step$command, ""),
                    c("clean", "model", "vals"))
+})
+
+test_that("'order_commands' returns an empty list unchanged", {
+  expect_identical(order_commands(list()), list())
+})
+
+test_that("'order_commands' accepts a script with no inputs", {
+  steps <- list(list(file = "src/a.R",
+                     inputs = character(),
+                     output = "out/a.rds",
+                     command = "a"))
+  expect_identical(order_commands(steps), steps)
+})
+
+test_that("'order_commands' rejects a cycle that also reads an earlier script", {
+  steps <- list(list(file = "src/a.R",
+                     inputs = character(),
+                     output = "out/a.rds",
+                     command = "a"),
+                list(file = "src/b.R",
+                     inputs = c("out/a.rds", "out/c.rds"),
+                     output = "out/b.rds",
+                     command = "b"),
+                list(file = "src/c.R",
+                     inputs = "out/b.rds",
+                     output = "out/c.rds",
+                     command = "c"))
+  expect_error(order_commands(steps),
+               "depend on each other")
+})
+
+test_that("'find_command_cycle' reports a cycle after a script with no predecessors", {
+  ans <- find_command_cycle(nodes = c(1L, 2L, 3L),
+                            preds = list(integer(), 3L, 2L))
+  expect_identical(ans, c(2L, 3L, 2L))
 })
 
 test_that("'order_commands' rejects a script that reads its own output", {

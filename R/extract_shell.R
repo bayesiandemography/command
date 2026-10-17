@@ -5,12 +5,6 @@
 #' Extract a call to [cmd_assign()] or [cmd_assign_collect()] from an
 #' R script, and turn it into a shell command.
 #'
-#' Values in the call must be literals: constants, `c(...)`,
-#' or `as.integer()`, `as.numeric()`, `as.logical()`,
-#' `as.Date()`, `as.POSIXct()`, or `as.POSIXlt()`.
-#' A name or another function call, such as `file.path()`
-#' or `paste()`, is an error.
-#'
 #' # The components of a shell command
 #'
 #' The shell command produced by `extract_shell()`
@@ -35,11 +29,11 @@
 #' - Step 1. Write an R script that carries out
 #'   a step in analysis (eg tidying data, fitting
 #'   a model, making a graph.) This script
-#'   will contain a call to [cmd_assign()],
+#'   will contain a call to [cmd_assign()] or [cmd_assign_collect()],
 #'   and  will be the first argument passed to
 #'   Rscript in the shell command.
 #'   When writing and testing the script,
-#'   use [cmd_assign()] interactively.
+#'   use [cmd_assign()] or [cmd_assign_collect()] interactively.
 #' - Step 2. Once the R script is working correctly,
 #'   call `extract_shell()`, and add the command
 #'   to your shell script.
@@ -70,15 +64,16 @@
 #'   (as determined by [file.exists()]) or that look
 #'   like they could be.
 #'
-#' A character vector supplied to [cmd_assign_collect()]
-#' is a file argument when its name starts with a dot,
-#' or, when no argument name starts with a dot, when
-#' each element looks like a path. Each element is
-#' written as its own positional argument.
+#' `extract_shell()` assumes that a
+#' character vector supplied to [cmd_assign_collect()]
+#' is a file argument if the name of the character
+#' vector starts with a dot,
+#' or, when no argument name starts with a dot,
+#' if each element looks like a path.
 #' 
 #' @param path_file Path to the R script containing
-#' the call to [cmd_assign()]. The path
-#' starts at `dir_shell`.
+#' the call to [cmd_assign()] or [cmd_assign_collect()].
+#' The path starts at `dir_shell`.
 #' @param dir_shell The directory that contains
 #' the shell script. The default is
 #' the current working directory.
@@ -93,8 +88,10 @@
 #' - [shell_script()] Create a shell script
 #'   from calls to [cmd_assign()]
 #' - [cmd_assign()] Process command line arguments
+#' - [cmd_assign_collect()] Process command line arguments when
+#'   the number of arguments is not known in advance
 #' - [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
-#'   How to use `cmd_assign()`
+#'   How to use `cmd_assign()` and `cmd_assign_collect()`
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
 #'   Safe, flexible data analysis workflows
 #'

@@ -540,8 +540,6 @@ read_cmd_arg <- function(expr, nm, file) {
       return(x)
     if (is.symbol(x)) {
       nm_sym <- as.character(x)
-      if (!nzchar(nm_sym))
-        reject()
       if (nm_sym %in% c("TRUE", "T"))
         return(TRUE)
       if (nm_sym %in% c("FALSE", "F"))
@@ -621,7 +619,7 @@ read_cmd_arg <- function(expr, nm, file) {
 #' [cmd_assign_collect()], or [cmd_assign_collect_quiet()],
 #' including a call nested inside another expression and a call
 #' written as `command::cmd_assign()`. Argument values are read
-#' by [read_cmd_arg()] and are not evaluated.
+#' by `read_cmd_arg()` and are not evaluated.
 #'
 #' @param file Path to an R script.
 #'
@@ -1107,8 +1105,6 @@ find_command_cycle <- function(nodes, preds) {
   path <- integer()
   cycle <- NULL
   dfs <- function(i) {
-    if (!is.null(cycle))
-      return()
     state[[i]] <<- 1L
     path <<- c(path, i)
     for (p in preds[[i]]) {

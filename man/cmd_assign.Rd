@@ -38,11 +38,8 @@ interfaces, making them clearer and safer.
 }
 \section{Types of session}{
 \code{cmd_assign()} behaves differently depending
-on whether it is called
-\enumerate{
-\item interactively, or
-\item inside an R script that is run from the command line.
-}
+on whether it is called interactively, or
+from within an R script being run from the command line.
 
 For instance, if the code
 
@@ -51,8 +48,8 @@ For instance, if the code
 is run interactively, it creates an object
 called \code{use_log} with value \code{TRUE}.
 
-But if the same code is run inside a
-script via the command
+But if the same code is run from within a
+script that has been invoked using the command
 
 \verb{Rscript tidy_data.R --use_log=FALSE}
 
@@ -90,21 +87,19 @@ and if \code{person.R} is run from the command line using
   --max_age=100
 }\if{html}{\out{</div>}}
 
-then \code{cmd_assign()}
-\itemize{
-\item matches named command line argument \code{--max_age=100}
-to \code{cmd_assign()} argument \code{max_age};
-\item matches unnamed command line argument \code{raw_data.csv} to
-\code{cmd_assign()} argument \code{.data}; and
-\item matches unnamed command line argument \code{person.rds}
-to \code{cmd_assign()} argument \code{.out}.
+then \code{cmd_assign()} assigns \code{cmd_assign()} names to
+command line arguments in the following order:\tabular{lll}{
+   order \tab \code{cmd_assign()} name \tab command line argument \cr
+   1 \tab \code{max_age} \tab \code{--max_age=100} \cr
+   2 \tab \code{.data} \tab \code{raw_data.csv} \cr
+   3 \tab \code{.out} \tab \code{person.rds} \cr
 }
 }
 
 \section{The values specified in the call to cmd_assign() are not defaults}{
 The values specified in the call to \code{cmd_assign()} are
-not defaults in the sense of values to fall back to
-when no value is supplied. For instance, if we run a script
+not defaults in the sense of values to fall back on
+when no value is supplied. For instance, if we take a script
 containing the call
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{cmd_assign(
@@ -113,13 +108,11 @@ containing the call
 )
 }\if{html}{\out{</div>}}
 
-from the command line without passing a value
+and run it from the command line without passing a value
 for \code{n_draw}, then \code{cmd_assign()} will throw an error.
 It will \emph{not} set \code{n_draw} to \code{10}.
 
-The reason for not allowing defaults is that
-it is clearer and safer to explicitly
-supply all inputs to a script.
+Defaults can  hide bugs and make code less predictable.
 }
 
 \section{Coercing values passed at the command line}{
@@ -146,12 +139,12 @@ and if \code{fit.R} is run from the command line using
   --date=2025-01-01
 }\if{html}{\out{</div>}}
 
-then \code{cmd_assign()} will create
-\itemize{
-\item a length-1 character vector called \code{.data} with value \code{"data/individuals.rds"},
-\item a length-1 logical vector called \code{impute} with value \code{TRUE},
-\item a length-1 date vector called \code{date} with value \code{"2025-01-01"}, and
-\item a length-1 character vector called \code{.out} with value \code{"output/fitted.rds"}.
+then \code{cmd_assign()} will create the following length-1 vectors\tabular{lll}{
+   name \tab class \tab value \cr
+   \code{.data} \tab \code{"character"} \tab \code{"data/individuals.rds"} \cr
+   \code{impute} \tab \code{"logical"} \tab \code{TRUE} \cr
+   \code{date} \tab \code{"Date"} \tab \code{"2025-01-01"} \cr
+   \code{.out} \tab \code{"character"} \tab \code{"output/fitted.rds"} \cr
 }
 }
 
@@ -172,16 +165,11 @@ Function \code{cmd_assign()} does not in fact distinguish between
 names with dots and names without dots. But the dot-name convention
 is still useful because of the way it calls attention
 to the distinction between file paths and
-ordinary objects. For instance, a dot-name reminds the
-reader that they are dealing with a reference to
-an input, rather than the input itself,
-and that the input needs to be read into memory through
-some statement of the form
+ordinary objects. For instance, a dot-name is a
+reminder that the object being named is a reference to
+an input or output, rather than the input or output itself.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{households <- read.csv(.households)
-}\if{html}{\out{</div>}}
-
-In addition, functions \code{\link[=extract_make]{extract_make()}},
+In contrast, functions \code{\link[=extract_make]{extract_make()}},
 \code{\link[=extract_shell]{extract_shell()}}, \code{\link[=makefile]{makefile()}}, and \code{\link[=shell_script]{shell_script()}}
 \emph{do} treat names with dots differently from
 names without dots. See the help for

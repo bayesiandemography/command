@@ -9,12 +9,12 @@ Authors@R: c(
 	   role = c("aut", "cre")),
     person("Bayesian Demography Limited",
             role = "cph"))
-Description: Process command line arguments. Processing includes
-    checking arguments, matching arguments to names,
-    and converting strings to numbers, booleans, or dates.
-    The main function, cmd_assign(), allows the inputs and outputs
-    of a file to be clearly defined, leading to
-    safer, more modular data analysis pipelines.
+Description: Process command line arguments. Processing
+    includes checking, naming, and coercing to numeric,
+    date, or logical. By capturing assumptions about
+    inputs and outputs, the 'command' package can
+    provide scripts with well defined interfaces,
+    leading to safer, more modular data analysis pipelines.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 3.5.0)

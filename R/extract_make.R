@@ -6,14 +6,6 @@
 #' R script, and turn it into a Makefile rule.
 #'
 #' The rule may need editing before it is added to a Makefile.
-#' A file path that contains a space or a character special
-#' to Make must be corrected in the dependency line.
-#'
-#' Values in the call must be literals: constants, `c(...)`,
-#' or `as.integer()`, `as.numeric()`, `as.logical()`,
-#' `as.Date()`, `as.POSIXct()`, or `as.POSIXlt()`.
-#' A name or another function call, such as `file.path()`
-#' or `paste()`, is an error.
 #'
 #' # The components of a Makefile rule
 #'
@@ -48,18 +40,17 @@
 #' - Step 1. Write the R file that carries out
 #'   the step in analysis (eg tidying data, fitting
 #'   a model, making a graph.) This file
-#'   will contain a call to [cmd_assign()],
+#'   will contain a call to [cmd_assign()] or [cmd_assign_collect()],
 #'   and  will appear in the first line of the
 #'   Makefile rule. When writing and testing the file,
-#'   use [cmd_assign()] interactively.
+#'   use [cmd_assign()] or [cmd_assign_collect()] interactively.
 #' - Step 2. Once the R file is working correctly,
 #'   call `extract_make()`, and add the rule
 #'   to your Makefile.
 #'
 #' When using `extract_make()`, it is a good idea to
 #' set the current working directory to the project
-#' directory (something that will happen automatically
-#' if you are using RStudio projects.)
+#' directory.
 #'
 #' # Location of the Makefile
 #'
@@ -76,9 +67,8 @@
 #' 
 #' # Identifying file arguments
 #'
-#' To construct the Makefile rule, `extract_make()` needs to
-#' be able to pick out arguments that refer to
-#' file names. To do so, it uses the following heuristic:
+#' To identify arguments that refer to file names,
+#' `extract_make()` uses the following rules:
 #' - if the call includes arguments whose names start with
 #'   a dot, then these arguments are assumed to
 #'   refer to file names;
@@ -87,16 +77,9 @@
 #'   (as determined by [file.exists()]), or that look
 #'   like they could be.
 #'
-#' A character vector supplied to [cmd_assign_collect()]
-#' is a file argument when its name starts with a dot,
-#' or, when no argument name starts with a dot, when
-#' each element looks like a path. Each element becomes
-#' its own file name. The last of those file names is
-#' the target.
-#' 
 #' @param path_file A path from
 #' `dir_make` to the R scripe containing
-#' the call to [cmd_assign()]. 
+#' the call to [cmd_assign()] or [cmd_assign_collect()]. 
 #' @param dir_make The directory that contains
 #' the Makefile. The default is
 #' the current working directory.
@@ -111,8 +94,10 @@
 #' - [makefile()] Create a Makefile
 #'   from calls to [cmd_assign()]
 #' - [cmd_assign()] Process command line arguments
+#' - [cmd_assign_collect()] Process command line arguments when
+#'   the number of arguments is not known in advance
 #' - [Quick Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.html)
-#'   How to use `cmd_assign()`
+#'   How to use `cmd_assign()` and `cmd_assign_collect()`
 #' - [Modular Workflows for Data Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
 #'   Safe, flexible data analysis workflows
 #' - [littler](https://CRAN.R-project.org/package=littler) Alternative to Rscript

@@ -43,13 +43,13 @@ Makefile.
 Create a Makefile for a data analysis workflow.
 The Makefile can include
 rules extracted from existing R files.
-
+}
+\details{
 The Makefile is a draft and needs editing before use.
 \code{makefile()} cannot infer every rule, and a file path
 that contains a space or a character special to Make
 must be corrected in the dependency line.
-}
-\details{
+
 To create a Makefile in the \code{files}
 directory, set \code{files} to \code{"."}.
 

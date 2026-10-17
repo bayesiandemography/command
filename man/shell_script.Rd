@@ -42,14 +42,14 @@ shell script.
 Create a shell script for a data analysis workflow
 consisting of commands
 extracted from existing R files.
-
+}
+\details{
 \code{shell_script()} tries to put the commands in the order
 they need to run, by matching each script's output path
 with the input paths of the other scripts.
 It can get this order wrong, so the shell script may
 still need editing.
-}
-\details{
+
 To create a shell script in the \code{files}
 directory, set \code{files} to \code{"."}.
 

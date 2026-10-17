@@ -22,10 +22,8 @@
 #' # Types of session
 #'
 #' `cmd_assign()` behaves differently depending
-#'  on whether it is called
-#'
-#' 1. interactively, or
-#' 2. inside an R script that is run from the command line.
+#' on whether it is called interactively, or
+#' from within an R script being run from the command line.
 #'
 #' For instance, if the code
 #'
@@ -34,8 +32,8 @@
 #' is run interactively, it creates an object 
 #' called `use_log` with value `TRUE`.
 #'
-#' But if the same code is run inside a
-#' script via the command
+#' But if the same code is run from within a
+#' script that has been invoked using the command
 #' 
 #' `Rscript tidy_data.R --use_log=FALSE`
 #' 
@@ -75,21 +73,21 @@
 #'   --max_age=100
 #' ```
 #' 
-#' then `cmd_assign()`
+#' then `cmd_assign()` assigns `cmd_assign()` names to
+#' command line arguments in the following order:
 #'
-#' - matches named command line argument `--max_age=100`
-#'   to `cmd_assign()` argument `max_age`;
-#' - matches unnamed command line argument `raw_data.csv` to
-#'   `cmd_assign()` argument `.data`; and
-#' - matches unnamed command line argument `person.rds`
-#'   to `cmd_assign()` argument `.out`.
+#' | order | `cmd_assign()` name   | command line argument   | 
+#' |:------|:--------------------- |:------------------------|
+#' | 1     | `max_age`             | `--max_age=100`         | 
+#' | 2     | `.data`               | `raw_data.csv`          |
+#' | 3     | `.out`                | `person.rds`            |
 #'
 #' 
 #' # The values specified in the call to cmd_assign() are not defaults
 #'
 #' The values specified in the call to `cmd_assign()` are
-#' not defaults in the sense of values to fall back to
-#' when no value is supplied. For instance, if we run a script
+#' not defaults in the sense of values to fall back on
+#' when no value is supplied. For instance, if we take a script
 #' containing the call
 #'
 #' ```
@@ -99,13 +97,11 @@
 #' )
 #' ```
 #'
-#' from the command line without passing a value
+#' and run it from the command line without passing a value
 #' for `n_draw`, then `cmd_assign()` will throw an error.
 #' It will *not* set `n_draw` to `10`.
 #'
-#' The reason for not allowing defaults is that
-#' it is clearer and safer to explicitly
-#' supply all inputs to a script.
+#' Defaults can  hide bugs and make code less predictable.
 #'
 #' # Coercing values passed at the command line
 #' 
@@ -134,12 +130,14 @@
 #'   --date=2025-01-01
 #' ```
 #'
-#' then `cmd_assign()` will create
+#' then `cmd_assign()` will create the following length-1 vectors
 #'
-#' - a length-1 character vector called `.data` with value `"data/individuals.rds"`,
-#' - a length-1 logical vector called `impute` with value `TRUE`,
-#' - a length-1 date vector called `date` with value `"2025-01-01"`, and
-#' - a length-1 character vector called `.out` with value `"output/fitted.rds"`.
+#' | name | class     | value         |
+#' |:-----|:----------|:--------------|
+#' |`.data` | `"character"` | `"data/individuals.rds"` |
+#' | `impute` | `"logical"` | `TRUE` |
+#' | `date` | `"Date"` | `"2025-01-01"` |
+#' | `.out` | `"character"` | `"output/fitted.rds"` |
 #'
 #' # The dot-name convention
 #'
@@ -159,16 +157,11 @@
 #' names with dots and names without dots. But the dot-name convention
 #' is still useful because of the way it calls attention
 #' to the distinction between file paths and
-#' ordinary objects. For instance, a dot-name reminds the
-#' reader that they are dealing with a reference to
-#' an input, rather than the input itself,
-#' and that the input needs to be read into memory through
-#' some statement of the form
-#' ```
-#' households <- read.csv(.households)
-#' ```
+#' ordinary objects. For instance, a dot-name is a
+#' reminder that the object being named is a reference to
+#' an input or output, rather than the input or output itself.
 #'
-#' In addition, functions [extract_make()],
+#' In contrast, functions [extract_make()],
 #' [extract_shell()], [makefile()], and [shell_script()]
 #' *do* treat names with dots differently from
 #' names without dots. See the help for
@@ -279,11 +272,11 @@ cmd_assign_quiet <- function(...) {
 #' Unlike `cmd_assign()`, however, `cmd_assign_collect()`
 #' puts all the values that are left over into a single
 #' character vector. This vector can be any length,
-#' including zero. There must, however, be a single
-#' name in the call to `cmd_assign_collect()`
-#' that has not been used for named command
-#' line arguments. `cmd_assign_collect()`
-#' assigns the character vector to this name.
+#' including zero. `cmd_assign_collect()` must
+#' contain a single name-value pair that is not
+#' used for named command line arguments.
+#' `cmd_assign_collect()` assigns the name from
+#' this name-value to the character vector.
 #'
 #' If, for instance, the script `combine.R` contains
 #'
@@ -325,11 +318,10 @@ cmd_assign_quiet <- function(...) {
 #'
 #' `cmd_assign_collect()` is more flexible than `cmd_assign()`,
 #' in that it does not require the number, name, or type of values
-#' to be specified in advance. But if the number, name, and type
-#' of incoming values are in fact known in advance,
-#' then locking those in is good practice. More precise code
-#' is more self-documenting and more likely to throw an
-#' error if something unexpected happens.
+#' to be specified in advance. But if these things
+#' are in fact known in advance, then it is
+#' good practice to document and test for them,
+#' which is what `cmd_assign()` does.
 #'
 #' @param ... Name-value pairs.
 #'

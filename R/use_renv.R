@@ -143,6 +143,8 @@ renv_active_for <- function(project) {
 #'
 #' @seealso
 #' - [cmd_assign()] Process command line arguments
+#' - [cmd_assign_collect()] Process command line arguments when
+#'   the number of arguments is not known in advance
 #' - [Using command with renv](https://bayesiandemography.github.io/command/articles/a5_renv.html)
 #'
 #' @examples

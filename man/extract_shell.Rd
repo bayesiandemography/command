@@ -8,8 +8,8 @@ extract_shell(path_file, dir_shell = NULL)
 }
 \arguments{
 \item{path_file}{Path to the R script containing
-the call to \code{\link[=cmd_assign]{cmd_assign()}}. The path
-starts at \code{dir_shell}.}
+the call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}.
+The path starts at \code{dir_shell}.}
 
 \item{dir_shell}{The directory that contains
 the shell script. The default is
@@ -24,12 +24,6 @@ invisibly returns a text string with the command.
 \description{
 Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} from an
 R script, and turn it into a shell command.
-
-Values in the call must be literals: constants, \code{c(...)},
-or \code{as.integer()}, \code{as.numeric()}, \code{as.logical()},
-\code{as.Date()}, \code{as.POSIXct()}, or \code{as.POSIXlt()}.
-A name or another function call, such as \code{file.path()}
-or \code{paste()}, is an error.
 }
 \section{The components of a shell command}{
 The shell command produced by \code{extract_shell()}
@@ -57,11 +51,11 @@ Rscript passes to \code{src/model.R}
 \item Step 1. Write an R script that carries out
 a step in analysis (eg tidying data, fitting
 a model, making a graph.) This script
-will contain a call to \code{\link[=cmd_assign]{cmd_assign()}},
+will contain a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}},
 and  will be the first argument passed to
 Rscript in the shell command.
 When writing and testing the script,
-use \code{\link[=cmd_assign]{cmd_assign()}} interactively.
+use \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} interactively.
 \item Step 2. Once the R script is working correctly,
 call \code{extract_shell()}, and add the command
 to your shell script.
@@ -95,11 +89,12 @@ actually are file names
 like they could be.
 }
 
-A character vector supplied to \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}
-is a file argument when its name starts with a dot,
-or, when no argument name starts with a dot, when
-each element looks like a path. Each element is
-written as its own positional argument.
+\code{extract_shell()} assumes that a
+character vector supplied to \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}
+is a file argument if the name of the character
+vector starts with a dot,
+or, when no argument name starts with a dot,
+if each element looks like a path.
 }
 
 \examples{
@@ -137,8 +132,10 @@ Introduction to Rscript
 \item \code{\link[=shell_script]{shell_script()}} Create a shell script
 from calls to \code{\link[=cmd_assign]{cmd_assign()}}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
+\item \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} Process command line arguments when
+the number of arguments is not known in advance
 \item \href{https://bayesiandemography.github.io/command/articles/a1_quickstart.html}{Quick Start}
-How to use \code{cmd_assign()}
+How to use \code{cmd_assign()} and \code{cmd_assign_collect()}
 \item \href{https://bayesiandemography.github.io/command/articles/a4_workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 }

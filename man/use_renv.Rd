@@ -46,6 +46,8 @@ command::use_renv() ## if renv not used here, no effect
 \seealso{
 \itemize{
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
+\item \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} Process command line arguments when
+the number of arguments is not known in advance
 \item \href{https://bayesiandemography.github.io/command/articles/a5_renv.html}{Using command with renv}
 }
 }

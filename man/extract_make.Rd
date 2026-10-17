@@ -9,7 +9,7 @@ extract_make(path_file, dir_make = NULL)
 \arguments{
 \item{path_file}{A path from
 \code{dir_make} to the R scripe containing
-the call to \code{\link[=cmd_assign]{cmd_assign()}}.}
+the call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}.}
 
 \item{dir_make}{The directory that contains
 the Makefile. The default is
@@ -24,16 +24,9 @@ invisibly returns a text string with the rule.
 \description{
 Extract a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} from an
 R script, and turn it into a Makefile rule.
-
+}
+\details{
 The rule may need editing before it is added to a Makefile.
-A file path that contains a space or a character special
-to Make must be corrected in the dependency line.
-
-Values in the call must be literals: constants, \code{c(...)},
-or \code{as.integer()}, \code{as.numeric()}, \code{as.logical()},
-\code{as.Date()}, \code{as.POSIXct()}, or \code{as.POSIXlt()}.
-A name or another function call, such as \code{file.path()}
-or \code{paste()}, is an error.
 }
 \section{The components of a Makefile rule}{
 A Makefile rule produced by \code{extract_make()}
@@ -69,10 +62,10 @@ Rscript passes to \code{src/model.R}
 \item Step 1. Write the R file that carries out
 the step in analysis (eg tidying data, fitting
 a model, making a graph.) This file
-will contain a call to \code{\link[=cmd_assign]{cmd_assign()}},
+will contain a call to \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}},
 and  will appear in the first line of the
 Makefile rule. When writing and testing the file,
-use \code{\link[=cmd_assign]{cmd_assign()}} interactively.
+use \code{\link[=cmd_assign]{cmd_assign()}} or \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} interactively.
 \item Step 2. Once the R file is working correctly,
 call \code{extract_make()}, and add the rule
 to your Makefile.
@@ -80,8 +73,7 @@ to your Makefile.
 
 When using \code{extract_make()}, it is a good idea to
 set the current working directory to the project
-directory (something that will happen automatically
-if you are using RStudio projects.)
+directory.
 }
 
 \section{Location of the Makefile}{
@@ -111,12 +103,12 @@ actually are file names
 like they could be.
 }
 
-A character vector supplied to \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}
-is a file argument when its name starts with a dot,
-or, when no argument name starts with a dot, when
-each element looks like a path. Each element becomes
-its own file name. The last of those file names is
-the target.
+\code{extract_make()} assumes that a
+character vector supplied to \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}
+is a file argument if the name of the character
+vector starts with a dot,
+or, when no argument name starts with a dot,
+if each element looks like a path.
 }
 
 \examples{
@@ -155,8 +147,10 @@ Introduction to Rscript
 \item \code{\link[=makefile]{makefile()}} Create a Makefile
 from calls to \code{\link[=cmd_assign]{cmd_assign()}}
 \item \code{\link[=cmd_assign]{cmd_assign()}} Process command line arguments
+\item \code{\link[=cmd_assign_collect]{cmd_assign_collect()}} Process command line arguments when
+the number of arguments is not known in advance
 \item \href{https://bayesiandemography.github.io/command/articles/a1_quickstart.html}{Quick Start}
-How to use \code{cmd_assign()}
+How to use \code{cmd_assign()} and \code{cmd_assign_collect()}
 \item \href{https://bayesiandemography.github.io/command/articles/a4_workflow.html}{Modular Workflows for Data Analysis}
 Safe, flexible data analysis workflows
 \item \href{https://CRAN.R-project.org/package=littler}{littler} Alternative to Rscript
