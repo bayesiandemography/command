@@ -8,6 +8,16 @@ test_that("'path_join' joins with forward slashes", {
   expect_identical(path_join("src", ".", "script.R"), "src/script.R")
 })
 
+test_that("'path_join' rewrites backslashes as forward slashes", {
+  ## tempfile(tmpdir = getwd()) on Windows inserts '\\' after a
+  ## directory that already uses '/'. That backslash must not
+  ## survive into a shell command.
+  expect_identical(path_join("D:/a/testthat\\file123", "script.R"),
+                   "D:/a/testthat/file123/script.R")
+  expect_identical(path_join("C:\\proj", "src\\script.R"),
+                   "C:/proj/src/script.R")
+})
+
 
 ## 'is_absolute_path' ---------------------------------------------------------
 

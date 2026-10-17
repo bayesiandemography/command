@@ -5,6 +5,12 @@
 #' Base-R stand-in for `fs::path()`, using
 #' forward slashes so paths are suitable for
 #' Makefiles and shell scripts on all platforms.
+#' Backslashes already inside a component are
+#' rewritten as forward slashes. On Windows,
+#' [tempfile()] inserts `\` even when `tmpdir`
+#' uses `/`, and a backslash is an escape in a
+#' shell command, so [shell_quote()] would wrap
+#' the path.
 #' Components that are `"."` are dropped so that
 #' joining with the current directory does not
 #' produce a redundant `"./"` prefix.
@@ -16,6 +22,7 @@
 #' @noRd
 path_join <- function(...) {
   parts <- unlist(list(...), use.names = FALSE)
+  parts <- chartr("\\", "/", parts)
   parts <- parts[nzchar(parts) & parts != "."]
   if (!length(parts))
     return(".")
