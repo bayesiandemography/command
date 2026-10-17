@@ -53,23 +53,15 @@
 #'
 #' # Identifying file arguments
 #'
-#' To construct the rule, `extract_shell()` needs to
-#' be able to identify arguments that refer to a
-#' file name. To do so, it uses the following heuristic:
+#' To identify arguments that refer to file names,
+#' `extract_shell()` uses the following rules:
 #' - if the call includes arguments whose names start with
 #'   a dot, then these arguments are assumed to
 #'   refer to file names;
 #' - otherwise, find arguments whose values
 #'   actually are file names
-#'   (as determined by [file.exists()]) or that look
+#'   (as determined by [file.exists()]), or that look
 #'   like they could be.
-#'
-#' `extract_shell()` assumes that a
-#' character vector supplied to [cmd_assign_collect()]
-#' is a file argument if the name of the character
-#' vector starts with a dot,
-#' or, when no argument name starts with a dot,
-#' if each element looks like a path.
 #' 
 #' @param path_file Path to the R script containing
 #' the call to [cmd_assign()] or [cmd_assign_collect()].

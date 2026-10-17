@@ -76,25 +76,17 @@ report.qmd
 }
 
 \section{Identifying file arguments}{
-To construct the rule, \code{extract_shell()} needs to
-be able to identify arguments that refer to a
-file name. To do so, it uses the following heuristic:
+To identify arguments that refer to file names,
+\code{extract_shell()} uses the following rules:
 \itemize{
 \item if the call includes arguments whose names start with
 a dot, then these arguments are assumed to
 refer to file names;
 \item otherwise, find arguments whose values
 actually are file names
-(as determined by \code{\link[=file.exists]{file.exists()}}) or that look
+(as determined by \code{\link[=file.exists]{file.exists()}}), or that look
 like they could be.
 }
-
-\code{extract_shell()} assumes that a
-character vector supplied to \code{\link[=cmd_assign_collect]{cmd_assign_collect()}}
-is a file argument if the name of the character
-vector starts with a dot,
-or, when no argument name starts with a dot,
-if each element looks like a path.
 }
 
 \examples{
