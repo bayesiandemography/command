@@ -1,6 +1,4 @@
-# 
-
-x\]— title: “Quick Start” —
+# Quick Start
 
 ## Introduction
 
@@ -23,8 +21,9 @@ that first.
 Running
 
 ``` r
-cmd_assign(obj1 = "a",
-           obj2 = 1"))
+
+cmd_assign(obj1 = "orange",
+           obj2 = 1)
 ```
 
 has the same effect as running
@@ -324,12 +323,12 @@ converts these values to have the same classs as the matched values from
 In our example, this means coercing `"10"` to `numeric` and coercing
 `"TRUE"` to `logical`.
 
-| Argument   | Value from call      | Value from command line |
-|:-----------|----------------------|-------------------------|
-| `.data`    | `"data/dataset.csv"` | `"data/dataset2.csv"`   |
-| `n_iter`   | `5`                  | `10`                    |
-| `use_long` | `TRUE`               | `TRUE`                  |
-| `.out`     | `"out/model.rds"`    | `"out/model2.rds"`      |
+| Argument  | Value from call      | Value from command line |
+|:----------|----------------------|-------------------------|
+| `.data`   | `"data/dataset.csv"` | `"data/dataset2.csv"`   |
+| `n_iter`  | `5`                  | `10`                    |
+| `use_log` | `TRUE`               | `TRUE`                  |
+| `.out`    | `"out/model.rds"`    | `"out/model2.rds"`      |
 
 Finally, in the **assign** step,
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
@@ -385,25 +384,26 @@ data <- read_csv(.data)
 Function
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
 itself makes no distinction between names that start with dots and names
-that do not. However, functions
+that do not.
 [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md),
-`shell()`, discussed in [Creating a Shell
-Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.html),
+[`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md),
+[`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md),
 and
-[`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
-and
-[`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md),
-discussed in [Creating a
-Makefile](https://bayesiandemography.github.io/command/articles/a3_makefile.html),
-do make a distinction. Moreover, the convention is useful anyway, to
-separate values from references.
+[`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
+do. If a call includes any name that starts with a dot, those arguments
+are the file names. If it does not, a value is treated as a file name
+when the file exists, or when it looks like a path. Those functions read
+the literal values written in the script, and a shell token is quoted
+only when it contains a space or a character that is special to the
+shell. The dot-name convention is useful anyway, to separate values from
+references.
 
 ## Giving code files and outputs the same base name
 
 Another feature of the examples so far is that R files have the same
 base name as the files that they generate. File `fig_smoothed.R`, for
-instance, generates `fig_smooth.png`, `fig_smooth_5.png`,
-`fig_smooth_8.png`, and `fig_smooth_10.png`, and file `model.R`
+instance, generates `fig_smoothed.png`, `fig_smoothed_5.png`,
+`fig_smoothed_8.png`, and `fig_smoothed_10.png`, and file `model.R`
 generates `model.rds` and `model2.rds`. We rely on file extensions (eg
 `.R` vs `.png`, or `.R` vs `.rds`) to distinguish code from outputs, and
 we use suffixes (eg `_5`, `_8` and `_10`) to distinguish different
@@ -663,6 +663,17 @@ as
     .inputs <- head(.files, -1)
     .out <- tail(.files, 1)
     inputs <- lapply(.inputs, read.csv)
+
+[`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md),
+[`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md),
+[`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md),
+and
+[`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
+also read a call to
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
+Each element of the character vector becomes one file name. In a
+Makefile rule, the last element is the target and the earlier elements
+are prerequisites.
 
 If you do know how many values will be passed through the command line
 at run time, you should not use

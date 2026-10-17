@@ -37,9 +37,9 @@ The workflow has five steps:
     `out/cleaned_data.rds`
 2.  `src/model.R` fits a model to the cleaned data, and creates
     `out/model.rds`
-3.  `src/vals_fitted.R` extract fitted values from the model, and
-    creates `vals_fitted.rds`
-4.  `src/fig_fitted.R` uses `vals_fitted.rds` to create the plot in
+3.  `src/vals_fitted.R` extracts fitted values from the model, and
+    creates `out/vals_fitted.rds`
+4.  `src/fig_fitted.R` uses `out/vals_fitted.rds` to create the plot in
     `out/fig_fitted.png`
 5.  `report.qmd` uses `out/fig_fitted.png` to create the document
     `report.html`
@@ -78,11 +78,20 @@ In the call to
 above, the names `.cleaned_data` and `.out` start with a dot, and the
 name `rlm_method` does not.
 [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
-treats dotted name-value pairs differently fron non-dotted ones. A
-dotted name-value pair is assumed to refer to an unnamed file path
-passed at the command line, such as `out/cleaned_data.rds` or
-`out/model.rds`. A non-dotted pair is assumed to refer to a named
-argument, such as `--rlm_method=M`.
+decides which arguments are file names in two steps. If the call
+includes any name that starts with a dot, those arguments are the file
+names, and the others are named arguments such as `--rlm_method=M`. If
+the call includes no dotted names, a value is treated as a file name
+when the file exists, or when the value looks like a path, such as when
+it contains a slash or ends with an extension such as `.csv`.
+
+[`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
+and
+[`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
+also read calls to
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
+A character vector of paths becomes one file name per element, in the
+order written.
 
 The easiest way to use
 [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
@@ -96,6 +105,8 @@ creates a draft of the whole shell script.
 [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
 loops through all the R files in a directory, extracting
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+and
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
 calls and converting them into shell commands. It tries to put the
 commands in the order they need to run, by matching output paths with
 input paths, and then puts the commands into a script.

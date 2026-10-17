@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">UNKNOWN TITLE</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -106,12 +106,12 @@ and creates <code>out/cleaned_data.rds</code>
 creates <code>out/model.rds</code>
 </li>
 <li>
-<code>src/vals_fitted.R</code> extract fitted values from the model,
-and creates <code>vals_fitted.rds</code>
+<code>src/vals_fitted.R</code> extracts fitted values from the
+model, and creates <code>out/vals_fitted.rds</code>
 </li>
 <li>
-<code>src/fig_fitted.R</code> uses <code>vals_fitted.rds</code> to
-create the plot in <code>out/fig_fitted.png</code>
+<code>src/fig_fitted.R</code> uses <code>out/vals_fitted.rds</code>
+to create the plot in <code>out/fig_fitted.png</code>
 </li>
 <li>
 <code>report.qmd</code> uses <code>out/fig_fitted.png</code> to
@@ -142,11 +142,16 @@ command. For instance, the call</p>
 <p>In the call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> above, the names
 <code>.cleaned_data</code> and <code>.out</code> start with a dot, and
 the name <code>rlm_method</code> does not. <code><a href="../reference/extract_shell.html">extract_shell()</a></code>
-treats dotted name-value pairs differently fron non-dotted ones. A
-dotted name-value pair is assumed to refer to an unnamed file path
-passed at the command line, such as <code>out/cleaned_data.rds</code> or
-<code>out/model.rds</code>. A non-dotted pair is assumed to refer to a
-named argument, such as <code>--rlm_method=M</code>.</p>
+decides which arguments are file names in two steps. If the call
+includes any name that starts with a dot, those arguments are the file
+names, and the others are named arguments such as
+<code>--rlm_method=M</code>. If the call includes no dotted names, a
+value is treated as a file name when the file exists, or when the value
+looks like a path, such as when it contains a slash or ends with an
+extension such as <code>.csv</code>.</p>
+<p><code><a href="../reference/extract_shell.html">extract_shell()</a></code> and <code><a href="../reference/shell_script.html">shell_script()</a></code> also
+read calls to <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>. A character vector of
+paths becomes one file name per element, in the order written.</p>
 <p>The easiest way to use <code><a href="../reference/extract_shell.html">extract_shell()</a></code> is to call it
 from the R console, and then cut-and-paste the results into the shell
 script.</p>
@@ -156,10 +161,11 @@ script.</p>
 </h2>
 <p><code><a href="../reference/shell_script.html">shell_script()</a></code> creates a draft of the whole shell
 script. <code><a href="../reference/shell_script.html">shell_script()</a></code> loops through all the R files in a
-directory, extracting <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> calls and converting
-them into shell commands. It tries to put the commands in the order they
-need to run, by matching output paths with input paths, and then puts
-the commands into a script.</p>
+directory, extracting <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> and
+<code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code> calls and converting them into shell
+commands. It tries to put the commands in the order they need to run, by
+matching output paths with input paths, and then puts the commands into
+a script.</p>
 <p>For instance, the call
 <!-- Messages don't display properly, so don't print real output --></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">

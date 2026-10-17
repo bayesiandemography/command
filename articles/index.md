@@ -2,8 +2,8 @@
 
 ### All vignettes
 
-- [UNKNOWN
-  TITLE](https://bayesiandemography.github.io/command/articles/a1_quickstart.md):
+- [Quick
+  Start](https://bayesiandemography.github.io/command/articles/a1_quickstart.md):
 - [Creating a Shell
   Script](https://bayesiandemography.github.io/command/articles/a2_shell_script.md):
 - [Creating a

@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">UNKNOWN TITLE</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -104,23 +104,19 @@ and creates <code>out/cleaned_data.rds</code>
 creates <code>out/model.rds</code>
 </li>
 <li>
-<code>src/vals_fitted.R</code> extract fitted values from the model,
-and creates <code>vals_fitted.rds</code>
+<code>src/vals_fitted.R</code> extracts fitted values from the
+model, and creates <code>out/vals_fitted.rds</code>
 </li>
 <li>
-<code>src/fig_fitted.R</code> uses <code>vals_fitted.rds</code> to
-create the plot in <code>out/fig_fitted.png</code>
+<code>src/fig_fitted.R</code> uses <code>out/vals_fitted.rds</code>
+to create the plot in <code>out/fig_fitted.png</code>
 </li>
 <li>
 <code>report.qmd</code> uses <code>out/fig_fitted.png</code> to
 create the document <code>report.html</code>
 </li>
 </ol>
-<p><code>cleaned_data.R</code>, <code>model.R</code>, and
-<code>vals_fitted.R</code>, and <code>fig_fitted.R</code> all contain
-calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. For instance,
-<code>src/model.R</code> contains the lines</p>
-<p><code>cleaned_data.R</code>, <code>model.R</code>, and
+<p><code>cleaned_data.R</code>, <code>model.R</code>,
 <code>vals_fitted.R</code>, and <code>fig_fitted.R</code> all contain
 calls to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code>. For instance,
 <code>src/model.R</code> contains the lines</p>
@@ -143,11 +139,17 @@ rule. For instance, the call</p>
 <p>In the call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> above, the names
 <code>.cleaned_data</code> and <code>.out</code> start with a dot, and
 the name <code>rlm_method</code> does not. <code><a href="../reference/extract_make.html">extract_make()</a></code>
-treats dotted name-value pairs differently fron non-dotted ones. A
-dotted name-value pair is assumed to refer to an unnamed file path
-passed at the command line, such as <code>out/cleaned_data.rds</code> or
-<code>out/model.rds</code>. A non-dotted pair is assumed to refer to a
-named argument, such as <code>--rlm_method=M</code>.</p>
+decides which arguments are file names in two steps. If the call
+includes any name that starts with a dot, those arguments are the file
+names, and the others are named arguments such as
+<code>--rlm_method=M</code>. If the call includes no dotted names, a
+value is treated as a file name when the file exists, or when the value
+looks like a path, such as when it contains a slash or ends with an
+extension such as <code>.csv</code>.</p>
+<p><code><a href="../reference/extract_make.html">extract_make()</a></code> and <code><a href="../reference/makefile.html">makefile()</a></code> also read
+calls to <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>. A character vector of paths
+becomes one file name per element, in the order written. The last
+element is the target, and the earlier elements are prerequisites.</p>
 <p>The easiest way to use <code><a href="../reference/extract_make.html">extract_make()</a></code> is to call it from
 the R console, and then cut-and-paste the results into Makefile.</p>
 </div>
@@ -156,8 +158,11 @@ the R console, and then cut-and-paste the results into Makefile.</p>
 </h2>
 <p><code><a href="../reference/makefile.html">makefile()</a></code> creates a draft of the whole Makefile.
 <code><a href="../reference/makefile.html">makefile()</a></code> loops through all the R files in a directory,
-extracting <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> calls and converting them into
-Makefile rules. It then puts the rules into a Makefile.</p>
+extracting <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> and
+<code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code> calls and converting them into
+Makefile rules. It then puts the rules into a Makefile. The rules follow
+the order of the file names, not the order in which they need to
+run.</p>
 <p>For instance, the call
 <!-- Messages don't display properly, so don't print real output --></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -343,24 +348,27 @@ Output created: report.html
     ├── <span style="color: #00BB00;">model.R</span>
     └── <span style="color: #00BB00;">vals_fitted.R</span>
 </code></pre>
-<p>We have created <code>scaled.rds</code>, <code>model.rds</code>, and
-<code>tab_coef</code> in the <code>out</code> directory, and
+<p>We have created <code>cleaned_data.rds</code>,
+<code>model.rds</code>, <code>vals_fitted.rds</code>, and
+<code>fig_fitted.png</code> in the <code>out</code> directory, and
 <code>report.html</code> in the main directory.</p>
 <div class="section level3">
 <h3 id="named-vs-unnamed-arguments">Named vs unnamed arguments<a class="anchor" aria-label="anchor" href="#named-vs-unnamed-arguments"></a>
 </h3>
-<p>In the examples above, all the command line arguments were filenames.
-Command line arguments can also, however, be values. The following
-command, for instance, includes a named argument called
-<code>n_iter</code> with value <code>100</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">Rscript</span> myfile.R <span class="at">--n_iter</span><span class="op">=</span>100 myoutput.rds</span></code></pre></div>
-<p>The corresponding call to <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> will look
-something like this:</p>
+<p>The line passes one filename (<code>myoutput.rds</code>) and one
+numeric value (<code>100</code>) to the script
+<code>myfile.R</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">Rscript</span> myfile.R myoutput.rds <span class="at">--n_iter</span><span class="op">=</span>100</span></code></pre></div>
+<p>The script <code>myfile.R</code> contains</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>.myfile <span class="op">=</span> <span class="st">"myfile.R"</span>,</span>
-<span>           n_iter <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>       .out <span class="op">=</span> <span class="st">"myoutput.R"</span><span class="op">)</span></span></code></pre></div>
-<p>When</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>n_iter <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>           .out <span class="op">=</span> <span class="st">"myoutput.rds"</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> matches the unnamed argument
+<code>myoutput.rds</code> with <code>.out</code> and matches the named
+argument <code>--n_iter=100</code> with <code>n_iter</code>. Because
+<code>.out</code> starts with a dot, <code><a href="../reference/extract_make.html">extract_make()</a></code> treats
+it as the file name and writes <code>n_iter</code> into the recipe as
+<code>--n_iter=100</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -368,11 +376,11 @@ something like this:</p>
 </h2>
 <ul>
 <li>
-<a href="https://bayesiandemography.github.io/command/reference/makefile.html">shell_script()</a>
+<a href="https://bayesiandemography.github.io/command/reference/shell_script.html">shell_script()</a>
 The shell script equivalent of <code><a href="../reference/makefile.html">makefile()</a></code>
 </li>
 <li>
-<a href="https://bayesiandemography.github.io/command/articles/a4_workflow.html">Modeular
+<a href="https://bayesiandemography.github.io/command/articles/a4_workflow.html">Modular
 Workflows for Data Analysis</a> Safe, flexible workflows for data
 analysis</li>
 <li>

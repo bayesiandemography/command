@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title> • command</title>
+<title>Quick Start • command</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Quick Start">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/a1_quickstart.html">UNKNOWN TITLE</a></li>
+<li><a class="dropdown-item" href="../articles/a1_quickstart.html">Quick Start</a></li>
     <li><a class="dropdown-item" href="../articles/a2_shell_script.html">Creating a Shell Script</a></li>
     <li><a class="dropdown-item" href="../articles/a3_makefile.html">Creating a Makefile</a></li>
     <li><a class="dropdown-item" href="../articles/a4_workflow.html">Modular Workflows for Data Analysis</a></li>
@@ -60,7 +60,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1></h1>
+      <h1>Quick Start</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/bayesiandemography/command/blob/main/vignettes/articles/a1_quickstart.Rmd" class="external-link"><code>vignettes/articles/a1_quickstart.Rmd</code></a></small>
@@ -69,7 +69,6 @@
 
     
     
-<p>x]— title: “Quick Start” —</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -90,8 +89,9 @@ at that first.</p>
 <h2 id="calling-cmd_assign-interactively">Calling <code>cmd_assign()</code> interactively<a class="anchor" aria-label="anchor" href="#calling-cmd_assign-interactively"></a>
 </h2>
 <p>Running</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">cmd_assign</span>(<span class="at">obj1 =</span> <span class="st">"a"</span>,</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>           <span class="at">obj2 =</span> <span class="dv">1</span><span class="st">"))</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cmd_assign.html">cmd_assign</a></span><span class="op">(</span>obj1 <span class="op">=</span> <span class="st">"orange"</span>,</span>
+<span>           obj2 <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>has the same effect as running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obj1</span> <span class="op">&lt;-</span> <span class="st">"orange"</span></span>
@@ -427,7 +427,7 @@ converts these values to have the same classs as the matched values from
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
-<td align="left"><code>use_long</code></td>
+<td align="left"><code>use_log</code></td>
 <td><code>TRUE</code></td>
 <td><code>TRUE</code></td>
 </tr>
@@ -475,13 +475,16 @@ in</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="va">.data</span><span class="op">)</span></span></code></pre></div>
 <p>Function <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> itself makes no distinction
-between names that start with dots and names that do not. However,
-functions <code><a href="../reference/extract_shell.html">extract_shell()</a></code>, <code>shell()</code>, discussed
-in <a href="https://bayesiandemography.github.io/command/articles/a2_shell_script.html">Creating
-a Shell Script</a>, and <code><a href="../reference/extract_make.html">extract_make()</a></code> and
-<code><a href="../reference/makefile.html">makefile()</a></code>, discussed in <a href="https://bayesiandemography.github.io/command/articles/a3_makefile.html">Creating
-a Makefile</a>, do make a distinction. Moreover, the convention is
-useful anyway, to separate values from references.</p>
+between names that start with dots and names that do not.
+<code><a href="../reference/extract_shell.html">extract_shell()</a></code>, <code><a href="../reference/shell_script.html">shell_script()</a></code>,
+<code><a href="../reference/extract_make.html">extract_make()</a></code>, and <code><a href="../reference/makefile.html">makefile()</a></code> do. If a call
+includes any name that starts with a dot, those arguments are the file
+names. If it does not, a value is treated as a file name when the file
+exists, or when it looks like a path. Those functions read the literal
+values written in the script, and a shell token is quoted only when it
+contains a space or a character that is special to the shell. The
+dot-name convention is useful anyway, to separate values from
+references.</p>
 </div>
 <div class="section level2">
 <h2 id="giving-code-files-and-outputs-the-same-base-name">Giving code files and outputs the same base name<a class="anchor" aria-label="anchor" href="#giving-code-files-and-outputs-the-same-base-name"></a>
@@ -489,9 +492,9 @@ useful anyway, to separate values from references.</p>
 <p>Another feature of the examples so far is that R files have the same
 base name as the files that they generate. File
 <code>fig_smoothed.R</code>, for instance, generates
-<code>fig_smooth.png</code>, <code>fig_smooth_5.png</code>,
-<code>fig_smooth_8.png</code>, and <code>fig_smooth_10.png</code>, and
-file <code>model.R</code> generates <code>model.rds</code> and
+<code>fig_smoothed.png</code>, <code>fig_smoothed_5.png</code>,
+<code>fig_smoothed_8.png</code>, and <code>fig_smoothed_10.png</code>,
+and file <code>model.R</code> generates <code>model.rds</code> and
 <code>model2.rds</code>. We rely on file extensions (eg <code>.R</code>
 vs <code>.png</code>, or <code>.R</code> vs <code>.rds</code>) to
 distinguish code from outputs, and we use suffixes (eg <code>_5</code>,
@@ -718,6 +721,11 @@ as</p>
 <pre><code><span><span class="va">.inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">.files</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">.files</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.inputs</span>, <span class="va">read.csv</span><span class="op">)</span></span></code></pre>
+<p><code><a href="../reference/extract_shell.html">extract_shell()</a></code>, <code><a href="../reference/shell_script.html">shell_script()</a></code>,
+<code><a href="../reference/extract_make.html">extract_make()</a></code>, and <code><a href="../reference/makefile.html">makefile()</a></code> also read a
+call to <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>. Each element of the character
+vector becomes one file name. In a Makefile rule, the last element is
+the target and the earlier elements are prerequisites.</p>
 <p>If you do know how many values will be passed through the command
 line at run time, you should not use <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>.
 In such cases, function <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> is a better choice, as

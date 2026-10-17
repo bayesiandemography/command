@@ -123,12 +123,12 @@ inside the session. The command
 Rscript my-script.R my-data.csv my-output.rds --n_digits=3
 ```
 
-for instance, makes the strings `"my-data.csv"`, `"myoutput.rds"`, and
-`"3"` accessible inside the session where `my-script.R` is run.
-Expressions of the form `--<name>=<object>` can be used to assign names
-to the strings. In the command above, for example, the strings
-`"my-data.csv"` and `"myoutput.rds"` have no names, and the string `"3"`
-has the name `n_digits`.
+for instance, makes the strings `"my-data.csv"`, `"my-output.rds"`, and
+`"--n_digits=3"` accessible inside the session where `my-script.R` is
+run. Expressions of the form `--<name>=<object>` can be used to assign
+names to the strings. In the command above, for example, the strings
+`"my-data.csv"` and `"my-output.rds"` have no names, and
+`"--n_digits=3"` supplies the name `n_digits` and the value `"3"`.
 
 Values for command line arguments can be retrieved within the session
 using base R function
@@ -169,7 +169,7 @@ use something like
 Rscript my-script.R my-other-data.csv my-other-output.rds --n_digits=3
 ```
 
-If we want to process `my_data.csv`, but we want to use 5 digits rather
+If we want to process `my-data.csv`, but we want to use 5 digits rather
 than 3, then we use something like
 
 ``` bash
@@ -234,7 +234,7 @@ performance.rds: performance.R model.rds
         Rscript $^ $@
 
 report.html: report.qmd performance.rds
-        Rscript $<
+        quarto render $<
 ```
 
 The lines
@@ -628,7 +628,7 @@ Following this convention leads to code such as
 
 ``` r
 
-cmd_assign(.data = "out/model.rds",
+cmd_assign(.model = "out/model.rds",
            .out = "out/vals_fitted.rds")
 
 model <- readRDS(.model)
@@ -736,7 +736,7 @@ This code
 - creates strings called `.vals_fitted` and `.out`, based on values
   passed at the command line;
 - creates object `vals_fitted`, by reading from the file specified by
-  \`.vals_fitted;
+  `.vals_fitted`;
 - creates a plot, based on `vals_fitted`; and
 - prints the plot in a file specified by `.out`.
 

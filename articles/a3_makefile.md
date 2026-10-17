@@ -35,19 +35,14 @@ contains the following files:
     `out/cleaned_data.rds`
 2.  `src/model.R` fits a model to the cleaned data, and creates
     `out/model.rds`
-3.  `src/vals_fitted.R` extract fitted values from the model, and
-    creates `vals_fitted.rds`
-4.  `src/fig_fitted.R` uses `vals_fitted.rds` to create the plot in
+3.  `src/vals_fitted.R` extracts fitted values from the model, and
+    creates `out/vals_fitted.rds`
+4.  `src/fig_fitted.R` uses `out/vals_fitted.rds` to create the plot in
     `out/fig_fitted.png`
 5.  `report.qmd` uses `out/fig_fitted.png` to create the document
     `report.html`
 
-`cleaned_data.R`, `model.R`, and `vals_fitted.R`, and `fig_fitted.R` all
-contain calls to
-[`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md).
-For instance, `src/model.R` contains the lines
-
-`cleaned_data.R`, `model.R`, and `vals_fitted.R`, and `fig_fitted.R` all
+`cleaned_data.R`, `model.R`, `vals_fitted.R`, and `fig_fitted.R` all
 contain calls to
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md).
 For instance, `src/model.R` contains the lines
@@ -80,11 +75,21 @@ In the call to
 above, the names `.cleaned_data` and `.out` start with a dot, and the
 name `rlm_method` does not.
 [`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
-treats dotted name-value pairs differently fron non-dotted ones. A
-dotted name-value pair is assumed to refer to an unnamed file path
-passed at the command line, such as `out/cleaned_data.rds` or
-`out/model.rds`. A non-dotted pair is assumed to refer to a named
-argument, such as `--rlm_method=M`.
+decides which arguments are file names in two steps. If the call
+includes any name that starts with a dot, those arguments are the file
+names, and the others are named arguments such as `--rlm_method=M`. If
+the call includes no dotted names, a value is treated as a file name
+when the file exists, or when the value looks like a path, such as when
+it contains a slash or ends with an extension such as `.csv`.
+
+[`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
+and
+[`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
+also read calls to
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
+A character vector of paths becomes one file name per element, in the
+order written. The last element is the target, and the earlier elements
+are prerequisites.
 
 The easiest way to use
 [`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
@@ -98,8 +103,11 @@ creates a draft of the whole Makefile.
 [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
 loops through all the R files in a directory, extracting
 [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+and
+[`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md)
 calls and converting them into Makefile rules. It then puts the rules
-into a Makefile.
+into a Makefile. The rules follow the order of the file names, not the
+order in which they need to run.
 
 For instance, the call
 
@@ -306,39 +314,41 @@ Our project directory now looks like this.
     └── vals_fitted.R
 ```
 
-We have created `scaled.rds`, `model.rds`, and `tab_coef` in the `out`
-directory, and `report.html` in the main directory.
+We have created `cleaned_data.rds`, `model.rds`, `vals_fitted.rds`, and
+`fig_fitted.png` in the `out` directory, and `report.html` in the main
+directory.
 
 ### Named vs unnamed arguments
 
-In the examples above, all the command line arguments were filenames.
-Command line arguments can also, however, be values. The following
-command, for instance, includes a named argument called `n_iter` with
-value `100`.
+The line passes one filename (`myoutput.rds`) and one numeric value
+(`100`) to the script `myfile.R`:
 
 ``` bash
-Rscript myfile.R --n_iter=100 myoutput.rds
+Rscript myfile.R myoutput.rds --n_iter=100
 ```
 
-The corresponding call to
-[`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
-will look something like this:
+The script `myfile.R` contains
 
 ``` r
 
-cmd_assign(.myfile = "myfile.R",
-           n_iter = 100,
-       .out = "myoutput.R")
+cmd_assign(n_iter = 100,
+           .out = "myoutput.rds")
 ```
 
-When
+[`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
+matches the unnamed argument `myoutput.rds` with `.out` and matches the
+named argument `--n_iter=100` with `n_iter`. Because `.out` starts with
+a dot,
+[`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md)
+treats it as the file name and writes `n_iter` into the recipe as
+`--n_iter=100`.
 
 ## Other resources
 
-- [shell_script()](https://bayesiandemography.github.io/command/reference/makefile.html)
+- [shell_script()](https://bayesiandemography.github.io/command/reference/shell_script.html)
   The shell script equivalent of
   [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md)
-- [Modeular Workflows for Data
+- [Modular Workflows for Data
   Analysis](https://bayesiandemography.github.io/command/articles/a4_workflow.html)
   Safe, flexible workflows for data analysis
 - [Project Management with
