@@ -803,4 +803,4 @@ Scientific Computing.” *PLOS Computational Biology* 13 (6): e1005510.
 
 Xie, Yihui, J. J. Allaire, and Garrett Grolemund. 2018. *R Markdown: The
 Definitive Guide*. Chapman; Hall/CRC.
-<https://bookdown.org/yihui/rmarkdown/>.
+<https://pkg.yihui.org/rmarkdown-book/>.

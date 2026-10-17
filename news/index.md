@@ -19,11 +19,17 @@
   [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
   A character vector of paths becomes one file name per element, and in
   a Makefile the last element is the target.
-- These functions also now recognize the
+- [`extract_make()`](https://bayesiandemography.github.io/command/reference/extract_make.md),
+  [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md),
+  [`makefile()`](https://bayesiandemography.github.io/command/reference/makefile.md),
+  and
+  [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
+  now recognize
   [`cmd_assign_quiet()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md),
   [`cmd_assign_collect_quiet()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md),
   and a call written with a `command::` or `command:::` prefix.
-- Documented the dot-name convention for file arguments in the help for
+- The dot-name convention for file arguments has been documented in the
+  help for
   [`cmd_assign()`](https://bayesiandemography.github.io/command/reference/cmd_assign.md)
   and
   [`cmd_assign_collect()`](https://bayesiandemography.github.io/command/reference/cmd_assign_collect.md).
@@ -53,9 +59,9 @@
 - [`extract_shell()`](https://bayesiandemography.github.io/command/reference/extract_shell.md)
   and
   [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
-  leave a plain token unchanged, and quote a path or value only when it
-  contains a space or a character that is special to the shell. `NULL`
-  is written as `--name=NULL`.
+  leave a plain length-1 vector unchanged, and quote a path or value
+  only when it contains a space or a character that is special to the
+  shell. `NULL` is written as `--name=NULL`.
 - [`shell_script()`](https://bayesiandemography.github.io/command/reference/shell_script.md)
   rejects a `quiet` value that is not `TRUE` or `FALSE`.
 

@@ -47,8 +47,9 @@
 <ul><li>Added <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code> and <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect_quiet()</a></code>, which assign every unnamed command-line argument to the one argument that was not passed by name.</li>
 <li>
 <code><a href="../reference/extract_make.html">extract_make()</a></code>, <code><a href="../reference/extract_shell.html">extract_shell()</a></code>, <code><a href="../reference/makefile.html">makefile()</a></code>, and <code><a href="../reference/shell_script.html">shell_script()</a></code> read calls to <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>. A character vector of paths becomes one file name per element, and in a Makefile the last element is the target.</li>
-<li>These functions also now recognize the <code><a href="../reference/cmd_assign.html">cmd_assign_quiet()</a></code>, <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect_quiet()</a></code>, and a call written with a <code>command::</code> or <code>command:::</code> prefix.</li>
-<li>Documented the dot-name convention for file arguments in the help for <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> and <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>.</li>
+<li>
+<code><a href="../reference/extract_make.html">extract_make()</a></code>, <code><a href="../reference/extract_shell.html">extract_shell()</a></code>, <code><a href="../reference/makefile.html">makefile()</a></code>, and <code><a href="../reference/shell_script.html">shell_script()</a></code> now recognize <code><a href="../reference/cmd_assign.html">cmd_assign_quiet()</a></code>, <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect_quiet()</a></code>, and a call written with a <code>command::</code> or <code>command:::</code> prefix.</li>
+<li>The dot-name convention for file arguments has been documented in the help for <code><a href="../reference/cmd_assign.html">cmd_assign()</a></code> and <code><a href="../reference/cmd_assign_collect.html">cmd_assign_collect()</a></code>.</li>
 <li>
 <code><a href="../reference/shell_script.html">shell_script()</a></code> orders commands by matching output paths with input paths.</li>
 <li>
@@ -63,7 +64,7 @@
 <div class="section level3">
 <h3 id="shell-commands-0-3-0">Shell commands<a class="anchor" aria-label="anchor" href="#shell-commands-0-3-0"></a></h3>
 <ul><li>
-<code><a href="../reference/extract_shell.html">extract_shell()</a></code> and <code><a href="../reference/shell_script.html">shell_script()</a></code> leave a plain token unchanged, and quote a path or value only when it contains a space or a character that is special to the shell. <code>NULL</code> is written as <code>--name=NULL</code>.</li>
+<code><a href="../reference/extract_shell.html">extract_shell()</a></code> and <code><a href="../reference/shell_script.html">shell_script()</a></code> leave a plain length-1 vector unchanged, and quote a path or value only when it contains a space or a character that is special to the shell. <code>NULL</code> is written as <code>--name=NULL</code>.</li>
 <li>
 <code><a href="../reference/shell_script.html">shell_script()</a></code> rejects a <code>quiet</code> value that is not <code>TRUE</code> or <code>FALSE</code>.</li>
 </ul></div>
