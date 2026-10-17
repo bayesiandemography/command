@@ -1,5 +1,5 @@
 
-# command (development version)
+# command 0.3.0
 
 ## Variable-length file arguments
 
@@ -10,17 +10,43 @@
   `shell_script()` read calls to `cmd_assign_collect()`. A
   character vector of paths becomes one file name per element,
   and in a Makefile the last element is the target.
-* Documented the dotted-name convention for file arguments
+* These functions also now recognize the `cmd_assign_quiet()`,
+  `cmd_assign_collect_quiet()`, and a call
+  written with a `command::` or `command:::` prefix.
+* Documented the dot-name convention for file arguments
   in the help for `cmd_assign()` and `cmd_assign_collect()`.
 * `shell_script()` orders commands by matching output paths
-  with input paths. The order can be wrong, and the script
-  may still need editing.
+  with input paths. 
 * `cmd_assign()` and `cmd_assign_collect()` reject a named
   command-line argument that is passed more than once.
 * `makefile()`, `shell_script()`, `extract_make()`, and
   `extract_shell()` read literal values from calls.
   A name or a function call such as `file.path()` or
   `paste()` is an error.
+
+## Command-line values
+
+* A named argument is split on the first `=`, so the value
+  may itself contain `=`. An argument with an empty name,
+  such as `--=value`, is an error.
+
+## Shell commands
+
+* `extract_shell()` and `shell_script()` leave a plain token
+  unchanged, and quote a path or value only when it contains
+  a space or a character that is special to the shell.
+  `NULL` is written as `--name=NULL`.
+* `shell_script()` rejects a `quiet` value that is not
+  `TRUE` or `FALSE`.
+
+## Bug fixes
+
+* The message for a missing directory now says that the
+  directory does not exist.
+
+## Documentation
+
+* Revised the package description and the help pages.
 
 # command 0.2.0
 
